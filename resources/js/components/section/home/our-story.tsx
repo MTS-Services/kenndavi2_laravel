@@ -58,13 +58,13 @@ export default function OurStory() {
                             I have created a brand-new twist to a great family
                             bar-b-que sauce recipe.  The recipe was originally
                             made by my grandmother “Sylvia.”  She passed the
-                            recipe down to my father “Kenneth Sr.”  My dad did
+                            recipe down to my father “Kenneth Sr.” My dad did
                             not know I was watching him and my grandmother the
-                            whole time in the kitchen making it from scratch. I
+                            whole time in the kitchen making it from scratch.I
                             thought of a great way to honor my family legacy by
                             adding my twist to the family recipe by creating
                             three new favors from my grandma’s original
-                            recipe. So, I would like to introduce you to the
+                            recipe.So, I would like to introduce you to the
                             following three new flavors of Sweet, Honey,
                             Teriyaki.  Each bottle is a celebration of where we
                             come from…shared meals, laughter around the table,
