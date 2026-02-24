@@ -1,53 +1,123 @@
 import { Link } from '@inertiajs/react';
-import React from 'react';
+import { ShoppingCart, User, Menu, X } from 'lucide-react';
+import { useState } from 'react';
 
 interface Props {
-  activePage?: string;
-  subPage?: string
+    activePage?: string;
+    subPage?: string;
 }
 
 function FrontendHeader({ activePage, subPage }: Props) {
-  return (
-    <header className="bg-white shadow-md">
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <div className="flex-shrink-0">
-            <Link href="/" className="text-2xl font-bold text-primary">
-              Cookid
-            </Link>
-          </div>
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-          {/* Navigation */}
-          <nav className="hidden md:flex space-x-8">
-            <Link
-              href="/"
-              className={`text-muted-foreground hover:text-secondary font-medium transition-colors ${
-                activePage === 'home' ? 'text-secondary' : ''
-              }`}
-            >
-              Home
-            </Link>
-            <Link
-              href="/privacy-policy"
-              className={`text-muted-foreground hover:text-secondary font-medium transition-colors ${
-                activePage === 'privacy-policy' ? 'text-secondary' : ''
-              }`}
-            >
-              Privacy Policy
-            </Link>
-          </nav>
+    return (
+        <header className="bg-bg-header py-6">
+            <div className="container mx-auto px-4">
+                {/* Desktop Layout */}
+                <div className="hidden md:flex items-center justify-between">
+                    {/* Left Navigation */}
+                    <nav className="flex items-center space-x-8">
+                        <Link
+                            href="/"
+                            className={`border-b-2 border-text-white font-normal text-text-white text-4xl transition-colors font-bebas-neue ${
+                                activePage === 'home'
+                                    ? ''
+                                    : 'hover:border-gray-400'
+                            }`}
+                        >
+                            HOME
+                        </Link>
+                        <Link
+                            href="/recipes"
+                            className={`font-normal text-text-white text-4xl transition-colors font-bebas-neue ${
+                                activePage === 'recipes'
+                                    ? 'border-b-2 border-white'
+                                    : 'hover:border-gray-400'
+                            }`}
+                        >
+                            RECIPES
+                        </Link>
+                    </nav>
 
-          {/* Mobile Menu Button */}
-          <div className="md:hidden">
-            <button className="text-muted-foreground hover:text-secondary">
-              Menu
-            </button>
-          </div>
-        </div>
-      </div>
-    </header>
-  );
+                    {/* Center Logo */}
+                    <div className="flex transform flex-col items-center">
+                       <img src="/assets/images/logo.png" alt="logo" className="max-w-[100px] max-h-[100px]" />
+                    </div>
+
+                    {/* Right Icons */}
+                    <div className="flex items-center space-x-4">
+                        <Link className="text-text-white transition-colors hover:text-gray-300">
+                            <ShoppingCart size={24} />
+                        </Link>
+                        <Link className="text-text-white transition-colors hover:text-gray-300">
+                            <User size={24} />
+                        </Link>
+                    </div>
+                </div>
+
+                {/* Mobile Layout */}
+                <div className="md:hidden flex items-center justify-between">
+                    {/* Logo on left */}
+                    <div className="flex transform flex-col items-center">
+                       <img src="/assets/images/logo.png" alt="logo" className="max-w-20 max-h-20" />
+                    </div>
+
+                    {/* Menu icon on right */}
+                    <button
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        className="text-text-white hover:text-gray-300 transition-colors"
+                    >
+                        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                    </button>
+                </div>
+
+                {/* Mobile Menu */}
+                {isMobileMenuOpen && (
+                    <div className="md:hidden mt-4 py-4 border-t border-gray-600">
+                        <nav className="flex flex-col space-y-4">
+                            <Link
+                                href="/"
+                                className={`border-b-2 border-text-white font-normal text-text-white text-2xl transition-colors font-bebas-neue ${
+                                    activePage === 'home'
+                                        ? ''
+                                        : 'hover:border-gray-400'
+                                }`}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                HOME
+                            </Link>
+                            <Link
+                                href="/recipes"
+                                className={`font-normal text-text-white text-2xl transition-colors font-bebas-neue ${
+                                    activePage === 'recipes'
+                                        ? 'border-b-2 border-text-white'
+                                        : 'hover:border-gray-400'
+                                }`}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                RECIPES
+                            </Link>
+                            <div className="flex items-center space-x-4 pt-4">
+                                <Link className="text-text-white transition-colors hover:text-gray-300">
+                                    <ShoppingCart size={24} />
+                                </Link>
+                                <Link className="text-text-white transition-colors hover:text-gray-300">
+                                    <User size={24} />
+                                </Link>
+                            </div>
+                        </nav>
+                    </div>
+                )}
+
+                {/* Dotted lines decoration (desktop only) */}
+                <div className="hidden md:block pointer-events-none absolute inset-0">
+                    <div className="absolute top-1/2 right-32 left-32 h-0.5">
+                        <div className="h-full border-t-2 border-dotted border-text-white"></div>
+                    </div>
+                </div>
+            </div>
+        </header>
+    );
 }
 
 export default FrontendHeader;
