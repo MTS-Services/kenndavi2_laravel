@@ -89,12 +89,22 @@
 
     --color-text-white: var(--text-white);
     --color-text-gray-300: var(--text-gray-300);
+    --color-text-black: var(--text-black);
+    --color-text-black-50: var(--text-black-50);
+    --color-text-black-100: var(--text-black-100);
    
 
 
 
     --color-bg-header: var(--bg-header);
     --color-bg-footer: var(--bg-footer);
+    --color-bg-white: var(--bg-white);
+    --color-bg-card: var(--bg-card);
+    --color-bg-white: var(--bg-white);
+    --color-bg-button: var(--bg-button);
+    --color-bg-light-green: var(--bg-light-green);
+    --color-bg-our-story: var(--bg-our-story);
+    --color-text-black-200: var(--text-black-200);
 
 }
 
@@ -156,10 +166,20 @@
 
     --text-white: #fff;
     --text-gray-300: #ADB7BC;
+    --text-black: #000000;
+    --text-black-50: #373737;
+    --text-black-100: #2A2A2A;
+    --text-black-200: #2F2F2F;
 
 
     --bg-header: #2D2926;
     --bg-footer: #191C1F;
+    --bg-white: #fff;
+    --bg-card: #F4F4F4;
+    --bg-white: #fff;
+    --bg-button: #AC2724;
+    --bg-light-green: #E8F5E9;
+    --bg-our-story: #E6F5F0;
 }
 
 @utility container {
