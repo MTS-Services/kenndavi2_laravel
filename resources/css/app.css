@@ -107,7 +107,8 @@
     --color-text-black-100: var(--text-black-100);
     --color-text-black-200: var(--text-black-200);
     --color-text-black-300: var(--text-black-300);
-    --color-text-main-title: var(--text-main-title)
+    --color-text-main-title: var(--text-main-title);
+    --color-text-testimonial: var(--text-testimonial);
 
    
 
@@ -188,6 +189,7 @@
     --text-black-200: #2F2F2F;
     --text-black-300: #070707;
     --text-main-title: #0C0C0C;
+    --text-testimonial: #E8563F;
 
 
     --bg-header: #2D2926;
