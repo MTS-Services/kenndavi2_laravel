@@ -2,6 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Aguafina+Script&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
 
 @import 'tailwindcss';
 
@@ -26,6 +27,7 @@
     --font-public-sans: 'Public Sans', ui-sans-serif, system-ui, sans-serif;
     --font-aguafina-script: 'Aguafina Script', ui-sans-serif, system-ui, sans-serif;
     --font-aktiv-grotesk: 'Aktiv Grotesk', ui-sans-serif, system-ui, sans-serif;
+    --font-manrope: 'Manrope', ui-sans-serif, system-ui, sans-serif;
 
 
 
@@ -109,6 +111,7 @@
     --color-text-black-300: var(--text-black-300);
     --color-text-main-title: var(--text-main-title);
     --color-text-testimonial: var(--text-testimonial);
+    --color-text-testimonial-desc: var(--text-testimonial-desc);
 
    
 
@@ -190,6 +193,7 @@
     --text-black-300: #070707;
     --text-main-title: #0C0C0C;
     --text-testimonial: #E8563F;
+    --text-testimonial-desc: #6C6C6C;
 
 
     --bg-header: #2D2926;
