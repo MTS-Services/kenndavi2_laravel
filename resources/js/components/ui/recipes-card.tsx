@@ -14,7 +14,7 @@ interface Props {
 
 export default function RecipesCard({ recipe }: Props) {
     return (
-        <div className="overflow-hidden max-w-sm mx-auto">
+        <div className="">
             {/* Recipe Image */}
             <div className="relative w-full sm:w-[300px] md:w-[350px] lg:w-[386px] h-48 bg-bg-card">
                 <img 
