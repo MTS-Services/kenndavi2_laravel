@@ -1,3 +1,4 @@
+import BbqSauceRecipes from '@/components/section/home/bbq-sauce-recipes'
 import Hero from '@/components/section/home/hero'
 import OurSauces from '@/components/section/home/our-sauces'
 import OurStory from '@/components/section/home/our-story'
@@ -11,7 +12,7 @@ export default function Home({ listings }: any) {
       <Hero />
       <OurSauces />
       <OurStory />
-      <RecipesCard />
+      <BbqSauceRecipes />
     </FrontendLayout>
   )
 }

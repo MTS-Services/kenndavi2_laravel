@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Aguafina+Script&display=swap');
 
 @import 'tailwindcss';
 
@@ -11,11 +12,23 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@font-face {
+    font-family: 'AktivGrotesk';
+    src: url('/assets/fonts/AktivGrotesk-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
 @theme {
 
     --font-bebas-neue: 'Bebas Neue', ui-sans-serif, system-ui, sans-serif;
     --font-inter: 'Inter', ui-sans-serif, system-ui, sans-serif;
     --font-public-sans: 'Public Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-aguafina-script: 'Aguafina Script', ui-sans-serif, system-ui, sans-serif;
+    --font-aktiv-grotesk: 'Aktiv Grotesk', ui-sans-serif, system-ui, sans-serif;
+
+
+
     --font-sans:
         'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
@@ -92,6 +105,10 @@
     --color-text-black: var(--text-black);
     --color-text-black-50: var(--text-black-50);
     --color-text-black-100: var(--text-black-100);
+    --color-text-black-200: var(--text-black-200);
+    --color-text-black-300: var(--text-black-300);
+    --color-text-main-title: var(--text-main-title)
+
    
 
 
@@ -104,7 +121,6 @@
     --color-bg-button: var(--bg-button);
     --color-bg-light-green: var(--bg-light-green);
     --color-bg-our-story: var(--bg-our-story);
-    --color-text-black-200: var(--text-black-200);
 
 }
 
@@ -170,6 +186,8 @@
     --text-black-50: #373737;
     --text-black-100: #2A2A2A;
     --text-black-200: #2F2F2F;
+    --text-black-300: #070707;
+    --text-main-title: #0C0C0C;
 
 
     --bg-header: #2D2926;

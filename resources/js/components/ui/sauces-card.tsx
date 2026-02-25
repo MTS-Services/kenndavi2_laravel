@@ -31,11 +31,11 @@ export default function SaucesCard({ sauce }: Props) {
                 <h3 className="mb-2 font-bebas-neue text-3xl font-normal text-text-black">
                     {sauce.name}
                 </h3>
-                <p className="mb-4 font-inter text-base font-normal text-text-black-50">
+                <p className="mb-4 font-aktiv-grotesk text-base font-normal text-text-black-50">
                    {sauce.description}
                 </p>
                 <div className="flex items-center justify-between">
-                    <span className="font-inter text-2xl font-bold text-text-black-100">
+                    <span className="font-aktiv-grotesk text-2xl font-normal text-text-black-100">
                         Price {sauce.price}
                     </span>
                     <Link 
