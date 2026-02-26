@@ -153,36 +153,45 @@ export default function ProductDetailsPage() {
                 <div className="container mx-auto px-4 py-10 lg:py-16">
                     <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] xl:gap-16">
                         {/* Left: Product Gallery */}
-                        <div>
-                            <div className="overflow-hidden">
-                                <img
-                                    src={selectedImage}
-                                    alt="Sweet & Smoky BBQ Sauce"
-                                    className="h-full w-full object-cover"
-                                />
-                            </div>
+                        {/* Left: Product Gallery */}
+<div className="w-full">
+    {/* Main Image */}
+    <div className="w-full overflow-hidden aspect-square sm:aspect-[4/3] lg:aspect-[5/4]">
+        <img
+            src={selectedImage}
+            alt="Sweet & Smoky BBQ Sauce"
+            className="h-full w-full object-cover"
+        />
+    </div>
 
-                            <div className="mt-4 flex gap-3 md:mt-6 md:gap-4">
-                                {productImages.map((image) => (
-                                    <button
-                                        key={image}
-                                        type="button"
-                                        onClick={() => setSelectedImage(image)}
-                                        className={`relative flex h-20 w-20 flex-none overflow-hidden rounded-xl border transition-all md:h-24 md:w-24 ${
-                                            selectedImage === image
-                                                ? 'border-red-500 ring-2 ring-red-500 ring-offset-2 ring-offset-white'
-                                                : 'border-gray-200 hover:border-red-400'
-                                        }`}
-                                    >
-                                        <img
-                                            src={image}
-                                            alt="Sweet & Smoky BBQ Sauce thumbnail"
-                                            className="h-full w-full object-cover"
-                                        />
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+    {/* Thumbnails */}
+    <div className="mt-3 md:mt-4 flex flex-wrap gap-2 md:gap-3">
+        {productImages.map((image) => (
+            <button
+                key={image}
+                type="button"
+                onClick={() => setSelectedImage(image)}
+                className={`relative flex-none overflow-hidden rounded-lg border transition-all
+                    w-14 h-14
+                    sm:w-16 sm:h-16
+                    md:w-20 md:h-20
+                    lg:w-[72px] lg:h-[72px]
+                    xl:w-24 xl:h-24
+                    ${
+                        selectedImage === image
+                            ? 'border-red-500 ring-2 ring-red-500 ring-offset-2 ring-offset-white'
+                            : 'border-gray-200 hover:border-red-400'
+                    }`}
+            >
+                <img
+                    src={image}
+                    alt="Sweet & Smoky BBQ Sauce thumbnail"
+                    className="h-full w-full object-cover"
+                />
+            </button>
+        ))}
+    </div>
+</div>
 
                         {/* Right: Product Details */}
                         <div className="space-y-6 lg:space-y-8">
