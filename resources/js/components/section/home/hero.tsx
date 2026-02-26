@@ -6,13 +6,13 @@ export default function Hero() {
                 <img
                     src="/assets/images/home/banner.png"
                     alt="Hero Banner"
-                    className="h-full w-full object-cover"
+                    className="h-[430px] sm:h-full w-full object-cover"
                 />
 
                 {/* Text Overlay */}
                 <div className="absolute inset-0 flex items-end">
-                    <div className="container px-4 text-white pb-8">
-                        <h1 className="mb-6 font-bebas-neue text-5xl font-normal md:text-9xl">
+                    <div className="container px-4 text-text-white pb-8">
+                        <h1 className="mb-6 font-bebas-neue  text-3xl sm:text-5xl font-normal md:text-9xl">
                             Welcome to Northside
                         </h1>
                         <p className="max-w-3xl font-inter text-lg md:text-xl">

@@ -11,7 +11,7 @@ function FrontendHeader({ activePage, subPage }: Props) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     return (
-        <header className="bg-bg-header py-6">
+        <header className="bg-bg-header py-1.5 md:py-3 lg:py-6">
             <div className="container mx-auto px-4">
                 {/* Desktop Layout */}
                 <div className="hidden md:flex items-center justify-between">
