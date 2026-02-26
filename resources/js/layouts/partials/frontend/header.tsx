@@ -109,12 +109,6 @@ function FrontendHeader({ activePage, subPage }: Props) {
                     </div>
                 )}
 
-                {/* Dotted lines decoration (desktop only) */}
-                <div className="hidden md:block pointer-events-none absolute inset-0">
-                    <div className="absolute top-1/2 right-32 left-32 h-0.5">
-                        <div className="h-full border-t-2 border-dotted border-text-white"></div>
-                    </div>
-                </div>
             </div>
         </header>
     );
