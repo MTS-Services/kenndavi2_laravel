@@ -7,7 +7,7 @@ import RecipesCard from '@/components/ui/recipes-card'
 import FrontendLayout from '@/layouts/frontend-layout'
 import React from 'react'
 
-export default function Home({ listings }: any) {
+export default function Home() {
   return (
     <FrontendLayout activePage="home">
       <Hero />
