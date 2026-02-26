@@ -149,7 +149,7 @@ export default function ProductDetailsPage() {
 
     return (
         <FrontendLayout>
-            <div className="bg-white">
+            <div className="">
                 <div className="container mx-auto px-4 py-10 lg:py-16">
                     <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] xl:gap-16">
                         {/* Left: Product Gallery */}
@@ -280,7 +280,7 @@ export default function ProductDetailsPage() {
                                                 <span>Add to cart</span>
                                                 <ShoppingCartIcon className="h-4 w-4" />
                                             </Link>
-                                            <Link className="flex border border-text-buy-now px-6 py-5 font-public-sans text-xs font-bold uppercase text-text-buy-now">
+                                            <Link href={route('frontend.shopping-info')} className="flex border border-text-buy-now px-6 py-5 font-public-sans text-xs font-bold uppercase text-text-buy-now">
                                                 Buy Now
                                             </Link>
                                         </div>

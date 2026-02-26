@@ -42,10 +42,10 @@ const RecipeData = [
 
 export default function BbqSauceRecipes() {
     return (
-        <div className="mt-28">
+        <div className="mt-12 sm:mt-28">
             <div className="container mx-auto px-4">
                 <div>
-                    <h2 className="text-center font-bebas-neue text-[56px] font-normal text-text-main-title">
+                    <h2 className="text-center font-bebas-neue text-3xl sm:text-[56px] font-normal text-text-main-title">
                         Bbq Sauce Recipes
                     </h2>
                 </div>

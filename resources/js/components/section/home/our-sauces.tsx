@@ -8,7 +8,7 @@ const saucesData = [
         price: "$40.00",
         image: "/assets/images/home/19534e4b7e7bb9999e7570eceacd260d5cd8696d.png",
         category: "Sweet",
-        href: "/sauces/savory-fusion"
+        href: route('frontend.details')
     },
     {
         id: "2",
@@ -17,7 +17,7 @@ const saucesData = [
         price: "$35.00",
         image: "/assets/images/home/513f91e933b9cf0b47a9e4627c132b20f4bf15b6.jpg",
         category: "Honey",
-        href: "/sauces/honey-bbq"
+        href: route('frontend.details')
     },
     {
         id: "3",
@@ -26,15 +26,15 @@ const saucesData = [
         price: "$42.00",
         image: "/assets/images/home/fb87184304aaa733c0da92fab04e9ebd14294505.jpg",
         category: "Spicy",
-        href: "/sauces/spicy-texas"
+        href: route('frontend.details')
     }
 ];
 
 export default function OurSauces() {
     return (
-        <div id="our-sauces" className="mt-28">
+        <div id="our-sauces" className="mt-12 sm:mt-28">
             <div className="container mx-auto px-4">
-                <h2 className="font-bebas-neue text-center text-text-title text-[56px] font-normal">
+                <h2 className="font-bebas-neue text-center text-text-title text-3xl sm:text-[56px] font-normal">
                     Our Sauces
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
