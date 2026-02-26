@@ -23,7 +23,7 @@ export default function OurStory() {
                             alt="Grandmother preparing food"
                             className="mb-6 w-full max-w-md lg:max-w-lg"
                         />
-                        <p className="mb-4 font-inter text-lg sm:text-xl lg:text-2xl font-normal text-text-black">
+                        <p className="mb-4 font-aktiv-grotesk text-lg sm:text-xl lg:text-2xl font-normal text-text-black">
                             Just remember when you are enjoying every savory
                             taste of my bar-b-que sauce you are tasting…{' '}
                             <span className="text-lg sm:text-xl lg:text-2xl font-normal text-bg-button">
@@ -31,7 +31,7 @@ export default function OurStory() {
                             </span>
                         </p>
                         <div className="text-left lg:text-center">
-                            <p className="font-bebas-neue text-2xl font-bold">
+                            <p className="font-aguafina-script text-2xl font-bold">
                                 Kenneth Davis II
                             </p>
                             <p className="text-text-gray/40 font-inter text-sm font-normal">
@@ -54,7 +54,7 @@ export default function OurStory() {
                                 className="w-1/2 max-w-[200px] lg:max-w-[250px]"
                             />
                         </div>
-                        <p className="mb-8 font-inter text-base lg:text-lg text-xl text-text-black">
+                        <p className="mb-8 font-aktiv-grotesk text-base lg:text-lg text-text-black">
                             I have created a brand-new twist to a great family
                             bar-b-que sauce recipe.  The recipe was originally
                             made by my grandmother “Sylvia.”  She passed the
@@ -77,7 +77,7 @@ export default function OurStory() {
                                 <h3 className="font-bebas-neue text-4xl sm:text-5xl lg:text-6xl font-normal text-text-black">
                                     15K {'+'}
                                 </h3>
-                                <p className="font-inter text-lg sm:text-xl lg:text-2xl font-normal text-text-black">
+                                <p className="font-aktiv-grotesk text-lg sm:text-xl lg:text-2xl font-normal text-text-black">
                                     Satisfied Customer
                                 </p>
                             </div>
@@ -85,7 +85,7 @@ export default function OurStory() {
                                 <h3 className="font-bebas-neue text-4xl sm:text-5xl lg:text-6xl font-normal text-text-black">
                                     10 YEARS {'+'}
                                 </h3>
-                                <p className="font-inter text-lg sm:text-xl lg:text-2xl font-normal text-text-black">
+                                <p className="font-aktiv-grotesk text-lg sm:text-xl lg:text-2xl font-normal text-text-black">
                                     Experience
                                 </p>
                             </div>
