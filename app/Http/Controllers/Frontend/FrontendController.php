@@ -22,4 +22,9 @@ class FrontendController extends Controller
     {
         return Inertia::render('frontend/product-details');
     }
+
+    public function shoppingInfo(): Response
+    {
+        return Inertia::render('frontend/shopping-info');
+    }
 }

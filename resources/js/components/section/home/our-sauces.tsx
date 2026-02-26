@@ -8,7 +8,7 @@ const saucesData = [
         price: "$40.00",
         image: "/assets/images/home/19534e4b7e7bb9999e7570eceacd260d5cd8696d.png",
         category: "Sweet",
-        href: "/sauces/savory-fusion"
+        href: route('frontend.details')
     },
     {
         id: "2",
@@ -17,7 +17,7 @@ const saucesData = [
         price: "$35.00",
         image: "/assets/images/home/513f91e933b9cf0b47a9e4627c132b20f4bf15b6.jpg",
         category: "Honey",
-        href: "/sauces/honey-bbq"
+        href: route('frontend.details')
     },
     {
         id: "3",
@@ -26,7 +26,7 @@ const saucesData = [
         price: "$42.00",
         image: "/assets/images/home/fb87184304aaa733c0da92fab04e9ebd14294505.jpg",
         category: "Spicy",
-        href: "/sauces/spicy-texas"
+        href: route('frontend.details')
     }
 ];
 

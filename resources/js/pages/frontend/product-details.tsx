@@ -280,7 +280,7 @@ export default function ProductDetailsPage() {
                                                 <span>Add to cart</span>
                                                 <ShoppingCartIcon className="h-4 w-4" />
                                             </Link>
-                                            <Link className="flex border border-text-buy-now px-6 py-5 font-public-sans text-xs font-bold uppercase text-text-buy-now">
+                                            <Link href={route('frontend.shopping-info')} className="flex border border-text-buy-now px-6 py-5 font-public-sans text-xs font-bold uppercase text-text-buy-now">
                                                 Buy Now
                                             </Link>
                                         </div>
