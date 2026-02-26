@@ -32,9 +32,9 @@ const saucesData = [
 
 export default function OurSauces() {
     return (
-        <div className="mt-28">
+        <div id="our-sauces" className="mt-28">
             <div className="container mx-auto px-4">
-                <h2 className="font-bebas-neue text-center text-text-main-title text-[56px] font-normal">
+                <h2 className="font-bebas-neue text-center text-text-title text-[56px] font-normal">
                     Our Sauces
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

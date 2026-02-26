@@ -17,4 +17,9 @@ class FrontendController extends Controller
     {
         return Inertia::render('frontend/privacy-policy');
     }
+
+    public function details(): Response
+    {
+        return Inertia::render('frontend/product-details');
+    }
 }

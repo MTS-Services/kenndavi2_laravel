@@ -109,10 +109,13 @@
     --color-text-black-100: var(--text-black-100);
     --color-text-black-200: var(--text-black-200);
     --color-text-black-300: var(--text-black-300);
-    --color-text-main-title: var(--text-main-title);
+    --color-text-title: var(--text-title);
+    --color-text-body: var(--text-body);
     --color-text-testimonial: var(--text-testimonial);
     --color-text-testimonial-desc: var(--text-testimonial-desc);
-
+    --color-text-green: var(--text-green);
+    --color-text-buy-now: var(--text-buy-now);
+    --color-text-star-rating: var(--text-star-rating);
    
 
 
@@ -191,10 +194,13 @@
     --text-black-100: #2A2A2A;
     --text-black-200: #2F2F2F;
     --text-black-300: #070707;
-    --text-main-title: #0C0C0C;
+    --text-title: #0C0C0C;
+    --text-body: #373737;
     --text-testimonial: #E8563F;
     --text-testimonial-desc: #6C6C6C;
-
+    --text-green: #009E67;
+    --text-buy-now: #CC1610;
+    --text-star-rating: #FA8232;
 
     --bg-header: #2D2926;
     --bg-footer: #191C1F;
