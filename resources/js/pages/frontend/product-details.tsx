@@ -149,7 +149,7 @@ export default function ProductDetailsPage() {
 
     return (
         <FrontendLayout>
-            <div className="bg-white">
+            <div className="">
                 <div className="container mx-auto px-4 py-10 lg:py-16">
                     <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] xl:gap-16">
                         {/* Left: Product Gallery */}
