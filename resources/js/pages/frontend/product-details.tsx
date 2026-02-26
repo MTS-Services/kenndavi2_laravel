@@ -292,15 +292,15 @@ export default function ProductDetailsPage() {
 
                     {/* Customer Feedback Section */}
                     <div className="mt-16">
-                        <h2 className="mb-8 font-bebas-neue text-[32px] font-normal uppercase text-text-title">
+                        <h2 className="mb-8 font-bebas-neue text-[40px] font-normal uppercase text-text-title">
                             Customer Feedback
                         </h2>
 
                         {/* Rating Summary */}
                         <div className="mb-10 flex flex-col gap-6 md:flex-row">
                             {/* Overall Rating Box */}
-                            <div className="flex min-w-[200px] flex-col items-center justify-center rounded-xl border border-[#FAD98E] bg-[#FFF8EC] px-10 py-8">
-                                <span className="font-public-sans text-[56px] font-bold leading-none text-text-title">
+                            <div className="flex min-w-[200px] flex-col items-center justify-center rounded-sm border bg-[#FBF4CE] px-10 py-8">
+                                <span className="font-public-sans text-[56px] font-medium text-base text-text-title">
                                     4.7
                                 </span>
                                 <div className="mt-2">
@@ -308,7 +308,7 @@ export default function ProductDetailsPage() {
                                 </div>
                                 <p className="mt-2 font-public-sans text-sm font-normal text-text-body">
                                     Customer Rating{' '}
-                                    <span className="text-text-gray-300">(934,516)</span>
+                                    <span className="font-public-sans text-base  font-normal  text-text-gray-300">(934,516)</span>
                                 </p>
                             </div>
 
