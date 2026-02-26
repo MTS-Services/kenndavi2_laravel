@@ -113,7 +113,9 @@
     --color-text-body: var(--text-body);
     --color-text-testimonial: var(--text-testimonial);
     --color-text-testimonial-desc: var(--text-testimonial-desc);
-
+    --color-text-green: var(--text-green);
+    --color-text-buy-now: var(--text-buy-now);
+    --color-text-star-rating: var(--text-star-rating);
    
 
 
@@ -196,7 +198,9 @@
     --text-body: #373737;
     --text-testimonial: #E8563F;
     --text-testimonial-desc: #6C6C6C;
-
+    --text-green: #009E67;
+    --text-buy-now: #CC1610;
+    --text-star-rating: #FA8232;
 
     --bg-header: #2D2926;
     --bg-footer: #191C1F;
