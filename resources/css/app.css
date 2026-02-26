@@ -109,7 +109,8 @@
     --color-text-black-100: var(--text-black-100);
     --color-text-black-200: var(--text-black-200);
     --color-text-black-300: var(--text-black-300);
-    --color-text-main-title: var(--text-main-title);
+    --color-text-title: var(--text-title);
+    --color-text-body: var(--text-body);
     --color-text-testimonial: var(--text-testimonial);
     --color-text-testimonial-desc: var(--text-testimonial-desc);
 
@@ -191,7 +192,8 @@
     --text-black-100: #2A2A2A;
     --text-black-200: #2F2F2F;
     --text-black-300: #070707;
-    --text-main-title: #0C0C0C;
+    --text-title: #0C0C0C;
+    --text-body: #373737;
     --text-testimonial: #E8563F;
     --text-testimonial-desc: #6C6C6C;
 

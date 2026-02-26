@@ -23,19 +23,19 @@ export default function SaucesCard({ sauce }: Props) {
                     alt={sauce.name}
                     className="w-full h-64 object-cover rounded-t-md"
                 />
-                <span className="absolute left-4 top-4 rounded-sm bg-white px-3 py-1 font-inter text-sm font-medium text-text-black">
+                <span className="absolute left-4 top-4 rounded-sm bg-white px-3 py-1 font-inter text-sm font-medium text-text-title">
                     {sauce.category}
                 </span>
             </div>
             <div className="p-6">   
-                <h3 className="mb-2 font-bebas-neue text-3xl font-normal text-text-black">
+                <h3 className="mb-2 font-bebas-neue text-3xl font-normal text-text-title">
                     {sauce.name}
                 </h3>
-                <p className="mb-4 font-aktiv-grotesk text-base font-normal text-text-black-50">
+                <p className="mb-4 font-aktiv-grotesk text-base font-normal text-text-body">
                    {sauce.description}
                 </p>
                 <div className="flex items-center justify-between">
-                    <span className="font-aktiv-grotesk text-2xl font-normal text-text-black-100">
+                    <span className="font-aktiv-grotesk text-2xl font-normal text-text-title">
                         Price {sauce.price}
                     </span>
                     <Link 
