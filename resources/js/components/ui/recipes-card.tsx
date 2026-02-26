@@ -14,7 +14,7 @@ interface Props {
 
 export default function RecipesCard({ recipe }: Props) {
     return (
-        <div className="">
+        <div className="mb-8">
             {/* Recipe Image */}
             <div className="relative w-full sm:w-[300px] md:w-[350px] lg:w-[386px] h-48 bg-bg-card">
                 <img 
@@ -25,7 +25,7 @@ export default function RecipesCard({ recipe }: Props) {
             </div>
             
             {/* Recipe Content */}
-            <div className="mt-6">
+            <div className="mt-4">
                 {/* Recipe Title */}
                 <h2 className="text-xl font-normal text-black-300 font-bebas-neue">
                     {recipe.title}
