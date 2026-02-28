@@ -23,7 +23,7 @@ return new class extends Migration
             $table->longText('license_number')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('image')->nullable();
-            $table->string('status')->default(ActiveInactive::ACTIVE->value);
+            $table->string('status')->default(ActiveInactive::ACTIVE->value);   
             $table->string('user_type');
             $table->boolean('is_verified')->default(false);
             $table->string('password');
