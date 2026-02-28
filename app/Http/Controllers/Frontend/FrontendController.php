@@ -36,4 +36,8 @@ class FrontendController extends Controller
     {
         return Inertia::render('frontend/sauce-recipes');
     }
+    public function recipeDetails(): Response
+    {
+        return Inertia::render('frontend/recipe-details');
+    }
 }

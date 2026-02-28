@@ -19,20 +19,20 @@ function FrontendHeader({ activePage, subPage }: Props) {
                     <nav className="flex items-center space-x-8">
                         <Link
                             href="/"
-                            className={`border-b-2 border-text-white font-normal text-text-white text-4xl transition-colors font-bebas-neue ${
+                            className={`font-normal text-text-white text-4xl transition-colors font-bebas-neue border-b-2 ${
                                 activePage === 'home'
-                                    ? ''
-                                    : 'hover:border-gray-400'
+                                    ? 'border-white'
+                                    : 'border-transparent hover:border-gray-400'
                             }`}
                         >
                             HOME
                         </Link>
                         <Link
                             href="/sauce-recipes"
-                            className={`font-normal text-text-white text-4xl transition-colors font-bebas-neue ${
-                                activePage === 'recipes'
-                                    ? 'border-b-2 border-white'
-                                    : 'hover:border-gray-400'
+                            className={`font-normal text-text-white text-4xl transition-colors font-bebas-neue border-b-2 ${
+                                activePage === 'sauce-recipes'
+                                    ? 'border-white'
+                                    : 'border-transparent hover:border-gray-400'
                             }`}
                         >
                             RECIPES
@@ -41,7 +41,7 @@ function FrontendHeader({ activePage, subPage }: Props) {
 
                     {/* Center Logo */}
                     <div className="flex transform flex-col items-center">
-                       <img src="/assets/images/logo.png" alt="logo" className="max-w-[100px] max-h-[100px]" />
+                       <img src="/assets/images/logo.png" alt="logo" className="max-w-25 max-h-25" />
                     </div>
 
                     {/* Right Icons */}
@@ -59,7 +59,7 @@ function FrontendHeader({ activePage, subPage }: Props) {
                 <div className="md:hidden flex items-center justify-between">
                     {/* Logo on left */}
                     <div className="flex transform flex-col items-center">
-                       <img src="/assets/images/logo.png" alt="logo" className="max-w-20 max-h-20" />
+                       <img src="/assets/images/logo.png" alt="logo" className="max-w-25 max-h-25" />
                     </div>
 
                     {/* Menu icon on right */}
@@ -77,19 +77,19 @@ function FrontendHeader({ activePage, subPage }: Props) {
                         <nav className="flex flex-col space-y-4">
                             <Link
                                 href="/"
-                                className={`border-b-2 border-text-white font-normal text-text-white text-2xl transition-colors font-bebas-neue ${
+                                className={`border-b-2 border-text-white font-normal text-text-white text-xl transition-colors font-bebas-neue ${
                                     activePage === 'home'
-                                        ? ''
-                                        : 'hover:border-gray-400'
+                                    ? 'border-white'
+                                    : 'border-transparent hover:border-gray-400'
                                 }`}
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 HOME
                             </Link>
                             <Link
-                                href="/recipes"
-                                className={`font-normal text-text-white text-2xl transition-colors font-bebas-neue ${
-                                    activePage === 'recipes'
+                                href="sauce-recipes"
+                                className={`font-normal text-text-white text-xl transition-colors font-bebas-neue ${
+                                    activePage === 'sauce-recipes'
                                         ? 'border-b-2 border-text-white'
                                         : 'hover:border-gray-400'
                                 }`}

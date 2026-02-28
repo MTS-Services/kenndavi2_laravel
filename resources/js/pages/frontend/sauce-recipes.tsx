@@ -97,7 +97,7 @@ const RecipeData = [
 
 export default function SauceRecipes() {
     return (
-        <FrontendLayout>
+        <FrontendLayout activePage="sauce-recipes">
             <div className="mt-12 sm:mt-28">
                 <div className="container mx-auto px-4">
                     <div>
