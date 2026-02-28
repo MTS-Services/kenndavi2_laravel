@@ -3,6 +3,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Aguafina+Script&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 @import 'tailwindcss';
 
@@ -28,6 +31,8 @@
     --font-aguafina-script: 'Aguafina Script', ui-sans-serif, system-ui, sans-serif;
     --font-aktiv-grotesk: 'Aktiv Grotesk', ui-sans-serif, system-ui, sans-serif;
     --font-manrope: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+    --font-roboto: 'Roboto', ui-sans-serif, system-ui, sans-serif;
+    --font-poppins: 'Poppins', ui-sans-serif, system-ui, sans-serif;
 
 
 
@@ -133,7 +138,7 @@
 }
 
 :root {
-    --background: #F9FAFB;
+    --background: #fff;
     --foreground: #121711;
 
     --card: oklch(1 0 0);
@@ -211,7 +216,7 @@
     --bg-button: #AC2724;
     --bg-light-green: #E8F5E9;
     --bg-our-story: #E6F5F0;
-    --order-card-bg: #ADB7BC;
+    --order-card-bg: #F8F8F8;
 }
 
 @utility container {
