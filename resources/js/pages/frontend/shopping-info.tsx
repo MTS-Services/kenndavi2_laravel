@@ -253,13 +253,14 @@ export default function ShippingInformationPage() {
                                 </div>
 
                                 {/* Place Order Button */}
-                                <button
+                                <Link 
+                                    href={route('frontend.order-confirmed')}
                                     type="button"
                                     className="flex w-full items-center justify-center gap-2 bg-text-buy-now px-6 py-4 font-bebas-neue text-xl font-normal uppercase text-text-white"
                                 >
                                     Place order
                                     <ArrowRight className="h-4 w-4" />
-                                </button>
+                                </Link>
 
                                 {/* Back Button */}
                                 <Link

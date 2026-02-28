@@ -40,4 +40,8 @@ class FrontendController extends Controller
     {
         return Inertia::render('frontend/recipe-details');
     }
+    public function productCard(): Response
+    {
+        return Inertia::render('frontend/product-card');
+    }
 }
