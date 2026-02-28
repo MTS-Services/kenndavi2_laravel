@@ -1,5 +1,6 @@
 import RecipesCard from '@/components/ui/recipes-card';
 import FrontendLayout from '@/layouts/frontend-layout';
+import { Link } from '@inertiajs/react';
 
 
 const RecipeData = [
@@ -107,7 +108,9 @@ export default function SauceRecipes() {
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                         {RecipeData.map((recipe) => (
-                            <RecipesCard key={recipe.id} recipe={recipe} />
+                           <Link href={route('frontend.recipe-details')}>
+                               <RecipesCard key={recipe.id} recipe={recipe} />
+                           </Link>
                         ))}
                     </div>
                 </div>

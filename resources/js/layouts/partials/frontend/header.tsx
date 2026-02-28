@@ -46,7 +46,7 @@ function FrontendHeader({ activePage, subPage }: Props) {
 
                     {/* Right Icons */}
                     <div className="flex items-center space-x-4">
-                        <Link className="text-text-white transition-colors hover:text-gray-300">
+                        <Link href={route('frontend.product-card')} className="text-text-white transition-colors hover:text-gray-300">
                             <ShoppingCart size={24} />
                         </Link>
                         <Link className="text-text-white transition-colors hover:text-gray-300">

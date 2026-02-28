@@ -283,11 +283,11 @@ export default function ProductDetailsPage() {
 
                                         {/* Action Buttons */}
                                         <div className="flex items-center justify-center gap-3">
-                                            <Link href={route('frontend.order-confirmed')} className="flex items-center gap-2 bg-text-buy-now px-6 py-5 font-public-sans text-xs font-bold uppercase text-text-white">
+                                            <Link href={route('frontend.product-card')} className="flex items-center gap-2 bg-text-buy-now px-6 py-5 font-public-sans text-xs font-bold uppercase text-text-white">
                                                 <span>Add to cart</span>
                                                 <ShoppingCartIcon className="h-4 w-4" />
                                             </Link>
-                                            <Link href={route('frontend.product-card')} className="flex border border-text-buy-now px-6 py-5 font-public-sans text-xs font-bold uppercase text-text-buy-now">
+                                            <Link href={route('frontend.shopping-info')} className="flex border border-text-buy-now px-6 py-5 font-public-sans text-xs font-bold uppercase text-text-buy-now">
                                                 Buy Now
                                             </Link>
                                         </div>
