@@ -22,15 +22,7 @@ class UserAuthController extends Controller
 {
     use PasswordValidationRules;
 
-    public function userChoose(): Response
-    {
-        return Inertia::render('frontend/user-choose', [
-            'user_type' => collect(UserType::cases())->map(fn ($type) => [
-                'value' => $type->value,
-                'label' => $type->label(),
-            ]),
-        ]);
-    }
+
 
     public function register(): Response
     {
