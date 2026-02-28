@@ -128,6 +128,7 @@
     --color-bg-button: var(--bg-button);
     --color-bg-light-green: var(--bg-light-green);
     --color-bg-our-story: var(--bg-our-story);
+    --color-order-card-bg: var(--order-card-bg);
 
 }
 
@@ -210,6 +211,7 @@
     --bg-button: #AC2724;
     --bg-light-green: #E8F5E9;
     --bg-our-story: #E6F5F0;
+    --order-card-bg: #ADB7BC;
 }
 
 @utility container {

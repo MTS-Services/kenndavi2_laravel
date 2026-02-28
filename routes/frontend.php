@@ -8,5 +8,6 @@ Route::name('frontend.')->controller(FrontendController::class)->group(function 
     Route::get('/', 'index')->name('home');
     Route::get('/details', 'details')->name('details');
     Route::get('/shopping-info', 'shoppingInfo')->name('shopping-info');
+    Route::get('/order-confirmed!', 'orderConfirmed')->name('order-confirmed'); 
     Route::get('/privacy-policy', 'privacyPolicy')->name('privacy-policy');
 });
