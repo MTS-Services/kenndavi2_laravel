@@ -17,6 +17,7 @@ Route::prefix('user')->name('user.')->group(function () {
         Route::post('/logout', [UserAuthController::class, 'logout'])->name('logout');
 
         Route::get('/dashboard', 'index')->name('dashboard');
+        Route::get('/orders', 'orders')->name('orders');
 
     });
 

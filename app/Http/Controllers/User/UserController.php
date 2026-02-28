@@ -12,5 +12,9 @@ class UserController extends Controller
     {
         return Inertia::render('user/dashboard');
     }
+    public function orders(): Response
+    {
+        return Inertia::render('user/order/orders');
+    }
 
 }

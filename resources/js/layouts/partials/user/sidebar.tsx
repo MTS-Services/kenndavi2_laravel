@@ -98,7 +98,7 @@ export default function Sidebar() {
                         
                     />
                     <NavItem
-                        href="/account/orders"
+                        href={route('user.orders')}
                         label="Orders"
                     />
                     <NavItem

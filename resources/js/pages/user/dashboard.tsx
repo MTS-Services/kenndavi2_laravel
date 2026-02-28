@@ -27,35 +27,38 @@ export default function Dashboard() {
                 </div>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <Link href="#">
-                        <div className="flex w-full flex-col items-center rounded-sm border border-text-gray-300 px-36 py-10 text-center">
+                        <div className="flex w-full flex-col items-center rounded-sm border border-text-gray-300 px-4 py-8 sm:px-8 md:px-12 lg:px-16 xl:px-20 2xl:px-36 text-center">
                             <img
                                 src="/assets/images/user-dashboard/material-symbols.png"
                                 alt=""
+                                className=""
                             />
-                            <p className="mt-6 text-center font-aktiv-grotesk text-base font-normal text-text-title">
+                            <p className="mt-4 sm:mt-6 text-center font-aktiv-grotesk text-sm sm:text-base font-normal text-text-title">
                                 orders
                             </p>
                         </div>
                     </Link>
                     <Link href="#">
-                        <div className="flex w-full flex-col items-center rounded-sm border border-text-gray-300 px-36 py-10 text-center">
+                        <div className="flex w-full flex-col items-center rounded-sm border border-text-gray-300 px-4 py-8 sm:px-8 md:px-12 lg:px-16 xl:px-20 2xl:px-36 text-center">
                             <img
                                 src="/assets/images/user-dashboard/carbon_star-review.png"
                                 alt=""
+                                className=""
                             />
-                            <p className="mt-6 text-center font-aktiv-grotesk text-base font-normal text-text-title">
+                            <p className="mt-4 sm:mt-6 text-center font-aktiv-grotesk text-sm sm:text-base font-normal text-text-title">
                                 orders
                             </p>
                         </div>
                     </Link>
 
                     <Link href="#">
-                        <div className="flex w-full flex-col items-center rounded-sm border border-text-gray-300 px-36 py-10 text-center">
+                        <div className="flex w-full flex-col items-center rounded-sm border border-text-gray-300 px-4 py-8 sm:px-8 md:px-12 lg:px-16 xl:px-20 2xl:px-36 text-center">
                             <img
                                 src="/assets/images/user-dashboard/line-md_account.png"
                                 alt=""
+                                className=""
                             />
-                            <p className="mt-6 text-center font-aktiv-grotesk text-base font-normal text-text-title">
+                            <p className="mt-4 sm:mt-6 text-center font-aktiv-grotesk text-sm sm:text-base font-normal text-text-title">
                                 orders
                             </p>
                         </div>
