@@ -27,4 +27,17 @@ class FrontendController extends Controller
     {
         return Inertia::render('frontend/shopping-info');
     }
+
+    public function orderConfirmed(): Response
+    {
+        return Inertia::render('frontend/order-confirmed');
+    }
+    public function sauceRecipes(): Response
+    {
+        return Inertia::render('frontend/sauce-recipes');
+    }
+    public function recipeDetails(): Response
+    {
+        return Inertia::render('frontend/recipe-details');
+    }
 }
