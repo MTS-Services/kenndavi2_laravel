@@ -17,7 +17,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @font-face {
-    font-family: 'AktivGrotesk';
+    font-family: 'Aktiv Grotesk';
     src: url('/assets/fonts/AktivGrotesk-Regular.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
