@@ -124,11 +124,10 @@ function StarRating({ rating, size = 'sm' }: StarRatingProps) {
             {Array.from({ length: 5 }).map((_, index) => (
                 <Star
                     key={index}
-                    className={`${iconClass} ${
-                        index < rating
+                    className={`${iconClass} ${index < rating
                             ? 'fill-text-star-rating text-text-star-rating'
                             : 'fill-gray-200 text-gray-200'
-                    }`}
+                        }`}
                 />
             ))}
         </div>
@@ -154,44 +153,43 @@ export default function ProductDetailsPage() {
                     <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] xl:gap-16">
                         {/* Left: Product Gallery */}
                         {/* Left: Product Gallery */}
-<div className="w-full">
-    {/* Main Image */}
-    <div className="w-full overflow-hidden aspect-square sm:aspect-[4/3] lg:aspect-[5/4]">
-        <img
-            src={selectedImage}
-            alt="Sweet & Smoky BBQ Sauce"
-            className="h-full w-full object-cover"
-        />
-    </div>
+                        <div className="w-full">
+                            {/* Main Image */}
+                            <div className="w-full overflow-hidden aspect-square sm:aspect-[4/3] lg:aspect-[5/4]">
+                                <img
+                                    src={selectedImage}
+                                    alt="Sweet & Smoky BBQ Sauce"
+                                    className="h-full w-full object-cover"
+                                />
+                            </div>
 
-    {/* Thumbnails */}
-    <div className="mt-3 md:mt-4 flex flex-wrap gap-2 md:gap-3">
-        {productImages.map((image) => (
-            <button
-                key={image}
-                type="button"
-                onClick={() => setSelectedImage(image)}
-                className={`relative flex-none overflow-hidden rounded-lg border transition-all
+                            {/* Thumbnails */}
+                            <div className="mt-3 md:mt-4 flex flex-wrap gap-2 md:gap-3">
+                                {productImages.map((image) => (
+                                    <button
+                                        key={image}
+                                        type="button"
+                                        onClick={() => setSelectedImage(image)}
+                                        className={`relative flex-none overflow-hidden rounded-lg border transition-all
                     w-14 h-14
                     sm:w-16 sm:h-16
                     md:w-20 md:h-20
                     lg:w-[72px] lg:h-[72px]
                     xl:w-24 xl:h-24
-                    ${
-                        selectedImage === image
-                            ? 'border-red-500 ring-2 ring-red-500 ring-offset-2 ring-offset-white'
-                            : 'border-gray-200 hover:border-red-400'
-                    }`}
-            >
-                <img
-                    src={image}
-                    alt="Sweet & Smoky BBQ Sauce thumbnail"
-                    className="h-full w-full object-cover"
-                />
-            </button>
-        ))}
-    </div>
-</div>
+                    ${selectedImage === image
+                                                ? 'border-red-500 ring-2 ring-red-500 ring-offset-2 ring-offset-white'
+                                                : 'border-gray-200 hover:border-red-400'
+                                            }`}
+                                    >
+                                        <img
+                                            src={image}
+                                            alt="Sweet & Smoky BBQ Sauce thumbnail"
+                                            className="h-full w-full object-cover"
+                                        />
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
 
                         {/* Right: Product Details */}
                         <div className="space-y-6 lg:space-y-8">
@@ -329,11 +327,10 @@ export default function ProductDetailsPage() {
                                             {Array.from({ length: 5 }).map((_, index) => (
                                                 <Star
                                                     key={index}
-                                                    className={`h-3.5 w-3.5 ${
-                                                        index < row.stars
+                                                    className={`h-3.5 w-3.5 ${index < row.stars
                                                             ? 'fill-text-star-rating text-text-star-rating'
                                                             : 'fill-gray-200 text-gray-200'
-                                                    }`}
+                                                        }`}
                                                 />
                                             ))}
                                         </div>
