@@ -1,10 +1,67 @@
 import UserDashboardLayout from '@/layouts/user-dashboard-layout';
+import { Link } from '@inertiajs/react';
 
 export default function Dashboard() {
     return (
         <UserDashboardLayout>
-            <h1 className="text-2xl font-semibold">Dashboard</h1>
-            <p className="mt-4">Welcome to your dashboard.</p>
+            <div className="">
+                <div className="w-full rounded-lg p-8">
+                    <h2 className="mb-1.5 font-aktiv-grotesk text-base font-normal text-text-title">
+                        Hello John (not John?{' '}
+                        <span className="cursor-pointer font-normal text-text-buy-now">
+                            Log out
+                        </span>
+                        )
+                    </h2>
+                    <p className="mb-6 font-aktiv-grotesk text-xs font-normal text-text-title">
+                        From your account dashboard you can view your{' '}
+                        <span className="cursor-pointer font-normal text-text-buy-now"> 
+                            recent orders
+                        </span>{' '}
+                        and manage your{' '}
+                        <span className="cursor-pointer font-normal text-text-buy-now">
+                            account
+                        </span>
+                        .
+                    </p>
+                </div>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <Link href="#">
+                        <div className="flex w-full flex-col items-center rounded-sm border border-text-gray-300 px-36 py-10 text-center">
+                            <img
+                                src="/assets/images/user-dashboard/material-symbols.png"
+                                alt=""
+                            />
+                            <p className="mt-6 text-center font-aktiv-grotesk text-base font-normal text-text-title">
+                                orders
+                            </p>
+                        </div>
+                    </Link>
+                    <Link href="#">
+                        <div className="flex w-full flex-col items-center rounded-sm border border-text-gray-300 px-36 py-10 text-center">
+                            <img
+                                src="/assets/images/user-dashboard/carbon_star-review.png"
+                                alt=""
+                            />
+                            <p className="mt-6 text-center font-aktiv-grotesk text-base font-normal text-text-title">
+                                orders
+                            </p>
+                        </div>
+                    </Link>
+
+                    <Link href="#">
+                        <div className="flex w-full flex-col items-center rounded-sm border border-text-gray-300 px-36 py-10 text-center">
+                            <img
+                                src="/assets/images/user-dashboard/line-md_account.png"
+                                alt=""
+                            />
+                            <p className="mt-6 text-center font-aktiv-grotesk text-base font-normal text-text-title">
+                                orders
+                            </p>
+                        </div>
+                    </Link>
+                </div>
+            </div>
         </UserDashboardLayout>
     );
 }
