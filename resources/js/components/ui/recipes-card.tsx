@@ -16,11 +16,18 @@ export default function RecipesCard({ recipe }: Props) {
     return (
         <div className="mb-8">
             {/* Recipe Image */}
-            <div className="relative w-full sm:w-[300px] md:w-[350px] lg:w-[386px] h-48 bg-bg-card">
+            {/* <div className="relative w-full sm:w-[300px] md:w-[350px] lg:w-[386px] h-48 bg-bg-card">
                 <img 
                     src={recipe.image} 
                     alt={recipe.title}
                     className="w-full h-full object-cover rounded-md"
+                />
+            </div> */}
+            <div className="relative w-full aspect-[386/240] overflow-hidden rounded-md">
+                <img 
+                    src={recipe.image} 
+                    alt={recipe.title}
+                    className="absolute inset-0 w-full h-full object-cover"
                 />
             </div>
             

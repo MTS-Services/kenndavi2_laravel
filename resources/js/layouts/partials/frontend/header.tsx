@@ -28,7 +28,7 @@ function FrontendHeader({ activePage, subPage }: Props) {
                             HOME
                         </Link>
                         <Link
-                            href="/recipes"
+                            href="/sauce-recipes"
                             className={`font-normal text-text-white text-4xl transition-colors font-bebas-neue ${
                                 activePage === 'recipes'
                                     ? 'border-b-2 border-white'
