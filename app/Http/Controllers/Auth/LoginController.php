@@ -10,11 +10,20 @@ use Inertia\Inertia;
 
 class LoginController extends Controller
 {
-    public function showLogin(Request $request)
-    {
+    // public function showLogin(Request $request)
+    // {
        
-            return Inertia::render('auth/login');
+    //         return Inertia::render('auth/login');
+    // }
+
+    public function showLogin(Request $request)
+{
+    if (Auth::check()) {
+        return redirect()->route('user.dashboard');
     }
+
+    return Inertia::render('auth/login');
+}
 
     public function store(Request $request)
     {
