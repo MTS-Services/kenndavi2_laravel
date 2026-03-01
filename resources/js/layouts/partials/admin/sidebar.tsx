@@ -15,6 +15,12 @@ const adminNavItems: NavItemType[] = [
         slug: 'dashboard',
     },
     // {
+    //     title: 'Product Management',
+    //     href: route('admin.product-management.index'),
+    //     icon: LayoutGrid,
+    //     slug: 'product-management',
+    // },
+    // {
     //     title: 'User Management',
     //     href: '#',
     //     icon: Users,
