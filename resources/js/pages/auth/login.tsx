@@ -7,12 +7,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { PasswordInput } from '@/components/ui/password-input';
 import { Spinner } from '@/components/ui/spinner';
-import AuthLayout from '@/layouts/auth-layout';
 // import { request } from '@/routes/password';
-import { SharedData } from '@/types';
 import { store } from '@/actions/App/Http/Controllers/Auth/LoginController';
-import FrontendLayout from '@/layouts/frontend-layout';
 import { Checkbox } from '@/components/ui/checkbox';
+import FrontendLayout from '@/layouts/frontend-layout';
+import { SharedData } from '@/types';
 import { ArrowRightIcon } from 'lucide-react';
 
 const userType = new URLSearchParams(window.location.search).get('type');
@@ -21,13 +20,14 @@ interface LoginProps {
     status?: string;
     canResetPassword: boolean;
     canRegister: boolean;
+
 }
 
 export default function Login({ status, userType }: LoginProps) {
     const { features } = usePage<SharedData>().props;
 
     return (
-                <FrontendLayout>
+        <FrontendLayout>
             <Head title="Log in" />
             <div className="flex min-h-screen items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
                 <div className="w-full max-w-md rounded-lg border border-text-gray-300 p-8">
@@ -99,7 +99,7 @@ export default function Login({ status, userType }: LoginProps) {
 
                                     <div className="text-sm">
                                         <TextLink
-                                            href="#"
+                                            href={route('forgot-password')}
                                             className="font-aktiv-grotesk text-sm font-normal text-bg-button"
                                         >
                                             Forgot password?
@@ -137,7 +137,7 @@ export default function Login({ status, userType }: LoginProps) {
                                 <div className="flex items-center justify-center">
                                     <div className="w-full border border-text-gray-300" />
                                     <div className="w-full text-sm">
-                                        <p className="text-text-title font-aktiv-grotesk font-normal text-sm text-center">
+                                        <p className="text-center font-aktiv-grotesk text-sm font-normal text-text-title">
                                             or continue with
                                         </p>
                                     </div>
@@ -145,9 +145,7 @@ export default function Login({ status, userType }: LoginProps) {
                                 </div>
 
                                 <div>
-                                    <Link
-                                        className="w-fit flex items-center justify-center"
-                                    >
+                                    <Link className="flex w-fit items-center justify-center">
                                         <svg
                                             className="mr-2 h-12 w-12"
                                             viewBox="0 0 24 24"

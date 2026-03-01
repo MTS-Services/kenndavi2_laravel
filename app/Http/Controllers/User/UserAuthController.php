@@ -90,4 +90,12 @@ class UserAuthController extends Controller
 
         return redirect()->route('frontend.home');
     }
+    public function forgotPassword()
+    {
+        return Inertia::render('auth/forgot-password');
+    }
+    public function resetPassword()
+    {
+        return Inertia::render('auth/reset-password');
+    }
 }
