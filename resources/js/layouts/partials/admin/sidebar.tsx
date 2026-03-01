@@ -14,29 +14,29 @@ const adminNavItems: NavItemType[] = [
         icon: LayoutGrid,
         slug: 'dashboard',
     },
-    {
-        title: 'User Management',
-        href: '#',
-        icon: Users,
-        badge: 2,
-        slug: 'user-management',
-        children: [
-            {
-                title: 'Users',
-                href: route('admin.um.users.index'),
-                icon: User,
-                permission: 'manage users',
-                slug: 'users',
-            },
-            {
-                title: 'Pending Verification',
-                href: route('admin.um.user.pending-verification'),
-                icon: User,
-                permission: 'manage users',
-                slug: 'pending-verification',
-            },
-        ],
-    },
+    // {
+    //     title: 'User Management',
+    //     href: '#',
+    //     icon: Users,
+    //     badge: 2,
+    //     slug: 'user-management',
+    //     children: [
+    //         {
+    //             title: 'Users',
+    //             href: route('admin.um.users.index'),
+    //             icon: User,
+    //             permission: 'manage users',
+    //             slug: 'users',
+    //         },
+    //         {
+    //             title: 'Pending Verification',
+    //             href: route('admin.um.user.pending-verification'),
+    //             icon: User,
+    //             permission: 'manage users',
+    //             slug: 'pending-verification',
+    //         },
+    //     ],
+    // },
 ];
 
 interface AdminSidebarProps {
@@ -68,14 +68,14 @@ export const AdminSidebar = React.memo<AdminSidebarProps>(
                 {isMobileMenuOpen && (
                     <div className="fixed inset-0 z-40 md:hidden">
                         <div 
-                            className="fixed bg-black bg-opacity-50"
+                            className="fixed inset-0 bg-black bg-opacity-50"
                             onClick={() => setIsMobileMenuOpen(false)}
                         />
-                        <div className="fixed left-0 top-0 h-full w-64 bg-white shadow-lg">
+                        <div className="fixed left-0 top-0 h-full w-64 bg-bg-white shadow-lg">
                             {/* Mobile sidebar content */}
                             <div className="flex h-full flex-col">
                                 {/* Logo Section */}
-                                <div className="flex h-16 items-center border-b px-6">
+                                <div className="flex h-16 items-center border-b border-text-gray-300 px-6">
                                     <Link href={route('admin.dashboard')}>
                                         <AppLogo className="h-8 w-auto" />
                                     </Link>
@@ -105,8 +105,8 @@ export const AdminSidebar = React.memo<AdminSidebarProps>(
                                 </div>
 
                                 {/* Footer */}
-                                <div className="border-t p-4">
-                                    <div className="text-center text-xs text-muted-foreground">
+                                <div className="border-t border-text-gray-300 p-4">
+                                    <div className="text-center text-xs text-text-gray-300">
                                         v1.0.0
                                     </div>
                                 </div>
@@ -118,7 +118,7 @@ export const AdminSidebar = React.memo<AdminSidebarProps>(
                 {/* Desktop sidebar */}
                 <aside
                     className={cn(
-                        'relative hidden h-screen border-r bg-background',
+                        'relative hidden h-screen border-r border-text-gray-300 bg-bg-white',
                         'transition-all duration-300 ease-in-out',
                         'flex-col md:flex',
                         isCollapsed ? 'w-16' : 'w-64',
@@ -127,7 +127,7 @@ export const AdminSidebar = React.memo<AdminSidebarProps>(
                     {/* Logo Section */}
                     <div
                         className={cn(
-                            'flex h-16 items-center border-b',
+                            'flex h-16 items-center border-b border-text-gray-300',
                             isCollapsed ? 'justify-center px-2' : 'px-6',
                         )}
                     >
@@ -136,7 +136,7 @@ export const AdminSidebar = React.memo<AdminSidebarProps>(
                             className="flex items-center gap-2 transition-opacity hover:opacity-80"
                         >
                             {isCollapsed ? (
-                                <LayoutGrid className="h-6 w-6 text-primary" />
+                                <LayoutGrid className="h-6 w-6 text-text-buy-now" />
                             ) : (
                                 <AppLogo className="text-base!" />
                             )}
@@ -167,15 +167,6 @@ export const AdminSidebar = React.memo<AdminSidebarProps>(
                             })}
                         </nav>
                     </div>
-
-                    {/* Footer */}
-                    {!isCollapsed && (
-                        <div className="border-t p-4">
-                            <div className="text-center text-xs text-muted-foreground">
-                                v1.0.0
-                            </div>
-                        </div>
-                    )}
                 </aside>
             </>
         );

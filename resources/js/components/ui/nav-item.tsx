@@ -96,13 +96,13 @@ export const NavItem = React.memo<NavItemProps>(({
                         disabled={item.disabled}
                         className={cn(
                             'group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium',
-                            'text-foreground transition-all duration-200',
-                            'bg-primary/15 hover:bg-secondary hover:text-white',
-                            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                            'text-text-body transition-all duration-200',
+                            'bg-text-buy-now/15 hover:bg-bg-button hover:text-text-white',
+                            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bg-button focus-visible:ring-offset-2',
                             'w-full text-left',
                             isCollapsed ? 'justify-center px-2' : '',
                             level > 0 && !isCollapsed && 'ml-4',
-                            itemIsActive && 'bg-secondary text-white hover:bg-primary',
+                            itemIsActive && 'bg-bg-button text-text-white hover:bg-text-buy-now',
                             item.disabled && 'opacity-50 cursor-not-allowed hover:bg-transparent',
                             item.className
                         )}
@@ -124,15 +124,15 @@ export const NavItem = React.memo<NavItemProps>(({
 
                         {/* Active indicator */}
                         {isCollapsed && itemIsActive && (
-                            <div className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full">
-                                <div className="absolute inset-0 bg-primary rounded-full animate-ping" />
+                            <div className="absolute -top-1 -right-1 w-2 h-2 bg-text-buy-now rounded-full">
+                                <div className="absolute inset-0 bg-text-buy-now rounded-full animate-ping" />
                             </div>
                         )}
                     </CollapsibleTrigger>
 
                     {/* Expanded state */}
                     {!isCollapsed && (
-                        <CollapsibleContent className="mt-1 space-y-1 border-l-2 border-border/30 pl-4 pr-2 ml-4">
+                        <CollapsibleContent className="mt-1 space-y-1 border-l-2 border-text-gray-300/30 pl-4 pr-2 ml-4">
                             {filteredChildren.map((child, index) => (
                                 <NavItem
                                     key={`${child.title}-${index}`}
@@ -180,13 +180,13 @@ export const NavItem = React.memo<NavItemProps>(({
             onClick={handleLinkClick}
             className={cn(
                 'group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium',
-                'text-muted-foreground transition-all duration-200',
-                'hover:bg-secondary hover:text-accent',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                'text-text-gray-300 transition-all duration-200',
+                'hover:bg-bg-button hover:text-text-white',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bg-button focus-visible:ring-offset-2',
                 'w-full',
                 isCollapsed ? 'justify-center px-2' : '',
                 level > 0 && !isCollapsed && 'ml-4',
-                itemIsActive && 'bg-secondary text-white hover:bg-primary',
+                itemIsActive && 'bg-bg-button text-text-white hover:bg-text-buy-now',
                 item.disabled && 'opacity-50 cursor-not-allowed pointer-events-none',
                 item.className
             )}
@@ -203,14 +203,14 @@ export const NavItem = React.memo<NavItemProps>(({
 
             {/* Active indicators */}
             {isCollapsed && itemIsActive && (
-                <div className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full">
-                    <div className="absolute inset-0 bg-primary rounded-full animate-ping" />
+                <div className="absolute -top-1 -right-1 w-2 h-2 bg-text-buy-now rounded-full">
+                    <div className="absolute inset-0 bg-text-buy-now rounded-full animate-ping" />
                 </div>
             )}
 
             {!isCollapsed && itemIsActive && (
-                <div className="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0">
-                    <div className="absolute w-1.5 h-1.5 bg-primary rounded-full animate-ping" />
+                <div className="w-1.5 h-1.5 bg-text-buy-now rounded-full flex-shrink-0">
+                    <div className="absolute w-1.5 h-1.5 bg-text-buy-now rounded-full animate-ping" />
                 </div>
             )}
         </Link>
