@@ -104,7 +104,7 @@ export default function ProductToReview(){
                                     {/* Action Button */}
                                     <td className="px-6 py-6">
                                         <Link
-                                            href="#"
+                                            href={route('user.review')}
                                             className="inline-flex items-center justify-center px-6 py-4 bg-text-buy-now text-text-white font-bold text-sm font-public-sans uppercase"
                                         >
                                             Write a review
