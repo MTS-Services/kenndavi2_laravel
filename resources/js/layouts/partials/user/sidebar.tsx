@@ -106,7 +106,7 @@ export default function Sidebar() {
                         label="Product to review"
                     />
                     <NavItem
-                        href="/account/account-settings"
+                        href={route('user.account-settings')}
                         label="Account"
                     />
 
