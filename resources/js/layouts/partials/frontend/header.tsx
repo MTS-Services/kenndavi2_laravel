@@ -41,7 +41,9 @@ function FrontendHeader({ activePage, subPage }: Props) {
 
                     {/* Center Logo */}
                     <div className="flex transform flex-col items-center">
-                       <img src="/assets/images/logo.png" alt="logo" className="max-w-25 max-h-25" />
+                       <Link href="/" className="text-text-white transition-colors hover:text-gray-300">
+                            <img src="/assets/images/logo.png" alt="logo" className="max-w-25 max-h-25" />
+                        </Link>
                     </div>
 
                     {/* Right Icons */}
@@ -49,7 +51,7 @@ function FrontendHeader({ activePage, subPage }: Props) {
                         <Link href={route('frontend.product-card')} className="text-text-white transition-colors hover:text-gray-300">
                             <ShoppingCart size={24} />
                         </Link>
-                        <Link className="text-text-white transition-colors hover:text-gray-300">
+                        <Link href={route('login')} className="text-text-white transition-colors hover:text-gray-300">
                             <User size={24} />
                         </Link>
                     </div>
@@ -59,7 +61,9 @@ function FrontendHeader({ activePage, subPage }: Props) {
                 <div className="md:hidden flex items-center justify-between">
                     {/* Logo on left */}
                     <div className="flex transform flex-col items-center">
-                       <img src="/assets/images/logo.png" alt="logo" className="max-w-25 max-h-25" />
+                       <Link href="/" className="text-text-white transition-colors hover:text-gray-300">
+                            <img src="/assets/images/logo.png" alt="logo" className="max-w-25 max-h-25" />
+                        </Link>
                     </div>
 
                     {/* Menu icon on right */}
@@ -101,7 +105,7 @@ function FrontendHeader({ activePage, subPage }: Props) {
                                 <Link className="text-text-white transition-colors hover:text-gray-300">
                                     <ShoppingCart size={24} />
                                 </Link>
-                                <Link className="text-text-white transition-colors hover:text-gray-300">
+                                <Link href={route('login')} className="text-text-white transition-colors hover:text-gray-300">
                                     <User size={24} />
                                 </Link>
                             </div>

@@ -16,5 +16,17 @@ class UserController extends Controller
     {
         return Inertia::render('user/order/orders');
     }
+    public function productToReview(): Response
+    {
+        return Inertia::render('user/product-to-review/product-to-review');
+    }
+    public function review(): Response
+    {
+        return Inertia::render('user/product-to-review/review');
+    }
+    public function accountSettings(): Response
+    {
+        return Inertia::render('user/account-settings/account-settings');
+    }
 
 }

@@ -102,11 +102,11 @@ export default function Sidebar() {
                         label="Orders"
                     />
                     <NavItem
-                        href="/account/orders"
+                        href={route('user.product-to-review')}
                         label="Product to review"
                     />
                     <NavItem
-                        href="/account/account-settings"
+                        href={route('user.account-settings')}
                         label="Account"
                     />
 
