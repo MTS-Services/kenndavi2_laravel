@@ -7,7 +7,7 @@ interface AppLogoProps extends React.ImgHTMLAttributes<HTMLImageElement> {
 export default function AppLogo({ className, ...props }: AppLogoProps) {
     return (
         <>
-           <p className='font-bold text-black'>Why Tennessee</p>
+           <p className='font-bold text-black'>Main menu</p>
         </>
     );
 }
