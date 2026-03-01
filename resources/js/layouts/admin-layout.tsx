@@ -20,6 +20,8 @@ export default function AdminLayout({ children, activeSlug }: AdminLayoutProps) 
         return false;
     });
 
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+
     const { appearance, updateAppearance } = useAppearance();
     useEffect(() => {
         if (appearance !== 'light') {
@@ -35,15 +37,26 @@ export default function AdminLayout({ children, activeSlug }: AdminLayoutProps) 
     }, [isCollapsed]);
 
     return (
-        <div className="relative flex h-full max-h-screen min-h-screen bg-background">
-            <AdminSidebar isCollapsed={isCollapsed} activeSlug={activeSlug} />
-            <div className="flex flex-1 flex-col overflow-hidden">
-                <AdminHeader isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
-                <main className="flex-1 overflow-y-auto overflow-x-hidden p-6 space-y-6">
-                    {children}
-                </main>
-
-                <AdminFooter />
+        <div>
+            <AdminHeader 
+                isCollapsed={isCollapsed} 
+                setIsCollapsed={setIsCollapsed}
+                isMobileMenuOpen={isMobileMenuOpen}
+                setIsMobileMenuOpen={setIsMobileMenuOpen}
+            />
+            <div className="relative flex h-full max-h-screen min-h-screen bg-background">
+                <AdminSidebar 
+                    isCollapsed={isCollapsed} 
+                    activeSlug={activeSlug}
+                    isMobileMenuOpen={isMobileMenuOpen}
+                    setIsMobileMenuOpen={setIsMobileMenuOpen}
+                />
+                <div className="flex flex-1 flex-col overflow-hidden">
+                    <main className="flex-1 overflow-y-auto overflow-x-hidden p-6 space-y-6">
+                        {children}
+                    </main>
+                    <AdminFooter />
+                </div>
             </div>
         </div>
     );
