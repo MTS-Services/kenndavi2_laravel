@@ -17,7 +17,7 @@ class UserMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if (! Auth::check()) {
-            return redirect()->route('user.choose');
+            return redirect()->route('login');
         }
         $user = Auth::user();
 
