@@ -18,6 +18,7 @@ Route::prefix('user')->name('user.')->group(function () {
 
         Route::get('/dashboard', 'index')->name('dashboard');
         Route::get('/orders', 'orders')->name('orders');
+        Route::get('product-to-review', 'productToReview')->name('product-to-review');
 
     });
 
