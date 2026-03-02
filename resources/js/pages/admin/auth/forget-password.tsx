@@ -37,7 +37,7 @@ export default function ForgetPassword() {
                         value={data.email}
                         onChange={(e) => setData('email', e.target.value)}
                         className="w-full rounded-md border border-gray-300 px-4 py-3"
-                        placeholder="you@example.com"
+                        placeholder="you@example.com"   
                         required
                     />
                     {errors.email && (

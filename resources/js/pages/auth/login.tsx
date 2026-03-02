@@ -48,18 +48,18 @@ export default function Login({ status, userType }: LoginProps) {
                                     <div>
                                         <Label
                                             htmlFor="email"
-                                            className="mb-2 font-aktiv-grotesk text-sm font-normal text-text-title focus:border-bg-button!"
+                                            className="mb-2 font-aktiv-grotesk text-sm font-normal text-text-title focus:border-text-gray-300!"
                                         >
                                             Email address
                                         </Label>
-                                        <Input
+                                        <input
                                             id="email"
                                             type="email"
                                             name="email"
                                             required
                                             autoFocus
                                             placeholder="Email Address"
-                                            className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:ring-orange-500 focus:outline-none sm:text-sm"
+                                            className="block w-full appearance-none rounded-md border border-text-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm"
                                         />
                                         <InputError message={errors.email} />
                                     </div>
@@ -67,16 +67,16 @@ export default function Login({ status, userType }: LoginProps) {
                                     <div>
                                         <Label
                                             htmlFor="password"
-                                            className="mb-2 font-aktiv-grotesk text-sm font-normal text-text-title focus:border-bg-button!"
+                                            className="mb-2 font-aktiv-grotesk text-sm font-normal text-text-title focus:border-text-gray-300!"
                                         >
                                             Password
                                         </Label>
-                                        <PasswordInput
+                                        <input
                                             id="password"
                                             name="password"
                                             required
                                             placeholder="Password"
-                                            className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:ring-orange-500 focus:outline-none sm:text-sm"
+                                            className="block w-full appearance-none rounded-md border border-text-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm"
                                         />
                                         <InputError message={errors.password} />
                                     </div>
@@ -87,11 +87,11 @@ export default function Login({ status, userType }: LoginProps) {
                                         <Checkbox
                                             id="remember"
                                             name="remember"
-                                            className="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+                                            className="h-4 w-4 rounded  text-orange-600 focus:ring-orange-500"
                                         />
                                         <Label
                                             htmlFor="remember"
-                                            className="ml-2 block text-sm text-gray-300"
+                                            className="ml-2 block text-sm text-text-gray-300"
                                         >
                                             Keep me logged in
                                         </Label>
@@ -100,7 +100,7 @@ export default function Login({ status, userType }: LoginProps) {
                                     <div className="text-sm">
                                         <TextLink
                                             href={route('forgot-password')}
-                                            className="font-aktiv-grotesk text-sm font-normal text-bg-button"
+                                            className="font-aktiv-grotesk text-sm font-normal text-text-buy-now"
                                         >
                                             Forgot password?
                                         </TextLink>

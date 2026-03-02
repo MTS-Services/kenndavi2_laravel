@@ -40,13 +40,13 @@ export default function ForgotPassword({ status }: { status?: string }) {
                                     >
                                         Email Address
                                     </Label>
-                                    <Input
+                                    <input
                                         id="email"
                                         type="email"
                                         name="email"
                                         autoFocus
                                         placeholder="name@company.com"
-                                        className="border border-text-gray-300 bg-background/50 focus:border-bg-button focus:ring-bg-button"
+                                        className="block w-full appearance-none rounded-md border border-text-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm"
                                     />
                                     <InputError message={errors.email} />
                                 </div>
