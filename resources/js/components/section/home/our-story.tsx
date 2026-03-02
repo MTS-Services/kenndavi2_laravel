@@ -8,7 +8,7 @@ export default function OurStory() {
                         <div className="mb-6 flex items-center lg:justify-center">
                             <div className="mr-4 h-24 w-4 bg-gradient-to-b from-[#CC1610] to-[#E6F5F0]"></div>
                             <div>
-                                <p className="text-black-200 text-sm font-normal">
+                                <p className="text-black-200 text-sm font-normal mb-4">
                                     Our Story
                                 </p>
                                 <h2 className="font-bebas-neue text-3xl sm:text-4xl font-normal text-text-black">
@@ -42,16 +42,16 @@ export default function OurStory() {
 
                     {/* Right Column */}
                     <div className="flex flex-col items-start">
-                        <div className="mb-6 flex gap-4 lg:justify-center">
+                        <div className="mb-6 flex flex-col sm:flex-row gap-4 lg:justify-center">
                             <img
                                 src="/assets/images/home/Rectangle 4339.png"
                                 alt="Family member 1"
-                                className="w-1/2 max-w-[200px] lg:max-w-[250px]"
+                                className="w-1/2 max-w-[200px] lg:max-w-full"
                             />
                             <img
                                 src="/assets/images/home/Rectangle 4338.png"
                                 alt="Family member 2"
-                                className="w-1/2 max-w-[200px] lg:max-w-[250px]"
+                                className="w-1/2 max-w-[200px] lg:max-w-full"
                             />
                         </div>
                         <p className="mb-8 font-aktiv-grotesk text-base lg:text-lg text-text-black">

@@ -24,24 +24,30 @@ export default function RecipesCard({ recipe }: Props) {
                 />
             </div> */}
             <div className="relative w-full aspect-[386/240] overflow-hidden rounded-md">
+               <Link href={route('frontend.recipe-details')}>
                 <img 
                     src={recipe.image} 
                     alt={recipe.title}
                     className="absolute inset-0 w-full h-full object-cover"
                 />
+               </Link>
             </div>
             
             {/* Recipe Content */}
             <div className="mt-4">
                 {/* Recipe Title */}
+        
+                <Link href={route('frontend.recipe-details')}>
                 <h2 className="text-xl font-normal text-black-300 font-bebas-neue">
                     {recipe.title}
                 </h2>
+                </Link>
                 
                 {/* Recipe Time */}
+                <Link href={route('frontend.recipe-details')}>
                 <p className="text-base text-text-black-50 font-normal font-aktiv-grotesk">
                     {recipe.description}
-                </p>
+                </p></Link>
             </div>
         </div>
     )
