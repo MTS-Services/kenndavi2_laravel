@@ -73,6 +73,7 @@ const saucesData = [
 
 export default function Index() {
     const [showCreateModal, setShowCreateModal] = useState(false);
+    const [editingProduct, setEditingProduct] = useState<typeof saucesData[0] | null>(null);
     const [photos, setPhotos] = useState<(File | null)[]>([
         null,
         null,
@@ -87,6 +88,16 @@ export default function Index() {
     const [price, setPrice] = useState('');
     const [dragOver, setDragOver] = useState<number | null>(null);
     const fileInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+    const handleEdit = (product: typeof saucesData[0]) => {
+        setEditingProduct(product);
+        setTitle(product.name);
+        setDescription(product.description);
+        setCategory('Sweet'); // Default category since recipe data doesn't have it
+        setStockLevel(10); // Default stock level
+        setPrice(product.price.replace('$', ''));
+        setShowCreateModal(true);
+    };
 
     const handleFileChange = (index: number, file: File | null) => {
         if (!file) return;
@@ -128,6 +139,7 @@ export default function Index() {
 
     const handleCloseModal = () => {
         setShowCreateModal(false);
+        setEditingProduct(null);
         // Reset form
         setPhotos([null, null, null, null, null]);
         setTitle('');
@@ -152,7 +164,7 @@ export default function Index() {
             </div>
             <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
                 {saucesData.map((sauce) => (
-                    <ProductCardAdmin key={sauce.id} product={sauce} />
+                    <ProductCardAdmin key={sauce.id} product={sauce} onEdit={handleEdit} />
                 ))}
             </div>
             <div className="flex items-center justify-between py-4">
@@ -179,7 +191,7 @@ export default function Index() {
                         <div className="flex items-center justify-between">
                             <div>
                                 <h3 className="mb-8 font-poppins text-3xl font-medium text-text-title">
-                                    Add new Product
+                                    {editingProduct ? 'Edit Recipe' : 'Add new Recipe'}
                                 </h3>
                             </div>
                             <button

@@ -1,4 +1,4 @@
-import ProductCardAdmin from '@/components/ui/product-card-admin';
+import ProductCardAdmin, { productData } from '@/components/ui/product-card-admin';
 import SaucesCardAdmin from '@/components/ui/product-card-admin';
 import AdminLayout from '@/layouts/admin-layout';
 import { Link } from '@inertiajs/react';
@@ -53,6 +53,7 @@ const saucesData = [
 
 export default function Index() {
     const [showCreateModal, setShowCreateModal] = useState(false);
+    const [editingProduct, setEditingProduct] = useState<productData | null>(null);
     const [photos, setPhotos] = useState<(File | null)[]>([null, null, null, null, null]);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
@@ -61,6 +62,16 @@ export default function Index() {
     const [price, setPrice] = useState('');
     const [dragOver, setDragOver] = useState<number | null>(null);
     const fileInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+    const handleEdit = (product: productData) => {
+        setEditingProduct(product);
+        setTitle(product.name);
+        setDescription(product.description);
+        setCategory(product.category || 'Sweet');
+        setStockLevel(product.available || 10);
+        setPrice(product.price.replace('$', ''));
+        setShowCreateModal(true);
+    };
 
     const handleFileChange = (index: number, file: File | null) => {
         if (!file) return;
@@ -102,6 +113,7 @@ export default function Index() {
 
     const handleCloseModal = () => {
         setShowCreateModal(false);
+        setEditingProduct(null);
         // Reset form
         setPhotos([null, null, null, null, null]);
         setTitle('');
@@ -126,7 +138,7 @@ export default function Index() {
             </div>
             <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 ">
                 {saucesData.map((sauce) => (
-                    <ProductCardAdmin key={sauce.id} product={sauce} />
+                    <ProductCardAdmin key={sauce.id} product={sauce} onEdit={handleEdit} />
                 ))}
             </div>
             <div className="flex items-center justify-between py-4">
@@ -153,7 +165,7 @@ export default function Index() {
                         <div className="flex items-center justify-between">
                             <div>
                                 <h3 className="font-poppins font-medium text-3xl text-text-title mb-8">
-                                    Add new Recipe
+                                    {editingProduct ? 'Edit Product' : 'Add new Product'}
                                 </h3>
                             </div>
                             <button

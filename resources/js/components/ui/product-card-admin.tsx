@@ -1,7 +1,7 @@
 import { Link } from "@inertiajs/react";
 import { EditIcon,  Trash2 } from "lucide-react";
 
-interface productData {
+export interface productData {
     id: string;
     name: string;
     description: string;
@@ -14,9 +14,10 @@ interface productData {
 
 interface Props {
     product: productData;
+    onEdit?: (product: productData) => void;
 }
 
-export default function ProductCardAdmin({ product }: Props) {
+export default function ProductCardAdmin({ product, onEdit }: Props) {
     return (
         <div className="rounded-md bg-bg-card shadow-md px-4 py-3">
             <div className="relative">
@@ -44,9 +45,12 @@ export default function ProductCardAdmin({ product }: Props) {
                    {product.description}
                 </p>
                 <div className="flex items-center justify-between">
-                    <Link href="#" className="flex items-center gap-3.5 font-inter text-base font-medium text-text-green border border-text-green px-8 py-2.5 rounded-md bg-bg-our-story">
+                    <button 
+                        onClick={() => onEdit?.(product)}
+                        className="flex items-center gap-3.5 font-inter text-base font-medium text-text-green border border-text-green px-8 py-2.5 rounded-md bg-bg-our-story"
+                    >
                         <EditIcon /> Edit
-                    </Link>
+                    </button>
                     <Link 
                         href="#"
                         className="flex items-center gap-3.5 font-inter text-base font-medium text-text-buy-now border border-text-buy-now px-8 py-2.5 rounded-md bg-text-buy-now/5"
