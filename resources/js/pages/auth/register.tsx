@@ -1,8 +1,14 @@
 import InputError from '@/components/input-error';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { PasswordInput } from '@/components/ui/password-input';
-import { useForm } from '@inertiajs/react';
+import { Spinner } from '@/components/ui/spinner';
+import FrontendLayout from '@/layouts/frontend-layout';
+import { store } from '@/routes/admin';
+import { Checkbox } from '@headlessui/react';
+import { Form, Head, Link, useForm } from '@inertiajs/react';
+import { ArrowRightIcon } from 'lucide-react';
 import React from 'react';
 
 export default function Register() {
@@ -28,223 +34,171 @@ export default function Register() {
         post(route('register.post'));
     }
     return (
-        <div>
-            <div className="flex min-h-screen items-center justify-center bg-gray-100">
-                <div className="w-full max-w-lg rounded-lg bg-white p-8 shadow-md  my-20">
-                    <h2 className="mb-6 text-center text-2xl font-bold text-gray-800">
-                        Register
-                    </h2>
+        <FrontendLayout>
+            <Head title="Log in" />
+            <div className="flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+                <div className="w-full max-w-md rounded-lg border border-text-gray-300 p-8">
+                    <div className="text-center">
+                        <h2 className="mb-5 font-bebas-neue text-xl font-normal text-text-title">
+                            Sign up to your account
+                        </h2>
+                    </div>
 
-                    <form className="space-y-4" onSubmit={handleSubmit}>
-                        <div>
-                            <label
-                                htmlFor="file"
-                                className="mb-1 block text-sm font-medium text-gray-700"
-                            >
-                                Image
-                            </label>
-                            <input
-                                type="file"
-                                id="file"
-                                className="w-full rounded-md border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-secondary focus:outline-none"
-                            />
-                            {/* error message (optional) */}
-                            <p className="mt-1 text-sm text-red-500"></p>
+                    <Form
+                        {...store.form()}
+                        resetOnSuccess={['password']}
+                        className="mt-8 space-y-6"
+                    >
+                        {({ processing, errors }) => (
+                            <>
+                                <div className="space-y-4">
+                                       <div>
+                                        <Label
+                                            htmlFor="name"
+                                            className="mb-2 font-aktiv-grotesk text-sm font-normal text-text-title focus:border-text-gray-300!"
+                                        >
+                                           Full Name
+                                        </Label>
+                                        <input
+                                            id="name"
+                                            type="text"
+                                            name="name"
+                                            required
+                                            autoFocus
+                                            placeholder="Full Name"
+                                            className="block w-full appearance-none rounded-md border border-text-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm"
+                                        />
+                                        <InputError message={errors.name} />
+                                    </div>
 
-                            {/* hint text */}
-                            <p className="mt-1 text-xs text-gray-500">
-                                Maximum file size: 256 MB
-                            </p>
-                        </div>
-                        <div>
-                            <label
-                                htmlFor="username"
-                                className="mb-1 block text-sm font-medium text-gray-700"
-                            >
-                                User Name
-                            </label>
-                            <input
-                                type="text"
-                                id="username"
-                                className="w-full rounded-md border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-secondary focus:outline-none"
-                                placeholder="Enter Your Username"
-                                onChange={(e) =>
-                                    setData('username', e.target.value.trim())
-                                }
-                            />
-                            <p className="mt-1 text-sm text-red-500"></p>
-                        </div>
-                        <div>
-                            <label
-                                htmlFor="name"
-                                className="mb-1 block text-sm font-medium text-gray-700"
-                            >
-                                Name
-                            </label>
-                            <input
-                                type="text"
-                                id="name"
-                                className="w-full rounded-md border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-secondary focus:outline-none"
-                                placeholder="Enter Your Name"
-                                onChange={(e) =>
-                                    setData('name', e.target.value.trim())
-                                }
-                            />
-                            <p className="mt-1 text-sm text-red-500"></p>
-                        </div>
-                        <div>
-                            <label
-                                htmlFor="license_number"
-                                className="mb-1 block text-sm font-medium text-gray-700"
-                            >
-                                License number
-                            </label>
-                            <input
-                                type="tel"
-                                id="license_number"
-                                className="w-full rounded-md border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-secondary focus:outline-none"
-                                placeholder="Enter Your License number"
-                                onChange={(e) =>
-                                    setData(
-                                        'license_number',
-                                        e.target.value.trim(),
-                                    )
-                                }
-                            />
-                            <p className="mt-1 text-sm text-red-500"></p>
-                        </div>
-                        <div>
-                            <label
-                                htmlFor="brokerage_name"
-                                className="mb-1 block text-sm font-medium text-gray-700"
-                            >
-                                Brokerage name
-                            </label>
-                            <input
-                                type="text"
-                                id="brokerage_name"
-                                className="w-full rounded-md border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-secondary focus:outline-none"
-                                placeholder="Enter Your brokerage_name"
-                                onChange={(e) =>
-                                    setData('brokerage_name', e.target.value.trim())
-                                }
-                            />
-                            <p className="mt-1 text-sm text-red-500"></p>
-                        </div>
-                        <div>
-                            <label
-                                htmlFor="phone"
-                                className="mb-1 block text-sm font-medium text-gray-700"
-                            >
-                                License number
-                            </label>
-                            <input
-                                type="tel"
-                                id="phone"
-                                className="w-full rounded-md border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-secondary focus:outline-none"
-                                placeholder="Enter Your License number"
-                                onChange={(e) =>
-                                    setData('phone', e.target.value.trim())
-                                }
-                            />
-                            <p className="mt-1 text-sm text-red-500"></p>
-                        </div>
-                        <div>
-                            <label
-                                htmlFor="your_self"
-                                className="mb-1 block text-sm font-medium text-gray-700"
-                            >
-                                About Youself
-                            </label>
-                            <textarea
-                                name=""
-                                id=""
-                                className="w-full rounded-md border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-secondary focus:outline-none"
-                                onChange={(e) =>
-                                    setData('your_self', e.target.value.trim())
-                                }
-                            ></textarea>
+                                    <div>
+                                        <Label
+                                            htmlFor="email"
+                                            className="mb-2 font-aktiv-grotesk text-sm font-normal text-text-title focus:border-text-gray-300!"
+                                        >
+                                            Email address
+                                        </Label>
+                                        <input
+                                            id="email"
+                                            type="email"
+                                            name="email"
+                                            required
+                                            autoFocus
+                                            placeholder="Email Address"
+                                            className="block w-full appearance-none rounded-md border border-text-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm"
+                                        />
+                                        <InputError message={errors.email} />
+                                    </div>
 
-                            <p className="mt-1 text-sm text-red-500"></p>
-                        </div>
-                        <div>
-                            <label
-                                htmlFor="email"
-                                className="mb-1 block text-sm font-medium text-gray-700"
-                            >
-                                Email
-                            </label>
-                            <input
-                                type="email"
-                                id="email"
-                                className="w-full rounded-md border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-secondary focus:outline-none"
-                                placeholder="Enter Your Email"
-                                onChange={(e) =>
-                                    setData('email', e.target.value.trim())
-                                }
-                            />
-                            <p className="mt-1 text-sm text-red-500"></p>
-                        </div>
+                                    <div>
+                                        <Label
+                                            htmlFor="password"
+                                            className="mb-2 font-aktiv-grotesk text-sm font-normal text-text-title focus:border-text-gray-300!"
+                                        >
+                                            Password
+                                        </Label>
+                                        <input
+                                            id="password"
+                                            name="password"
+                                            required
+                                            placeholder="Password"
+                                            className="block w-full appearance-none rounded-md border border-text-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm"
+                                        />
+                                        <InputError message={errors.password} />
+                                    </div>
+                                </div>
 
-                        <div className="grid gap-2">
-                            <Label htmlFor="password">Password</Label>
-                            <PasswordInput
-                                id="password"
-                                name="password"
-                                value={data.password}
-                                onChange={(e) => setData('password', e.target.value)}
-                                required
-                                placeholder="********"
-                                className="h-11 border-gray-200 bg-white/50 px-4! py-3! transition-all focus:border-secondary! focus:ring-secondary!"
-                            />
-                            <InputError message={errors.password} />
-                        </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="password_confirmation">Confirm Password</Label>
-                            <PasswordInput
-                                id="password_confirmation"
-                                name="password_confirmation"
-                                value={data.password_confirmation}
-                                onChange={(e) => setData('password_confirmation', e.target.value)}
-                                required
-                                placeholder="********"
-                                className="h-11 border-gray-200 bg-white/50 px-4! py-3! transition-all focus:border-secondary! focus:ring-secondary!"
-                            />
-                            <InputError message={errors.password_confirmation} />
-                        </div>
+                                <div className="flex items-center justify-between">
+                                     <div className="flex items-center">
+                                        <Checkbox
+                                            id="remember"
+                                            name="remember"
+                                            className="h-4 w-4 rounded  text-orange-600 focus:ring-orange-500"
+                                        />
+                                        <Label
+                                            htmlFor="remember"
+                                            className="ml-2 block text-sm text-text-gray-300"
+                                        >
+                                            Keep me logged in
+                                        </Label>
+                                    </div>
+                                </div>
 
-                        <div className="flex items-center">
-                            <input
-                                type="checkbox"
-                                id="rememberMe"
-                                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-secondary"
-                            />
-                            <label
-                                htmlFor="rememberMe"
-                                className="ml-2 block text-sm text-gray-700"
-                            >
-                                Remember me
-                            </label>
+                                <div>
+                                    <Button
+                                        type="submit"
+                                        className="flex w-full items-center justify-center rounded-sm bg-bg-button px-4 py-4 font-poppins text-base font-medium text-text-white shadow-sm hover:bg-bg-button/80"
+                                        disabled={processing}
+                                    >
+                                        {processing ? (
+                                            <Spinner className="h-4 w-4" />
+                                        ) : (
+                                            'Log In'
+                                        )}
+                                        <ArrowRightIcon className="ml-1 h-4 w-4" />
+                                    </Button>
+                                </div>
+
+                                <div className="">
+                                    <span className="font-aktiv-grotesk text-sm font-normal text-text-title">
+                                        Don't have an account?{' '}
+                                    </span>
+                                    <Link
+                                        href={route('login')}
+                                        className="font-aktiv-grotesk text-sm font-medium text-bg-button hover:text-bg-button/80"
+                                    >
+                                      Login
+                                    </Link>
+                                </div>
+
+                                <div className="flex items-center justify-center">
+                                    <div className="w-full border border-text-gray-300" />
+                                    <div className="w-full text-sm">
+                                        <p className="text-center font-aktiv-grotesk text-sm font-normal text-text-title">
+                                            or continue with
+                                        </p>
+                                    </div>
+                                    <div className="w-full border border-text-gray-300" />
+                                </div>
+
+                                <div>
+                                    <Link className="flex w-fit items-center justify-center">
+                                        <svg
+                                            className="mr-2 h-12 w-12"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                fill="#4285F4"
+                                                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                                            />
+                                            <path
+                                                fill="#34A853"
+                                                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                                            />
+                                            <path
+                                                fill="#FBBC05"
+                                                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                                            />
+                                            <path
+                                                fill="#EA4335"
+                                                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                                            />
+                                        </svg>
+                                    </Link>
+                                </div>
+                            </>
+                        )}
+                    </Form>
+
+                    {status && (
+                        <div className="mt-4 rounded-md bg-green-50 p-4">
+                            <div className="text-sm text-green-800">
+                                {status}
+                            </div>
                         </div>
-
-                        <button
-                            type="submit"
-                            className="w-full rounded-md bg-secondary px-4 py-3 text-white transition-colors hover:bg-primary focus:ring-2 focus:ring-secondary focus:ring-offset-2 focus:outline-none"
-                        >
-                            Register
-                        </button>
-                    </form>
-
-                    {/* <div className="mt-6 text-center">
-                        <a
-                            href=""
-                            className="text-sm text-gray-600 hover:text-gray-800"
-                        >
-                            Singn Up
-                        </a>
-                    </div> */}
+                    )}
                 </div>
             </div>
-        </div>
+        </FrontendLayout>
     );
 }

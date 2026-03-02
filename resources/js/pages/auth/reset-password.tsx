@@ -2,11 +2,12 @@ import { Form, Head } from '@inertiajs/react';
 
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
-import AuthLayout from '@/layouts/auth-layout';
-import { update } from '@/routes/password';
+import FrontendLayout from '@/layouts/frontend-layout';
+import { store } from '@/routes/admin';
+import { ArrowRightIcon } from 'lucide-react';
+import TextLink from '@/components/text-link';
 
 interface ResetPasswordProps {
     token: string;
@@ -15,74 +16,92 @@ interface ResetPasswordProps {
 
 export default function ResetPassword({ token, email }: ResetPasswordProps) {
     return (
-        <AuthLayout
-            title="Reset password"
-            description="Please enter your new password below"
-        >
+        <FrontendLayout>
             <Head title="Reset password" />
 
-            <div className="mx-auto w-full max-w-md rounded-2xl border border-border/50 bg-card/50 p-8 shadow-xl backdrop-blur-sm">
-                <Form
-                    {...update.form()}
-                    transform={(data) => ({ ...data, token, email })}
-                    resetOnSuccess={['password', 'password_confirmation']}
-                >
-                    {({ processing, errors }) => (
-                        <div className="grid gap-5">
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email</Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    name="email"
-                                    autoComplete="email"
-                                    value={email}
-                                    className="bg-muted/50 cursor-not-allowed text-muted-foreground"
-                                    readOnly
-                                />
-                                <InputError message={errors.email} />
-                            </div>
+            <div className="flex min-h-screen items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+                <div className="w-full max-w-md rounded-lg border border-text-gray-300 p-8">
+                    <div className="text-center">
+                        <h2 className="mb-5 font-bebas-neue text-xl font-normal text-text-title">
+                            Reset Password
+                        </h2>
+                        <p className="mb-8 font-aktiv-grotesk text-sm font-normal text-text-body">
+                            Set your new password, new beginning here.
+                        </p>
+                    </div>
 
-                            <div className="grid gap-2">
-                                <Label htmlFor="password">New Password</Label>
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    name="password"
-                                    autoComplete="new-password"
-                                    autoFocus
-                                    placeholder="••••••••"
-                                    className="bg-background/50"
-                                />
-                                <InputError message={errors.password} />
-                            </div>
+                    <Form
+                        {...store.form()}
+                        resetOnSuccess={['password']}
+                        className="mt-8 space-y-6"
+                    >
+                        {({ processing, errors }) => (
+                            <>
+                                <div className="space-y-4">
+                                
+                                    <div>
+                                        <Label
+                                            htmlFor="password"
+                                            className="mb-2 font-aktiv-grotesk text-sm font-normal text-text-title focus:border-text-gray-300!"
+                                        >
+                                            Password
+                                        </Label>
+                                        <input
+                                            id="password"
+                                            name="password"
+                                            required
+                                            placeholder="8+ Password"
+                                            className="block w-full appearance-none rounded-md border border-text-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm"
+                                        />
+                                        <InputError message={errors.password} />
+                                    </div>
+                                    <div>
+                                        <Label
+                                            htmlFor="password"
+                                            className="mb-2 font-aktiv-grotesk text-sm font-normal text-text-title focus:border-text-gray-300!"
+                                        >
+                                            Confirm Password
+                                        </Label>
+                                        <input
+                                            id="password"
+                                            name="password"
+                                            required
+                                            placeholder="Confirm Password"
+                                            className="block w-full appearance-none rounded-md border border-text-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm"
+                                        />
+                                        <InputError message={errors.password} />
+                                    </div>
+                                </div>
 
-                            <div className="grid gap-2">
-                                <Label htmlFor="password_confirmation">Confirm password</Label>
-                                <Input
-                                    id="password_confirmation"
-                                    type="password"
-                                    name="password_confirmation"
-                                    autoComplete="new-password"
-                                    placeholder="••••••••"
-                                    className="bg-background/50"
-                                />
-                                <InputError message={errors.password_confirmation} />
-                            </div>
+                               
 
-                            <Button
-                                type="submit"
-                                className="mt-2 w-full bg-violet-600 hover:bg-violet-700 shadow-lg"
-                                disabled={processing}
-                                data-test="reset-password-button"
-                            >
-                                {processing && <Spinner className="mr-2 h-4 w-4" />}
-                                Reset password
-                            </Button>
+                                <div>
+                                    <Button
+                                        type="submit"
+                                        className="flex w-full items-center justify-center bg-bg-button px-4 py-4 font-poppins text-base font-medium text-text-white shadow-sm hover:bg-bg-button/80"
+                                        disabled={processing}
+                                    >
+                                        {processing ? (
+                                            <Spinner className="h-4 w-4" />
+                                        ) : (
+                                            'Reset Password'
+                                        )}
+                                        <ArrowRightIcon className="ml-1 h-4 w-4" />
+                                    </Button>
+                                </div> 
+                            </>
+                        )}
+                    </Form>
+
+                    {status && (
+                        <div className="mt-4 rounded-md bg-green-50 p-4">
+                            <div className="text-sm text-green-800">
+                                {status}
+                            </div>
                         </div>
                     )}
-                </Form>
+                </div>
             </div>
-        </AuthLayout>
+        </FrontendLayout>
     );
 }
