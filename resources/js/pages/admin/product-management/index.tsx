@@ -1,4 +1,5 @@
-import SaucesCardAdmin from '@/components/ui/sauces-card-admin';
+import ProductCardAdmin from '@/components/ui/product-card-admin';
+import SaucesCardAdmin from '@/components/ui/product-card-admin';
 import AdminLayout from '@/layouts/admin-layout';
 import { Link } from '@inertiajs/react';
 import { useRef, useState } from 'react';
@@ -24,6 +25,7 @@ const saucesData = [
         image: '/assets/images/home/19534e4b7e7bb9999e7570eceacd260d5cd8696d.png',
         category: 'Sweet',
         href: route('frontend.details'),
+        available: 10,
     },
     {
         id: '2',
@@ -34,6 +36,7 @@ const saucesData = [
         image: '/assets/images/home/513f91e933b9cf0b47a9e4627c132b20f4bf15b6.jpg',
         category: 'Honey',
         href: route('frontend.details'),
+        available: 5,
     },
     {
         id: '3',
@@ -44,6 +47,7 @@ const saucesData = [
         image: '/assets/images/home/fb87184304aaa733c0da92fab04e9ebd14294505.jpg',
         category: 'Spicy',
         href: route('frontend.details'),
+        available: 3,
     },
 ];
 
@@ -122,7 +126,7 @@ export default function Index() {
             </div>
             <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 ">
                 {saucesData.map((sauce) => (
-                    <SaucesCardAdmin key={sauce.id} sauce={sauce} />
+                    <ProductCardAdmin key={sauce.id} product={sauce} />
                 ))}
             </div>
             <div className="flex items-center justify-between py-4">
@@ -144,7 +148,7 @@ export default function Index() {
             {/* Create Product Modal */}
             {showCreateModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm">
-                    <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-bg-white rounded-2xl shadow-2xl px-10 py-5">
+                    <div className="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-bg-white rounded-2xl shadow-2xl px-10 py-5">
                         {/* Modal Header */}
                         <div className="flex items-center justify-between">
                             <div>

@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\RecipeController;
 use App\Http\Controllers\Admin\UserManagement\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -44,6 +45,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::group(['prefix' => 'order-management', 'as' => 'om.'], function () {
             Route::get('/index', [OrderController::class, 'index'])->name('index');
             Route::get('/create', [OrderController::class, 'create'])->name('create');
+        });
+        Route::group(['prefix' => 'recipe-management', 'as' => 'rm.'], function () {
+            Route::get('/index', [RecipeController::class, 'index'])->name('index');
+            Route::get('/create', [RecipeController::class, 'create'])->name('create');
         });
 
     });
