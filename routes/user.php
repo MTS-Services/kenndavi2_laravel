@@ -11,6 +11,7 @@ Route::get('/register', [UserAuthController::class, 'register'])->name('register
 Route::post('/register', [UserAuthController::class, 'registerStore'])->name('register.post');
 Route::get('forgot-password', [UserAuthController::class, 'forgotPassword'])->name('forgot-password');
 Route::get('reset-password', [UserAuthController::class, 'resetPassword'])->name('reset-password');
+Route::get('/otp-verification', [UserAuthController::class, 'otpVerification'])->name('otp-verification');
 
 Route::prefix('user')->name('user.')->group(function () {
     // Authentication Routes...
