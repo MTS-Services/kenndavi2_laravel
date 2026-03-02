@@ -179,8 +179,8 @@ export const NavItem = React.memo<NavItemProps>(({
             href={item.disabled ? '#' : item.href}
             onClick={handleLinkClick}
             className={cn(
-                'group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium',
-                'text-text-gray-300 transition-all duration-200',
+                'group relative flex items-center gap-3 rounded-lg px-3 py-2.5 font-normal font-poppins text-base',
+                'text-text-body transition-all duration-200',
                 'hover:bg-bg-button hover:text-text-white',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bg-button focus-visible:ring-offset-2',
                 'w-full',

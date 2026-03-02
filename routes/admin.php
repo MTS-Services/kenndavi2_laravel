@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\RecipeController;
 use App\Http\Controllers\Admin\UserManagement\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +26,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/update', [AdminController::class, 'updateAdmin'])->name('update');
         Route::get('/delete/{id}', [AdminController::class, 'deleteAdmin'])->name('delete');
         Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
+        Route::get('/profile', [AdminController::class, 'profile'])->name('profile');
 
         Route::group(['prefix' => 'users', 'as' => 'um.'], function () {
             Route::get('/users', [UserController::class, 'index'])->name('users.index');
@@ -34,7 +38,18 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/users/{id}', [UserController::class, 'destroy'])->name('user.destroy');
             Route::get('/pending-verification', [UserController::class, 'pendingVerification'])->name('user.pending-verification');
             Route::get('/user/verify/{id}', [UserController::class, 'verified'])->name('user.verify');
-            Route::post('/user/license-verify/{id}/{status}', [UserController::class, 'licenseVerify'])->name('user.license-verify');
+        });
+        Route::group(['prefix' => 'product-management', 'as' => 'pm.'], function () {
+            Route::get('/index', [ProductController::class, 'index'])->name('index');
+            Route::get('/create', [ProductController::class, 'create'])->name('create');
+        });
+        Route::group(['prefix' => 'order-management', 'as' => 'om.'], function () {
+            Route::get('/index', [OrderController::class, 'index'])->name('index');
+            Route::get('/create', [OrderController::class, 'create'])->name('create');
+        });
+        Route::group(['prefix' => 'recipe-management', 'as' => 'rm.'], function () {
+            Route::get('/index', [RecipeController::class, 'index'])->name('index');
+            Route::get('/create', [RecipeController::class, 'create'])->name('create');
         });
 
     });

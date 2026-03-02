@@ -142,4 +142,9 @@ class AdminController extends Controller
 
         return back()->with('success', 'Admin deleted successfully.');
     }
+
+    public function profile()
+    {
+        return Inertia::render('admin/profile');
+    }
 }

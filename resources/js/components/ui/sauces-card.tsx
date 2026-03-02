@@ -23,7 +23,7 @@ export default function SaucesCard({ sauce }: Props) {
                     alt={sauce.name}
                     className="w-full h-64 object-cover rounded-t-md"
                 />
-                <span className="absolute left-4 top-4 rounded-sm bg-white px-3 py-1 font-inter text-sm font-medium text-text-title">
+                <span className="absolute left-4 top-4 rounded-sm bg-bg-white px-3 py-1 font-inter text-sm font-medium text-text-title">
                     {sauce.category}
                 </span>
             </div>
