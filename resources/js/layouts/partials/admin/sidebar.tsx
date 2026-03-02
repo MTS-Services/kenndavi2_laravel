@@ -3,7 +3,7 @@ import { NavItem } from '@/components/ui/nav-item';
 import { cn } from '@/lib/utils';
 import { type NavItemType, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { Home, LayoutGrid, PentagonIcon } from 'lucide-react';
+import { CarTaxiFrontIcon, Home, LayoutGrid, PentagonIcon, ShoppingCart } from 'lucide-react';
 import * as React from 'react';
 
 // Navigation configuration
@@ -19,6 +19,12 @@ const adminNavItems: NavItemType[] = [
         href: route('admin.pm.index'),
         icon: PentagonIcon,
         slug: 'product-management',
+    },
+    {
+        title: 'Order Management',
+        href: route('admin.om.index'),
+        icon: ShoppingCart,
+        slug: 'order-management',
     },
 ];
 
