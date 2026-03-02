@@ -69,4 +69,17 @@ class AdminAuthController extends Controller
 
         return redirect()->route('admin.dashboard');
     }
+
+    public function forgotPassword()
+    {
+        return Inertia::render('admin/auth/forget-password');
+    }
+    public function otpVerification()
+    {
+        return Inertia::render('admin/auth/otp-verification');
+    }
+    public function resetPassword()
+    {
+        return Inertia::render('admin/auth/reset-password');
+    }
 }
