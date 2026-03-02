@@ -208,11 +208,7 @@ export const NavItem = React.memo<NavItemProps>(({
                 </div>
             )}
 
-            {!isCollapsed && itemIsActive && (
-                <div className="w-1.5 h-1.5 bg-text-buy-now rounded-full flex-shrink-0">
-                    <div className="absolute w-1.5 h-1.5 bg-text-buy-now rounded-full animate-ping" />
-                </div>
-            )}
+         
         </Link>
     );
 });
