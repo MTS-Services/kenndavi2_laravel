@@ -26,7 +26,7 @@ const testimonialData = [
 
 export default function Testimonial() {
     return (
-        <div className="mt-12 sm:mt-28 ">
+        <div className="my-12 sm:my-28 ">
             <div className="container mx-auto px-4">
                 <p className="font-imter text-center text-base font-medium tracking-[15px] text-text-testimonial">
                     Testimonial
