@@ -13,4 +13,8 @@ class ProductController extends Controller
     {
         return Inertia::render('admin/product-management/index');
     }
+    public function create()
+    {
+        return Inertia::render('admin/product-management/create');
+    }
 }
