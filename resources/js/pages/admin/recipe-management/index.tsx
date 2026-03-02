@@ -140,12 +140,12 @@ export default function Index() {
     return (
         <AdminLayout activeSlug={'recipe-management'}>
             <div className="flex items-center justify-between">
-                <h2 className="font-poppins text-4xl font-medium text-text-title">
+                <h2 className="font-poppins text-xl sm:text-4xl font-medium text-text-title">
                     Manage your Recipes
                 </h2>
                 <button
                     onClick={() => setShowCreateModal(true)}
-                    className="rounded-xl bg-bg-button px-6 py-4 font-inter text-xl font-medium text-text-white transition-opacity hover:opacity-90"
+                    className="rounded-xl bg-bg-button px-6 sm:px-6 py-2 sm:py-4 font-inter text-base sm:text-xl font-medium text-text-white transition-opacity hover:opacity-90"
                 >
                     Add a new Recipe
                 </button>

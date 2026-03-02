@@ -114,12 +114,12 @@ export default function Index() {
     return (
         <AdminLayout activeSlug={'product-management'}>
             <div className="flex items-center justify-between">
-                <h2 className="font-poppins text-4xl font-medium text-text-title">
+                <h2 className="font-poppins xl sm:text-4xl font-medium text-text-title">
                     Manage your products
                 </h2>
                 <button 
                     onClick={() => setShowCreateModal(true)}
-                    className="rounded-xl bg-bg-button px-6 py-4 font-inter text-xl font-medium text-text-white hover:opacity-90 transition-opacity"
+                    className="rounded-xl bg-bg-button px-3 sm:px-6 py-2 sm:py-4 font-inter text-base sm:text-xl font-medium text-text-white hover:opacity-90 transition-opacity"
                 >
                     Add a new product
                 </button>
@@ -153,7 +153,7 @@ export default function Index() {
                         <div className="flex items-center justify-between">
                             <div>
                                 <h3 className="font-poppins font-medium text-3xl text-text-title mb-8">
-                                    Add new Product
+                                    Add new Recipe
                                 </h3>
                             </div>
                             <button
@@ -171,7 +171,7 @@ export default function Index() {
                             <div className="flex flex-col gap-6">
                                 {/* Photo Upload Row */}
                                 <div>
-                                    <div className="flex gap-3">
+                                    <div className="flex flex-col sm:flex-row gap-3">
                                         {photos.map((photo, i) => {
                                             const previewUrl = photo ? URL.createObjectURL(photo) : null;
                                             return (
@@ -184,7 +184,7 @@ export default function Index() {
                                                     }}
                                                     onDragLeave={() => setDragOver(null)}
                                                     onDrop={(e) => handleDrop(e, i)}
-                                                    className="flex-1 aspect-square rounded-xl bg-bg-card flex flex-col items-center justify-center cursor-pointer overflow-hidden font-inter font-medium text-xl text-text-body"
+                                                    className="flex-1 aspect-square rounded-xl bg-bg-card flex flex-col mb-2 items-center justify-center cursor-pointer overflow-hidden font-inter font-medium text-xl text-text-body"
                                                     style={{
                                                         borderColor: dragOver === i ? '#9b1c1c' : undefined,
                                                         background: previewUrl ? 'transparent' : undefined,
