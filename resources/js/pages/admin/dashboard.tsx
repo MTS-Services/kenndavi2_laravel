@@ -2,6 +2,102 @@ import OrderCard, { Order } from '@/components/ui/order-card';
 import AdminLayout from '@/layouts/admin-layout';
 import { Head, usePage } from '@inertiajs/react';
 import { DollarSign, ShoppingCart, Truck } from 'lucide-react';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Filler, Legend} from 'chart.js';
+import { Line } from 'react-chartjs-2';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Filler,
+  Legend
+);
+
+export const options = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      display: false,
+    },
+    title: {
+      display: false,
+    },
+    tooltip: {
+      backgroundColor: '#fff',
+      titleColor: '#f97316',
+      bodyColor: '#111',
+      borderColor: '#e5e7eb',
+      borderWidth: 1,
+      padding: 12,
+      callbacks: {
+        title: (items: any) => items[0].label,
+        label: (item: any) => `$${item.raw.toLocaleString()}`,
+      },
+    },
+  },
+  scales: {
+    x: {
+      grid: { display: false },
+      border: { display: false },
+      ticks: { color: '#9ca3af', font: { size: 12 } },
+    },
+    y: {
+      grid: { color: '#f3f4f6' },
+      border: { display: false },
+      ticks: { color: '#9ca3af', font: { size: 12 } },
+    },
+  },
+};
+const labels = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+];
+
+
+const gradientPlugin = {
+  id: 'customGradient',
+  beforeDatasetDraw(chart: any) {
+    const { ctx, chartArea: { top, bottom } } = chart;
+    const gradient = ctx.createLinearGradient(0, top, 0, bottom);
+    gradient.addColorStop(0, 'rgba(249, 115, 22, 0.5)');  
+    gradient.addColorStop(1, 'rgba(249, 115, 22, 0.0)'); 
+    chart.data.datasets[0].backgroundColor = gradient;
+    chart.update('none');
+  },
+};
+
+export const data = {
+  labels: [
+    'W1','W2','W3','W4','W5','W6','W7','W8',
+    'W9','W10','W11','W12','W13','W14','W15','W16',
+    'W17','W18','W19','W20','W21','W22','W23','W24',
+  ],
+  datasets: [
+    {
+      fill: true,
+      label: 'Revenue',
+      data: [
+        47000, 30000, 38000, 25000, 21000, 35000,
+        33000, 31000, 28000, 42000, 40000, 38000,
+        43000, 36000, 38000, 37000, 35000, 25000,
+        27000, 26000, 24000, 26000, 28000, 26000,
+      ],
+      borderColor: '#f97316',
+      backgroundColor: 'transparent',
+      borderWidth: 2.5,
+      tension: 0.4,
+      pointRadius: 0,
+      pointHoverRadius: 5,
+      pointHoverBackgroundColor: '#f97316',
+    },
+  ],
+};
 
 type Props = {
     stats: {
@@ -34,7 +130,7 @@ const StatCard = ({ title, value, subtext, icon: Icon, trendValue }: any) => (
     </div>
 );
 
-// ✅ Orders data defined directly in Index — no controller needed
+//  Orders data defined directly in Index — no controller needed
 const orders: Order[] = [
     {
         id: '#ord-001',
@@ -138,8 +234,21 @@ export default function Index() {
                     </div>
                 </div>
 
-                {/* ✅ orders prop passed directly from Index */}
-               <div className="bg-white rounded-2xl shadow-sm border  overflow-hidden w-full">
+                <div  style={{ height: '300px', width: '100%' }}>
+                    <div className="flex items-center justify-between px-6 py-3">
+                        <h2 className="font-poppins text-2xl font-medium text-text-title">Sales Performance</h2>
+                        <select className="bg-[#F5F6F7] px-2.5 py-1.5 rounded-sm" name="timeframe" id="timeframe">
+                            <option value="7d">This year</option>
+                            <option value="7d">Last 7 days</option>
+                            <option value="30d">Last 30 days</option>
+                            <option value="90d">Last 90 days</option>   
+                        </select>
+                    </div>
+                    <Line options={options} data={data} plugins={[gradientPlugin]} />
+                </div>
+
+                {/* orders prop passed directly from Index */}
+               <div className="bg-white rounded-2xl shadow-sm border  overflow-hidden w-full mt-20">
                  <div className="">
                     <h2 className="font-poppins text-2xl font-semibold text-text-title p-6">
                         Recent Orders
