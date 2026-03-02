@@ -1,4 +1,6 @@
-import SaucesCard from "@/components/ui/sauces-card";
+import SaucesCardAdmin from '@/components/ui/sauces-card-admin';
+import AdminLayout from '@/layouts/admin-layout';
+import { Link } from '@inertiajs/react';
 
 const saucesData = [
     {
@@ -35,10 +37,35 @@ const saucesData = [
 
 export default function Index() {
     return (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {saucesData.map((sauce) => (
-                <SaucesCard key={sauce.id} sauce={sauce} />
-            ))}
-        </div>
+        <AdminLayout activeSlug={'product-management'}>
+            <div className="flex items-center justify-between">
+                <h2 className="font-poppins text-4xl font-medium text-text-title">
+                    Manage your products
+                </h2>
+                <Link className="rounded-xl bg-bg-button px-6 py-4 font-inter text-xl font-medium text-text-white">
+                    Add a new product
+                </Link>
+            </div>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {saucesData.map((sauce) => (
+                    <SaucesCardAdmin key={sauce.id} sauce={sauce} />
+                ))}
+            </div>
+            <div className="flex items-center justify-between py-4">
+                <span className="font-poppins text-sm font-medium text-text-green">
+                    Showing 1 to 10 of 50 results
+                </span>
+
+                <div className="flex gap-2">
+                    <button className="rounded-lg border border-text-green px-4 py-1.5 text-sm font-medium text-text-green transition-colors hover:bg-bg-light-green">
+                        Previous
+                    </button>
+
+                    <button className="rounded-lg border border-text-green px-4 py-1.5 text-sm font-medium text-text-green transition-colors hover:bg-bg-light-green">
+                        Next
+                    </button>
+                </div>
+            </div>
+        </AdminLayout>
     );
 }

@@ -35,10 +35,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/users/{id}', [UserController::class, 'destroy'])->name('user.destroy');
             Route::get('/pending-verification', [UserController::class, 'pendingVerification'])->name('user.pending-verification');
             Route::get('/user/verify/{id}', [UserController::class, 'verified'])->name('user.verify');
-            Route::post('/user/license-verify/{id}/{status}', [UserController::class, 'licenseVerify'])->name('user.license-verify');
         });
         Route::group(['prefix' => 'product-management', 'as' => 'pm.'], function () {
-            Route::get('/index', [ProductController::class, 'index'])->name('products.index');
+            Route::get('/index', [ProductController::class, 'index'])->name('index');
         });
 
     });

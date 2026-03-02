@@ -1,4 +1,5 @@
 import { Link } from "@inertiajs/react";
+import { EditIcon,  Trash2 } from "lucide-react";
 
 interface SauceData {
     id: string;
@@ -14,7 +15,7 @@ interface Props {
     sauce: SauceData;
 }
 
-export default function SaucesCard({ sauce }: Props) {
+export default function SaucesCardAdmin({ sauce }: Props) {
     return (
         <div className="rounded-md bg-bg-card shadow-md">
             <div className="relative">
@@ -26,6 +27,9 @@ export default function SaucesCard({ sauce }: Props) {
                 <span className="absolute left-4 top-4 rounded-sm bg-bg-white px-3 py-1 font-inter text-sm font-medium text-text-title">
                     {sauce.category}
                 </span>
+                <span className="absolute left-0 bottom-0 bg-text-green px-3 py-1 font-inter text-xs font-medium text-text-white">
+                    Available 20
+                </span>
             </div>
             <div className="p-6">   
                 <h3 className="mb-2 font-bebas-neue text-3xl font-normal text-text-title">
@@ -35,14 +39,14 @@ export default function SaucesCard({ sauce }: Props) {
                    {sauce.description}
                 </p>
                 <div className="flex items-center justify-between">
-                    <span className="font-aktiv-grotesk text-2xl font-normal text-text-title">
-                        Price {sauce.price}
-                    </span>
+                    <Link href="#" className="flex items-center gap-3.5 font-inter text-base font-medium text-text-green border border-text-green px-8 py-2.5 rounded-md bg-bg-our-story">
+                        <EditIcon /> Edit
+                    </Link>
                     <Link 
-                        href={sauce.href}
-                        className="rounded-md bg-bg-button px-6 py-3 font-inter text-base font-medium text-text-white"
+                        href="#"
+                        className="flex items-center gap-3.5 font-inter text-base font-medium text-text-buy-now border border-text-buy-now px-8 py-2.5 rounded-md bg-text-buy-now/5"
                     >
-                        See Details
+                      <Trash2 />  Delete
                     </Link>
                 </div>
             </div>

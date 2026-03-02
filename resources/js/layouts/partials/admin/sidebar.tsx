@@ -3,7 +3,7 @@ import { NavItem } from '@/components/ui/nav-item';
 import { cn } from '@/lib/utils';
 import { type NavItemType, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BarChart, LayoutGrid, User, Users } from 'lucide-react';
+import { Home, LayoutGrid, PentagonIcon } from 'lucide-react';
 import * as React from 'react';
 
 // Navigation configuration
@@ -11,38 +11,15 @@ const adminNavItems: NavItemType[] = [
     {
         title: 'Dashboard',
         href: route('admin.dashboard'),
-        icon: LayoutGrid,
+        icon: Home,
         slug: 'dashboard',
     },
-    // {
-    //     title: 'Product Management',
-    //     href: route('admin.product-management.index'),
-    //     icon: LayoutGrid,
-    //     slug: 'product-management',
-    // },
-    // {
-    //     title: 'User Management',
-    //     href: '#',
-    //     icon: Users,
-    //     badge: 2,
-    //     slug: 'user-management',
-    //     children: [
-    //         {
-    //             title: 'Users',
-    //             href: route('admin.um.users.index'),
-    //             icon: User,
-    //             permission: 'manage users',
-    //             slug: 'users',
-    //         },
-    //         {
-    //             title: 'Pending Verification',
-    //             href: route('admin.um.user.pending-verification'),
-    //             icon: User,
-    //             permission: 'manage users',
-    //             slug: 'pending-verification',
-    //         },
-    //     ],
-    // },
+    {
+        title: 'Product Management',
+        href: route('admin.pm.index'),
+        icon: PentagonIcon,
+        slug: 'product-management',
+    },
 ];
 
 interface AdminSidebarProps {
