@@ -66,7 +66,7 @@ export default function index({
       label: 'Name',
       sortable: true,
       render: (user) => (
-        <div className="font-medium text-gray-900 dark:text-gray-100">
+        <div className="font-medium text-text-title">
           {user.name}
         </div>
       ),
@@ -76,7 +76,7 @@ export default function index({
       label: 'Email',
       sortable: true,
       render: (user) => (
-        <div className="text-gray-600 dark:text-gray-400">
+        <div className="text-text-body">
           {user.email}
         </div>
       ),
@@ -86,7 +86,7 @@ export default function index({
       label: 'Phone',
       sortable: true,
       render: (user) => (
-        <div className="text-gray-600 dark:text-gray-400">
+        <div className="text-text-body">
           {user.phone ? user.phone : 'N/A'}
         </div>
       ),
@@ -97,7 +97,7 @@ export default function index({
       label: 'User Type',
       sortable: true,
       render: (user) => (
-        <div className="text-gray-600 dark:text-gray-400">
+        <div className="text-text-body">
           {USER_TYPE_LABELS[user.user_type] ?? user.user_type}
         </div>
       ),
@@ -107,8 +107,16 @@ export default function index({
       label: 'Verified',
       sortable: true,
       render: (user) => (
-        <div className="text-gray-600 dark:text-gray-400">
-          <span className={`${user.is_verified ? 'bg-green-500' : 'bg-red-500'} text-white px-2 py-1 rounded-full text-xs font-semibold ${user.is_verified ? 'bg-green-500' : 'bg-red-500'}-600`}>{user.is_verified ? 'Verified' : 'Not Verified'}</span>
+        <div className="text-text-body">
+          <span
+            className={`px-3 py-1 rounded-full text-xs font-semibold border ${
+              user.is_verified
+                ? 'bg-bg-light-green text-text-green border-text-green'
+                : 'bg-bg-card text-text-buy-now border-text-buy-now'
+            }`}
+          >
+            {user.is_verified ? 'Verified' : 'Not Verified'}
+          </span>
         </div>
       ),
     },
@@ -117,7 +125,7 @@ export default function index({
       label: 'Joined Date',
       sortable: true,
       render: (user) => (
-        <div className="text-gray-600 dark:text-gray-400">
+        <div className="text-text-body">
           {new Date(user.created_at).toLocaleDateString()}
         </div>
       ),
