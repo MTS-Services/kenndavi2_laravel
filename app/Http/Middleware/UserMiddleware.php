@@ -21,9 +21,9 @@ class UserMiddleware
         }
         $user = Auth::user();
 
-        if ($user->is_verified == false) {
-            return redirect()->route('user.pending-verification');
-        }
+        // if ($user->is_verified == false) {
+        //     return redirect()->route('user.pending-verification');
+        // }
 
         return $next($request);
     }

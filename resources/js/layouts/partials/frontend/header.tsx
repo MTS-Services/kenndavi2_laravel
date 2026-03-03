@@ -1,14 +1,18 @@
 import { Link } from '@inertiajs/react';
 import { ShoppingCart, User, Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import { usePage } from '@inertiajs/react';
 
 interface Props {
     activePage?: string;
     subPage?: string;
+    cartImage?: string | null;
 }
 
-function FrontendHeader({ activePage, subPage }: Props) {
+function FrontendHeader({ activePage, subPage, cartImage }: Props) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const { auth } = usePage().props as any;
+    const user = auth?.user;
 
     return (
         <header className="bg-bg-header py-1.5 md:py-3 lg:py-6">
@@ -49,10 +53,16 @@ function FrontendHeader({ activePage, subPage }: Props) {
                     {/* Right Icons */}
                     <div className="flex items-center space-x-4">
                         <Link href={route('frontend.product-card')} className="text-text-white transition-colors hover:text-gray-300">
-                            <ShoppingCart size={24} />
+                                <ShoppingCart size={24} />
                         </Link>
+                        
                         <Link href={route('login')} className="text-text-white transition-colors hover:text-gray-300">
-                            <User size={24} />
+                            {/* Show user image if authenticated, otherwise show user icon */}
+                            {user ? (
+                                <img src={user.image_url || '/assets/images/default-avatar.png'} alt="User" className="w-10 h-10 rounded-full border-2 border-text-buy-now" />
+                            ) : (
+                                <User size={24} />
+                            )}
                         </Link>
                     </div>
                 </div>

@@ -4,7 +4,7 @@ import { Camera, Eye } from 'lucide-react';
 export default function AccountSettings(){
     return(
         <UserDashboardLayout>
-            <div className="container mx-auto px-4 py-10 lg:py-16">
+            <div className="container mx-auto px-4 pb-10 lg:pb-16">
                 <div className="rounded-sm border border-text-gray-300">
                     <h2 className="font-public-sans text-sm font-medium text-text-title uppercase mb-8 border-b border-text-gray-300 p-4">
                         Account Setting
