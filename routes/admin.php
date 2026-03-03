@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\RecipeController;
+use App\Http\Controllers\Admin\TermsConditionsController;
 use App\Http\Controllers\Admin\UserManagement\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -56,6 +57,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::group(['prefix' => 'recipe-management', 'as' => 'rm.'], function () {
             Route::get('/index', [RecipeController::class, 'index'])->name('index');
             Route::get('/create', [RecipeController::class, 'create'])->name('create');
+        });
+        Route::group(['prefix' => 'terms-conditions', 'as' => 'tc.'], function () {
+            Route::get('/index', [TermsConditionsController::class, 'index'])->name('index');
+            Route::get('/create', [TermsConditionsController::class, 'create'])->name('create');
         });
 
     });

@@ -9,7 +9,9 @@ const FrontendFooter: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     {/* Column 1: Logo and Description */}
                     <div className="flex flex-col items-start">
+                        <Link href={route('frontend.home')}>
                         <img src="/assets/images/logo.png" alt="Northside Logo" className="max-w-36 mb-4" />
+                        </Link>
                         <p className="text-text-white text-xl font-normal font-inter mb-4">
                             Crafted with passion and premium ingredients to bring bold, unforgettable flavors to your table.
                         </p>
@@ -62,9 +64,7 @@ const FrontendFooter: React.FC = () => {
                             © {new Date().getFullYear()} The North Side. All rights reserved.
                         </p>
                         <div className="flex space-x-4 text-sm">
-                            <Link href="/terms" className="text-text-white text-sm font-normal font-public-sans">Terms & Conditions</Link>
-                            <Link href="/privacy-policy" className="text-text-white text-sm font-normal font-public-sans">Privacy Policy</Link>
-                            <Link href="/cookie-policy" className="text-text-white text-sm font-normal font-public-sans">Cookie Policy</Link>
+                            <Link href={route('frontend.terms-conditions')} className="text-text-white text-sm font-normal font-public-sans">Terms & Conditions</Link>
                         </div>
                     </div>
                 </div>
