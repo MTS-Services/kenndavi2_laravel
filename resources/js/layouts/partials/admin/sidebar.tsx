@@ -3,8 +3,9 @@ import { NavItem } from '@/components/ui/nav-item';
 import { cn } from '@/lib/utils';
 import { type NavItemType, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { Box, Home, LayoutGrid, ShoppingCart, Users, CookingPot } from 'lucide-react';
+import { Box, Home, LayoutGrid, ShoppingCart, Users, CookingPot, ReceiptText } from 'lucide-react';
 import * as React from 'react';
+import { text } from 'stream/consumers';
 
 // Navigation configuration
 const adminNavItems: NavItemType[] = [
@@ -31,6 +32,12 @@ const adminNavItems: NavItemType[] = [
         href: route('admin.rm.index'),
         icon: CookingPot,
         slug: 'recipe-management',
+    },
+    {
+        title: 'Terms & Conditions',
+        href: route('admin.tc.index'),
+        icon: ReceiptText,
+        slug: 'terms-conditions',
     },
     {
         title: 'Profile',
