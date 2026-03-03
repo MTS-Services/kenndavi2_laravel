@@ -44,4 +44,8 @@ class FrontendController extends Controller
     {
         return Inertia::render('frontend/product-card');
     }
+    public function termsConditions(): Response
+    {
+        return Inertia::render('frontend/terms-conditions');
+    }
 }

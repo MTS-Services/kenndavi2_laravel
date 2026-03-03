@@ -12,5 +12,5 @@ Route::name('frontend.')->controller(FrontendController::class)->group(function 
     Route::get('/sauce-recipes', 'sauceRecipes')->name('sauce-recipes');
     Route::get('/recipe-details', 'recipeDetails')->name('recipe-details');
     Route::get('/product-card', 'productCard')->name('product-card');
-    Route::get('/privacy-policy', 'privacyPolicy')->name('privacy-policy');
+    Route::get('/terms-conditions', 'termsConditions')->name('terms-conditions');
 });
