@@ -146,7 +146,7 @@ class AdminController extends Controller
             'phone' => ['nullable', 'string', 'max:20'],
             'email' => ['required', 'email', 'max:255', 'unique:admins,email,' . $admin->id],
             'oldPassword' => ['nullable', 'required_with:password', 'string'],
-            'password' => ['nullable', 'required', 'string', 'min:8', 'confirmed'],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
         ]);
 
         // Update basic info
