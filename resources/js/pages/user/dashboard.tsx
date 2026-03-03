@@ -26,7 +26,7 @@ export default function Dashboard() {
                     </p>
                 </div>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <Link href="#">
+                    <Link href={route('user.orders')}>
                         <div className="flex w-full flex-col items-center rounded-sm border border-text-gray-300 px-4 py-8 sm:px-8 md:px-12 lg:px-16 xl:px-20 2xl:px-36 text-center">
                             <img
                                 src="/assets/images/user-dashboard/material-symbols.png"
@@ -38,7 +38,7 @@ export default function Dashboard() {
                             </p>
                         </div>
                     </Link>
-                    <Link href="#">
+                    <Link href={route('user.product-to-review')}>
                         <div className="flex w-full flex-col items-center rounded-sm border border-text-gray-300 px-4 py-8 sm:px-8 md:px-12 lg:px-16 xl:px-20 2xl:px-36 text-center">
                             <img
                                 src="/assets/images/user-dashboard/carbon_star-review.png"
@@ -46,12 +46,12 @@ export default function Dashboard() {
                                 className=""
                             />
                             <p className="mt-4 sm:mt-6 text-center font-aktiv-grotesk text-sm sm:text-base font-normal text-text-title">
-                                orders
+                                Product to review
                             </p>
                         </div>
                     </Link>
 
-                    <Link href="#">
+                    <Link href={route('user.account-settings')}>
                         <div className="flex w-full flex-col items-center rounded-sm border border-text-gray-300 px-4 py-8 sm:px-8 md:px-12 lg:px-16 xl:px-20 2xl:px-36 text-center">
                             <img
                                 src="/assets/images/user-dashboard/line-md_account.png"
@@ -59,7 +59,7 @@ export default function Dashboard() {
                                 className=""
                             />
                             <p className="mt-4 sm:mt-6 text-center font-aktiv-grotesk text-sm sm:text-base font-normal text-text-title">
-                                orders
+                                Account
                             </p>
                         </div>
                     </Link>

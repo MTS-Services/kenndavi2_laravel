@@ -15,7 +15,7 @@ const total = subTotal + shipping;
 export default function OrderConfirmed() {
     return (
         <FrontendLayout>
-            <div>   
+            <div className="mb-12 sm:mb-28">   
                 <div className="container mx-auto px-4 py-10 lg:py-16">
                     <div className="">
                         {/* Success Icon & Header */}

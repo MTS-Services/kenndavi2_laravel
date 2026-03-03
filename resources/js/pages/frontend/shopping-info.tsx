@@ -35,7 +35,7 @@ export default function ShippingInformationPage() {
 
     return (
         <FrontendLayout>
-            <div className="">
+            <div className="mb-12 sm:mb-28">
                 <div className="container mx-auto px-4 py-10 lg:py-16">
                     <div className="grid gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.7fr)] xl:gap-16">
 
@@ -264,7 +264,7 @@ export default function ShippingInformationPage() {
 
                                 {/* Back Button */}
                                 <Link
-                                    href="#"
+                                    href={route('frontend.product-card')}
                                     className="mt-3 flex w-full items-center justify-center border border-text-buy-now px-6 py-4  font-bebas-neue text-xl font-normal uppercase text-text-buy-now tracking-widest"
                                 >
                                     Back

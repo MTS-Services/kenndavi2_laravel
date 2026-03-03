@@ -62,7 +62,7 @@ export default function ProductToReview(){
                             {products.map((product, index) => (
                                 <tr key={product.id} className={index !== products.length - 1 ? "" : ""}>
                                     {/* Product Info */}
-                                    <td className="px-6 py-6 w-1/2">
+                                    <td className="px-3  py-3 w-1/2">
                                         <div className="flex gap-4">
                                             <div className="shrink-0">
                                                 <img
@@ -83,7 +83,7 @@ export default function ProductToReview(){
                                     </td>
 
                                     {/* Price */}
-                                    <td className="px-6 py-6">
+                                    <td className="px-3  py-3">
                                         <div className="flex gap-2 items-center">
                                             <span className="text-sm font-normal font-public-sans text-text-body line-through">
                                                 ${product.originalPrice}
@@ -95,17 +95,17 @@ export default function ProductToReview(){
                                     </td>
 
                                     {/* Shipping Status */}
-                                    <td className="px-6 py-6">
+                                    <td className="px-3  py-3">
                                         <span className="font-public-sans text-sm font-medium text-text-green">
                                             {product.shippingStatus}
                                         </span>
                                     </td>
 
                                     {/* Action Button */}
-                                    <td className="px-6 py-6">
+                                    <td className="px-3  py-3">
                                         <Link
                                             href={route('user.review')}
-                                            className="inline-flex items-center justify-center px-6 py-4 bg-text-buy-now text-text-white font-bold text-sm font-public-sans uppercase"
+                                            className="inline-flex items-center justify-center px-3  py-2 xl:py-4 bg-text-buy-now text-text-white font-bold text-sm font-public-sans uppercase"
                                         >
                                             Write a review
                                         </Link>

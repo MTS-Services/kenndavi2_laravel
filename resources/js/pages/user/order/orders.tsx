@@ -54,7 +54,7 @@ export default function Orders() {
                             <div className="flex flex-col gap-3">
                                 {/* Order ID & Status */}
                                 <div className="flex items-center justify-between">
-                                    <span className="text-sm text-text-body">Order ID: #{order.id}</span>
+                                    <span className="font-aktiv-grotesk text-sm text-text-body">Order ID: #{order.id}</span>
                                     <span className="text-sm font-medium px-2 py-1 bg-green-100 text-green-800 rounded">
                                         {order.status}
                                     </span>
@@ -100,8 +100,8 @@ export default function Orders() {
                             <div className="flex-1 flex flex-col gap-2">
                                 {/* Order ID & Status */}
                                 <div className="flex items-center justify-between">
-                                    <span className="text-sm text-text-body">Order ID: #{order.id}</span>
-                                    <span className="text-sm font-medium">{order.status}</span>
+                                    <span className="font-aktiv-grotesk text-sm text-text-body ">Order ID: #{order.id}</span>
+                                    <span className="font-aktiv-grotesk text-sm font-medium bg-[#FEFDE8] text-text-star-rating px-2 py-1 rounded">{order.status}</span>
                                 </div>
 
                                 {/* Product Name */}
