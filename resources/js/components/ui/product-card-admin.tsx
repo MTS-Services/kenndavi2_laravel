@@ -20,6 +20,7 @@ interface Props {
 export default function ProductCardAdmin({ product, onEdit }: Props) {
     return (
         <div className="rounded-md bg-bg-card shadow-md px-4 py-3">
+            <Link href={product.href} target="_blank" rel="noopener noreferrer">
             <div className="relative">
                 <img
                     src={product.image}
@@ -37,17 +38,22 @@ export default function ProductCardAdmin({ product, onEdit }: Props) {
                     </span>
                 )}
             </div>
+            </Link>
             <div className="mt-3">   
+                <Link href={product.href} target="_blank" rel="noopener noreferrer">
                 <h3 className="mb-2 font-inter text-xl font-medium text-text-title">
                     {product.name}
                 </h3>
-                <p className="mb-4 font-aktiv-grotesk text-base font-normal text-text-body">
+                </Link>
+                <Link href={product.href} target="_blank" rel="noopener noreferrer">
+                <p className="mb-4 font-aktiv-grotesk text-base font-normal text-text-body line-clamp-2">
                    {product.description}
                 </p>
+                </Link>
                 <div className="flex items-center justify-between">
                     <button 
                         onClick={() => onEdit?.(product)}
-                        className="flex items-center gap-3.5 font-inter text-base font-medium text-text-green border border-text-green px-8 py-2.5 rounded-md bg-bg-our-story"
+                        className="flex items-center gap-3.5 font-inter text-base font-medium text-text-green border border-text-green px-8 py-2.5 rounded-md bg-bg-our-story cursor-pointer"
                     >
                         <EditIcon /> Edit
                     </button>

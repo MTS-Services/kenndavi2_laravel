@@ -56,7 +56,7 @@ export default function Profile() {
                     </div>
                     <button
                         onClick={() => setIsEditing(!isEditing)}
-                        className="flex items-center gap-2 rounded-sm bg-bg-button px-6 py-3 font-inter text-base font-medium text-text-white transition-opacity hover:opacity-90"
+                        className="flex items-center gap-2 rounded-sm bg-bg-button px-6 py-3 font-inter text-base font-medium text-text-white transition-opacity hover:opacity-90 cursor-pointer"
                     >
                         
                        Save
@@ -157,13 +157,13 @@ export default function Profile() {
                                         <button
                                             type="button"
                                             onClick={() => setIsEditing(false)}
-                                            className="rounded-lg border border-text-gray-300 px-6 py-3 font-medium text-text-title transition-colors hover:bg-bg-card"
+                                            className="rounded-lg border border-text-gray-300 px-6 py-3 font-medium text-text-title transition-colors hover:bg-bg-card cursor-pointer"
                                         >
                                             Cancel
                                         </button>
                                         <button
                                             type="submit"
-                                            className="rounded-lg bg-bg-button px-6 py-3 font-medium text-text-white transition-opacity hover:opacity-90"
+                                            className="rounded-lg bg-bg-button px-6 py-3 font-medium text-text-white transition-opacity hover:opacity-90 cursor-pointer"
                                         >
                                             Save Changes
                                         </button>

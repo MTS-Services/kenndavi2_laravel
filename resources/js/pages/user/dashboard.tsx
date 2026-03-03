@@ -6,14 +6,14 @@ export default function Dashboard() {
         <UserDashboardLayout>
             <div className="">
                 <div className="w-full rounded-lg p-8">
-                    <h2 className="mb-1.5 font-aktiv-grotesk text-base font-normal text-text-title">
+                    <h2 className="mb-1.5 font-aktiv-grotesk text-xl font-normal text-text-title">
                         Hello John (not John?{' '}
                         <span className="cursor-pointer font-normal text-text-buy-now">
                             Log out
                         </span>
                         )
                     </h2>
-                    <p className="mb-6 font-aktiv-grotesk text-xs font-normal text-text-title">
+                    <p className="mb-6 font-aktiv-grotesk text-sm font-normal text-text-title">
                         From your account dashboard you can view your{' '}
                         <span className="cursor-pointer font-normal text-text-buy-now"> 
                             recent orders

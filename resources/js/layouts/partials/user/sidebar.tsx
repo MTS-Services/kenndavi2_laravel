@@ -9,26 +9,23 @@ export default function Sidebar() {
     const { auth } = usePage<SharedData>().props;
     const [userType, setUserType] = useState(auth.user.user_type);
 
-    const NavItem = ({
-        href,
-        label,
-        icon,
-        onClick,
-    }: {
+    const NavItem = ({href, label, icon, onClick,}: {
         href?: string;
         label: string;
         icon?: React.ReactNode;
         onClick?: () => void;
     }) => {
+
         const currentUrl = usePage().url;
-        const isActive = href ? currentUrl.includes(href) : false;
+        const hrefPath = href ? new URL(href, window.location.origin).pathname : '';
+        const isActive = hrefPath ? currentUrl.startsWith(hrefPath) : false;
         
         return (
             <Link
                 href={href || '#'}
                 onClick={onClick}
                 className={cn(
-                    'flex items-center gap-3 py-3 font-normal text-base font-aktiv-grotesk border-b border-text-body text-text-body',
+                    'flex items-center gap-3 py-3 font-normal text-base font-aktiv-grotesk border-b border-text-body text-text-body hover:text-text-buy-now',
                     isActive 
                         ? 'text-text-buy-now' 
                         : 'text-text-title'

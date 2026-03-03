@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useInitials } from '@/hooks/use-initials';
 import { type SharedData } from '@/types';
-import { usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { Bell, Menu, X } from 'lucide-react';
 import * as React from 'react';
 
@@ -51,11 +51,13 @@ export function AdminHeader({
                                 )}
                             </button>
                             <div className="shrink-0">
+                               <Link href={route('admin.dashboard')}>
                                 <img
                                     className="h-20 w-auto"
                                     src="/assets/images/logo.png"
                                     alt="Logo"
                                 />
+                               </Link>
                             </div>
                         </div>
 
@@ -71,7 +73,7 @@ export function AdminHeader({
                                 <DropdownMenuTrigger asChild>
                                     <Button
                                         variant="ghost"
-                                        className="inline-flex text-start items-center justify-center p-2 text-gray-600 "
+                                        className="inline-flex text-start items-center justify-center p-2 text-gray-600 cursor-pointer"
                                     >
                                         <Avatar className="h-20 w-20">
                                             <AvatarImage

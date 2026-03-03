@@ -157,7 +157,7 @@ export default function Index() {
                 </h2>
                 <button
                     onClick={() => setShowCreateModal(true)}
-                    className="rounded-xl bg-bg-button px-6 sm:px-6 py-2 sm:py-4 font-inter text-base sm:text-xl font-medium text-text-white transition-opacity hover:opacity-90"
+                    className="rounded-xl bg-bg-button px-6 sm:px-6 py-2 sm:py-4 font-inter text-base sm:text-xl font-medium text-text-white transition-opacity hover:opacity-90 cursor-pointer"
                 >
                     Add a new Recipe
                 </button>

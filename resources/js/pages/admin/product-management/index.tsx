@@ -131,7 +131,7 @@ export default function Index() {
                 </h2>
                 <button 
                     onClick={() => setShowCreateModal(true)}
-                    className="rounded-xl bg-bg-button px-3 sm:px-6 py-2 sm:py-4 font-inter text-base sm:text-xl font-medium text-text-white hover:opacity-90 transition-opacity"
+                    className="rounded-xl bg-bg-button px-3 sm:px-6 py-2 sm:py-4 font-inter text-base sm:text-xl font-medium text-text-white hover:opacity-90 transition-opacity cursor-pointer"
                 >
                     Add a new product
                 </button>
