@@ -120,14 +120,6 @@ export default function index({
       },
     },
     {
-      label: 'Verify License',
-      icon: <ShieldCheck className="h-4 w-4" />, // ShieldCheck icon import korun
-      onClick: (user) => {
-        setSelectedUser(user);
-        setIsModalOpen(true);
-      },
-    },
-    {
       label: 'Delete',
       icon: <Trash2 className="h-4 w-4" />,
       onClick: (user) => {

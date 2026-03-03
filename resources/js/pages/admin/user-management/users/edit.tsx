@@ -75,7 +75,7 @@ export default function EditUser({ user }: Props) {
     };
 
     return (
-        <AdminLayout activeSlug="admin-users">
+        <AdminLayout activeSlug="user-management">
             <Head title={`Edit User: ${user.name}`} />
 
             <CardHeader className="flex items-center flex-row justify-between">
@@ -109,7 +109,7 @@ export default function EditUser({ user }: Props) {
                                 onChange={(e) => setData('name', e.target.value)}
                                 required
                             />
-                            {errors.name && <div className="text-red-500 text-sm">{errors.name}</div>}
+                            <InputError message={errors.name} />
                         </div>
 
                         <div className="grid gap-2">
@@ -121,7 +121,7 @@ export default function EditUser({ user }: Props) {
                                 onChange={(e) => setData('email', e.target.value)}
                                 required
                             />
-                            {errors.email && <div className="text-red-500 text-sm">{errors.email}</div>}
+                            <InputError message={errors.email} />
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="phone">Phone</Label>
@@ -132,7 +132,7 @@ export default function EditUser({ user }: Props) {
                                 onChange={(e) => setData('phone', e.target.value)}
                                 
                             />
-                            {errors.phone && <div className="text-red-500 text-sm">{errors.phone}</div>}
+                            <InputError message={errors.phone} />
                         </div>
                          <div className="grid gap-2">
                                 <Label htmlFor="password">Password</Label>
@@ -141,7 +141,6 @@ export default function EditUser({ user }: Props) {
                                     name="password"
                                     value={data.password}
                                     onChange={(e) => setData('password', e.target.value)}
-                                    required
                                     placeholder=""
                                     className="h-11 border-gray-200 bg-white/50 px-4! py-3!"
                                 />
@@ -154,7 +153,6 @@ export default function EditUser({ user }: Props) {
                                     name="password_confirmation"
                                     value={data.password_confirmation}
                                     onChange={(e) => setData('password_confirmation', e.target.value)}
-                                    required
                                     placeholder=""
                                     className="h-11 border-gray-200 bg-white/50 px-4! py-3!"
                                 />

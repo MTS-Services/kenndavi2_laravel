@@ -13,7 +13,7 @@ import { edit, index } from '@/actions/App/Http/Controllers/Admin/UserManagement
 export default function View({ user }: User | any) {
 
     return (
-        <AdminLayout activeSlug={'admin-users'}>
+        <AdminLayout activeSlug="user-management">
             <Head title="User Details" />
 
             <div className="container mx-auto py-6">
@@ -77,32 +77,7 @@ export default function View({ user }: User | any) {
                                 </CardContent>
                             </Card>
 
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>Brokerage</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <p className="text-muted-foreground">{(user as any).brokerage_name ?? 'N/A'}</p>
-                                </CardContent>
-                            </Card>
                         </div>
-
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>License Number</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-muted-foreground">{(user as any).license_number ?? 'N/A'}</p>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>License Verification Status</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-muted-foreground">{(user as any).license_verification_status ?? 'N/A'}</p>
-                            </CardContent>
-                        </Card>
                     </div>
 
                     {/* Right Column */}
@@ -119,14 +94,6 @@ export default function View({ user }: User | any) {
                                 <div>
                                     <p className="text-sm text-muted-foreground">Updated At</p>
                                     <p className="font-medium">{user.updated_at ? new Date(user.updated_at).toLocaleString() : 'N/A'}</p>
-                                </div>
-                                <div>
-                                    <p className="text-sm text-muted-foreground">Email Verified At</p>
-                                    <p className="font-medium">{user.email_verified_at ? new Date(user.email_verified_at).toLocaleString() : 'N/A'}</p>
-                                </div>
-                                <div>
-                                    <p className="text-sm text-muted-foreground">Admin?</p>
-                                    <p className="font-medium">{(user as any).is_admin ? 'Yes' : 'No'}</p>
                                 </div>
                             </CardContent>
                         </Card>

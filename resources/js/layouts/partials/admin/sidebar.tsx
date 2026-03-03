@@ -3,7 +3,7 @@ import { NavItem } from '@/components/ui/nav-item';
 import { cn } from '@/lib/utils';
 import { type NavItemType, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { Box, Home, LayoutGrid, ShoppingCart, Users, CookingPot, ReceiptText } from 'lucide-react';
+import { Box, Home, LayoutGrid, ShoppingCart, Users, CookingPot, ReceiptText, UsersRound } from 'lucide-react';
 import * as React from 'react';
 import { text } from 'stream/consumers';
 
@@ -18,7 +18,7 @@ const adminNavItems: NavItemType[] = [
     {
         title: 'User Management',
         href: route('admin.um.users.index'),
-        icon: Users,
+        icon: UsersRound,
         slug: 'user-management',
     },
     {

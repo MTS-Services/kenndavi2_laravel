@@ -111,12 +111,6 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:20'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:2048'],
-            'username' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique(User::class)->ignore($user->id),
-            ],
             'email' => [
                 'required',
                 'string',
