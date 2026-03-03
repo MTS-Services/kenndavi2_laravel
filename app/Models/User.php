@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Enums\ActiveInactive;
-use App\Enums\UserType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -13,19 +12,12 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'username',
         'name',
         'email',
         'phone',
-        'user_type',
         'status',
         'password',
-        'your_self',
-        'brokerage_name',
-        'license_number',
         'image',
-        'is_verified',
-        'license_verification_status',
     ];
 
     protected $hidden = [
@@ -38,9 +30,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'user_type' => UserType::class,
             'status' => ActiveInactive::class,
-            'is_verified' => 'boolean',
         ];
     }
 

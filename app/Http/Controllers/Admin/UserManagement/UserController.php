@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin\UserManagement;
 
 use App\Concerns\PasswordValidationRules;
 use App\Enums\ActiveInactive;
-use App\Enums\UserType;
 use App\Http\Controllers\Controller;
 use App\Mail\FoundingUserVerifiedMail;
 use App\Models\User;
@@ -25,12 +24,12 @@ class UserController extends Controller
 
     public function index(): Response
     {
-        $query = User::query()->where('is_verified', true);
+        $query = User::query()->latest();
 
         $result = $this->dataTableService->process($query, request(), [
             'searchable' => ['name', 'email'],
             'sortable' => ['id', 'name', 'email', 'created_at'],
-            'filterable' => ['user_type', 'is_verified', 'status'],
+            'filterable' => ['status'],
         ]);
 
         return Inertia::render('admin/user-management/users/index', [
@@ -46,24 +45,14 @@ class UserController extends Controller
 
     public function create(): Response
     {
-        return Inertia::render('admin/user-management/users/create', [
-            'user_types' => collect(UserType::cases())->map(fn ($type) => [
-                'value' => $type->value,
-                'label' => $type->label(),
-            ]),
-        ]);
+        return Inertia::render('admin/user-management/users/create');
     }
 
     public function store(Request $request)
     {
         $data = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
-            'username' => ['required', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:20'],
-            'user_type' => ['required', Rule::in(UserType::cases())],
-            'your_self' => ['nullable', 'string', 'max:255'],
-            'brokerage_name' => ['nullable', 'string', 'max:255'],
-            'license_number' => ['nullable', 'string', 'max:255'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:2048'],
             'email' => [
                 'required',
@@ -121,16 +110,7 @@ class UserController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:20'],
-            'your_self' => ['nullable', 'string', 'max:255'],
-            'brokerage_name' => ['nullable', 'string', 'max:255'],
-            'license_number' => ['nullable', 'string', 'max:255'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:2048'],
-            'username' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique(User::class)->ignore($user->id),
-            ],
             'email' => [
                 'required',
                 'string',

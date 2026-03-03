@@ -19,36 +19,25 @@ import InputError from '@/components/input-error';
 
 interface FormData {
     files: File | File[] | null;
-    username: string;
     name: string;
     email: string;
     phone: string;
     image: null | File | null,
-    your_self: string;
-    brokerage_name: string;
-    license_number: string;
     password: string;
     password_confirmation: string;
-    user_type: string;
-    user_types: any;
 }
 
-export default function CreateUser({ user_types }: any) {
-    console.log('user_types', user_types);
+export default function CreateUser() {
+    
     const { data, setData, post, processing, errors } = useForm<FormData>({
         files: null,
-        username: '',
+
         name: '',
         email: '',
         phone: '',
         image: null,
-        your_self: '',
-        brokerage_name: '',
-        license_number: '',
         password: '',
         password_confirmation: '',
-        user_type: '',
-        user_types: user_types
     });
 
     function handleSubmit(e: React.FormEvent) {
@@ -90,17 +79,6 @@ export default function CreateUser({ user_types }: any) {
                             </div>
                             <div></div>
                             <div className="grid gap-2">
-                                <Label htmlFor="username">Username</Label>
-                                <Input
-                                    id="username"
-                                    type="text"
-                                    value={data.username}
-                                    onChange={(e) => setData('username', e.target.value)}
-                                    required
-                                />
-                                 <InputError message={errors.username} />
-                            </div>
-                            <div className="grid gap-2">
                                 <Label htmlFor="name">Name</Label>
                                 <Input
                                     id="name"
@@ -111,26 +89,6 @@ export default function CreateUser({ user_types }: any) {
                                 />
                                 <InputError message={errors.name} />
                             </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="user_type">User Type</Label>
-                                <Select
-                                    value={data.user_type || ''}
-                                    onValueChange={(value) => setData('user_type', value)}
-                                >
-                                    <SelectTrigger className="datatable-select">
-                                        <SelectValue placeholder="Select user type" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {(user_types || []).map((option: any) => (
-                                            <SelectItem key={(option.value ?? option.id ?? option)} value={String(option.value ?? option.id ?? option)}>
-                                                {option.label ?? option.name ?? option}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                <InputError message={errors.user_type} />
-                            </div>
-
                             <div className="grid gap-2">
                                 <Label htmlFor="email">Email</Label>
                                 <Input
@@ -154,37 +112,6 @@ export default function CreateUser({ user_types }: any) {
                                 <InputError message={errors.phone} />
                             </div>
                             <div className="grid gap-2">
-                                <Label htmlFor="brokerage_name">Brokerage Name</Label>
-                                <Input
-                                    id="brokerage_name"
-                                    type="text"
-                                    value={data.brokerage_name}
-                                    onChange={(e) => setData('brokerage_name', e.target.value)}
-
-                                />
-                                <InputError message={errors.brokerage_name} />
-                            </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="your_self">Your Self</Label>
-                                <Input
-                                    id="your_self"
-                                    type="text"
-                                    value={data.your_self}
-                                    onChange={(e) => setData('your_self', e.target.value)}
-                                />
-                                <InputError message={errors.your_self} />
-                            </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="license_number">License Number</Label>
-                                <Input
-                                    id="license_number"
-                                    type="text"
-                                    value={data.license_number}
-                                    onChange={(e) => setData('license_number', e.target.value)}
-                                />
-                                <InputError message={errors.license_number} />
-                            </div>
-                            <div className="grid gap-2">
                                 <Label htmlFor="password">Password</Label>
                                 <PasswordInput
                                     id="password"
@@ -193,7 +120,7 @@ export default function CreateUser({ user_types }: any) {
                                     onChange={(e) => setData('password', e.target.value)}
                                     required
                                     placeholder="********"
-                                    className="h-11 border-gray-200 bg-white/50 px-4! py-3! transition-all focus:border-secondary! focus:ring-secondary!"
+                                    className="h-11 border-gray-200 bg-white/50 px-4! py-3!"
                                 />
                                 <InputError message={errors.password} />
                             </div>
@@ -206,7 +133,7 @@ export default function CreateUser({ user_types }: any) {
                                     onChange={(e) => setData('password_confirmation', e.target.value)}
                                     required
                                     placeholder="********"
-                                    className="h-11 border-gray-200 bg-white/50 px-4! py-3! transition-all focus:border-secondary! focus:ring-secondary!"
+                                    className="h-11 border-gray-200 bg-white/50 px-4! py-3!"
                                 />
                                 <InputError message={errors.password_confirmation} />
                             </div>

@@ -8,6 +8,7 @@ use App\Models\Admin;
 use App\Models\User;
 use App\Services\DataTableService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -22,21 +23,8 @@ class AdminController extends Controller
             'users_last_7_days' => User::where('created_at', '>=', now()->subDays(7))->count(),
         ];
 
-        // user type counts
-        $counts = User::selectRaw('user_type, count(*) as cnt')->groupBy('user_type')->pluck('cnt', 'user_type')->toArray();
-
-        $userTypeCounts = [];
-        foreach (UserType::cases() as $type) {
-            $value = $type->value;
-            $userTypeCounts[$value] = [
-                'label' => $type->label(),
-                'count' => $counts[$value] ?? 0,
-            ];
-        }
-
         return Inertia::render('admin/dashboard', [
-            'stats' => $stats,
-            'userTypeCounts' => $userTypeCounts,
+            'stats' => $stats
         ]);
     }
 
@@ -87,7 +75,6 @@ class AdminController extends Controller
             'email' => 'required|string|email|max:255|unique:admins,email',
             'password' => 'required|string|min:8|confirmed',
             'phone' => 'required|string',
-            'your_self' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
         $data['password'] = bcrypt($data['password']);
@@ -145,6 +132,41 @@ class AdminController extends Controller
 
     public function profile()
     {
-        return Inertia::render('admin/profile');
+        $admin = Auth::guard('admin')->user();
+        return Inertia::render('admin/profile', [
+            'admin' => $admin,
+        ]);
+    }
+    public function updateProfile(Request $request)
+    {
+        $admin = Auth::guard('admin')->user();
+        
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:20'],
+            'email' => ['required', 'email', 'max:255', 'unique:admins,email,' . $admin->id],
+            'oldPassword' => ['nullable', 'required_with:password', 'string'],
+            'password' => ['nullable', 'required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        // Update basic info
+        $admin->update([
+            'name' => $validated['name'],
+            'phone' => $validated['phone'],
+            'email' => $validated['email'],
+        ]);
+
+        // Update password if provided
+        if (!empty($validated['oldPassword']) && !empty($validated['password'])) {
+            if (\Illuminate\Support\Facades\Hash::check($validated['oldPassword'], $admin->password)) {
+                $admin->update([
+                    'password' => \Illuminate\Support\Facades\Hash::make($validated['password']),
+                ]);
+            } else {
+                return back()->withErrors(['oldPassword' => 'The old password is incorrect.']);
+            }
+        }
+
+        return back()->with('success', 'Profile updated successfully.');
     }
 }

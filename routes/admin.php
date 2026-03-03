@@ -34,6 +34,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/delete/{id}', [AdminController::class, 'deleteAdmin'])->name('delete');
         Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
         Route::get('/profile', [AdminController::class, 'profile'])->name('profile');
+        Route::post('/profile/update', [AdminController::class, 'updateProfile'])->name('profile.update');
 
         Route::group(['prefix' => 'users', 'as' => 'um.'], function () {
             Route::get('/users', [UserController::class, 'index'])->name('users.index');

@@ -269,7 +269,7 @@ export default function FileUpload({
                     onClick={() => !disabled && fileInputRef.current?.click()}
                     className={cn(
                         'cursor-pointer rounded-lg border-2 border-dashed transition-all',
-                        'hover:border-primary hover:bg-accent/50',
+                        'hover:border-bg-button hover:bg-accent/50',
                         'dark:border-gray-700 dark:hover:border-primary',
                         isDragging &&
                             'scale-[1.02] border-primary bg-accent/50',
@@ -295,11 +295,11 @@ export default function FileUpload({
                                 'bg-primary/10 dark:bg-primary/20',
                             )}
                         >
-                            <Upload className="h-8 w-8 text-secondary" />
+                            <Upload className="h-8 w-8 text-bg-button" />
                         </div>
 
                         <p className="mb-1 text-sm font-medium dark:text-gray-200">
-                            <span className="cursor-pointer text-secondary hover:underline">
+                            <span className="cursor-pointer text-bg-button hover:underline">
                                 Click to upload
                             </span>{' '}
                             or drag and drop

@@ -29,15 +29,9 @@ type Props = {
 };
 
 const STATUS_STYLES: Record<OrderStatus, { text: string; bg: string; border: string }> = {
-    Pending:   { text: 'text-amber-500',   bg: 'bg-amber-50',   border: 'border-amber-200'   },
-    Shipped:   { text: 'text-blue-500',    bg: 'bg-blue-50',    border: 'border-blue-200'    },
-    Delivered: { text: 'text-emerald-500', bg: 'bg-emerald-50', border: 'border-emerald-200' },
-};
-
-const STATUS_COLORS: Record<OrderStatus, string> = {
-    Pending:   'var(--amber-500)',
-    Shipped:   'var(--blue-500)',
-    Delivered: 'var(--emerald-500)',
+    Pending:   { text: 'text-text-testimonial', bg: 'bg-bg-card',        border: 'border-text-testimonial' },
+    Shipped:   { text: 'text-text-green',       bg: 'bg-bg-light-green', border: 'border-text-green'       },
+    Delivered: { text: 'text-text-green',       bg: 'bg-bg-light-green', border: 'border-text-green'       },
 };
 
 const EyeIcon = () => (
@@ -49,9 +43,9 @@ const EyeIcon = () => (
     </svg>
 );
 
-const ChevronDown = ({ color }: { color: string }) => (
+const ChevronDown = () => (
     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-        fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
         <polyline points="6 9 12 15 18 9" />
     </svg>
 );
@@ -144,8 +138,8 @@ export default function OrderCard({ orders: initialOrders }: Props) {
                                                     <option value="Shipped">Shipped</option>
                                                     <option value="Delivered">Delivered</option>
                                                 </select>
-                                                <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2">
-                                                    <ChevronDown color={STATUS_COLORS[order.status]} />
+                                                <span className={`pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 ${style.text}`}>
+                                                    <ChevronDown />
                                                 </span>
                                             </div>
                                         </td>

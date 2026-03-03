@@ -66,7 +66,7 @@ export default function index({
       label: 'Name',
       sortable: true,
       render: (user) => (
-        <div className="font-medium text-gray-900 dark:text-gray-100">
+        <div className="font-medium text-text-title">
           {user.name}
         </div>
       ),
@@ -76,7 +76,7 @@ export default function index({
       label: 'Email',
       sortable: true,
       render: (user) => (
-        <div className="text-gray-600 dark:text-gray-400">
+        <div className="text-text-body">
           {user.email}
         </div>
       ),
@@ -86,38 +86,18 @@ export default function index({
       label: 'Phone',
       sortable: true,
       render: (user) => (
-        <div className="text-gray-600 dark:text-gray-400">
+        <div className="text-text-body">
           {user.phone ? user.phone : 'N/A'}
         </div>
       ),
     },
-    // user type
-    {
-      key: 'user_type',
-      label: 'User Type',
-      sortable: true,
-      render: (user) => (
-        <div className="text-gray-600 dark:text-gray-400">
-          {USER_TYPE_LABELS[user.user_type] ?? user.user_type}
-        </div>
-      ),
-    },
-    {
-      key: 'is_verified',
-      label: 'Verified',
-      sortable: true,
-      render: (user) => (
-        <div className="text-gray-600 dark:text-gray-400">
-          <span className={`${user.is_verified ? 'bg-green-500' : 'bg-red-500'} text-white px-2 py-1 rounded-full text-xs font-semibold ${user.is_verified ? 'bg-green-500' : 'bg-red-500'}-600`}>{user.is_verified ? 'Verified' : 'Not Verified'}</span>
-        </div>
-      ),
-    },
+
     {
       key: 'created_at',
       label: 'Joined Date',
       sortable: true,
       render: (user) => (
-        <div className="text-gray-600 dark:text-gray-400">
+        <div className="text-text-body">
           {new Date(user.created_at).toLocaleDateString()}
         </div>
       ),
@@ -140,14 +120,6 @@ export default function index({
       },
     },
     {
-      label: 'Verify License',
-      icon: <ShieldCheck className="h-4 w-4" />, // ShieldCheck icon import korun
-      onClick: (user) => {
-        setSelectedUser(user);
-        setIsModalOpen(true);
-      },
-    },
-    {
       label: 'Delete',
       icon: <Trash2 className="h-4 w-4" />,
       onClick: (user) => {
@@ -160,7 +132,7 @@ export default function index({
   ];
 
   return (
-    <AdminLayout activeSlug="users">
+    <AdminLayout activeSlug="user-management">
       <Head title="Users" />
 
       <div className="flex justify-end mb-6">
@@ -178,15 +150,6 @@ export default function index({
           showNumbering={true}
           actions={actions}
           filters={[
-            {
-              key: 'user_type',
-              label: 'User Type',
-              options: [
-                { value: 'property_owner', label: 'Property Owner' },
-                { value: 'realtor', label: 'Realtor' },
-                { value: 'both', label: 'Both' },
-              ],
-            },
             {
               key: 'is_verified',
               label: 'Verification',
