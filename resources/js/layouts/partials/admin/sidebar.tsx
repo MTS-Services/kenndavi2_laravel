@@ -16,6 +16,12 @@ const adminNavItems: NavItemType[] = [
         slug: 'dashboard',
     },
     {
+        title: 'User Management',
+        href: route('admin.um.users.index'),
+        icon: Users,
+        slug: 'user-management',
+    },
+    {
         title: 'Product',
         href: route('admin.pm.index'),
         icon: Box,
