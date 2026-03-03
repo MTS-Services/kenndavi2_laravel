@@ -46,12 +46,12 @@ export default function OurStory() {
                             <img
                                 src="/assets/images/home/Rectangle 4339.png"
                                 alt="Family member 1"
-                                className="w-1/2 max-w-[200px] lg:max-w-full"
+                                className="w-full sm:w-1/2 max-w-full"
                             />
                             <img
                                 src="/assets/images/home/Rectangle 4338.png"
                                 alt="Family member 2"
-                                className="w-1/2 max-w-[200px] lg:max-w-full"
+                                className="w-full sm:w-1/2 max-w-full"
                             />
                         </div>
                         <p className="mb-8 font-aktiv-grotesk text-base lg:text-lg text-text-black">

@@ -21,7 +21,7 @@ const steps = [
 export default function RecipeDetails() {
     return (
         <FrontendLayout>
-            <div>
+            <div className="mb-12 sm:mb-28">
                 <div className="">
                     <img
                         src="/assets/images/product/Rectangle 3292 (2).png"

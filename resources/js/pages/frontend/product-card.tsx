@@ -73,11 +73,11 @@ export default function ProductCard() {
     return (
         <FrontendLayout>
             <div>
-                <div className="container mx-auto px-4 py-10 lg:py-16">
+                <div className="container mx-auto px-4 py-10 lg:py-16 mb-12 sm:mb-28">
                     <div className="grid gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.7fr)] xl:gap-16">
                         {/* Left Column - Shipping Table */}
                         <div className="rounded-sm border border-text-gray-300 p-6">
-                            <h2 className="mb-8 font-bebas-neue text-xl font-normal text-text-title uppercase">
+                            <h2 className="mb-8 font-bebas-neue text-3xl font-normal text-text-title uppercase">
                                 Shopping Cart
                             </h2>
                             {/* Header - Hidden on mobile */}

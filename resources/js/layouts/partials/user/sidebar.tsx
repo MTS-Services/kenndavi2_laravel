@@ -5,30 +5,27 @@ import { Menu, X, Home, Settings, FileText, LogOut, PlusCircle, Shield } from 'l
 import { useState } from 'react';
 
 export default function Sidebar() {
-    const { url, component } = usePage();
     const [isOpen, setIsOpen] = useState(false);
     const { auth } = usePage<SharedData>().props;
     const [userType, setUserType] = useState(auth.user.user_type);
 
-    const NavItem = ({
-        href,
-        label,
-        icon,
-        onClick,
-    }: {
+    const NavItem = ({href, label, icon, onClick,}: {
         href?: string;
         label: string;
         icon?: React.ReactNode;
         onClick?: () => void;
     }) => {
-        const isActive = url === href || component === href?.replace('/user/', '');
+
+        const currentUrl = usePage().url;
+        const hrefPath = href ? new URL(href, window.location.origin).pathname : '';
+        const isActive = hrefPath ? currentUrl.startsWith(hrefPath) : false;
         
         return (
             <Link
                 href={href || '#'}
                 onClick={onClick}
                 className={cn(
-                    'flex items-center gap-3 py-3 font-normal text-base font-aktiv-grotesk border-b border-text-body text-text-body',
+                    'flex items-center gap-3 py-3 font-normal text-base font-aktiv-grotesk border-b border-text-body text-text-body hover:text-text-buy-now',
                     isActive 
                         ? 'text-text-buy-now' 
                         : 'text-text-title'
@@ -51,7 +48,7 @@ export default function Sidebar() {
             <div className="flex items-center gap-4 md:hidden">
                 <button
                     onClick={() => setIsOpen(!isOpen)}
-                    className="rounded-lg bg-orange-500 p-2 text-white shadow-lg md:hidden"
+                    className="rounded-lg bg-bg-button p-2 text-white shadow-lg md:hidden"
                 >
                     {isOpen ? <X size={22} /> : <Menu size={22} />}
                 </button>
@@ -70,7 +67,7 @@ export default function Sidebar() {
 
             <aside
                 className={cn(
-                    'fixed top-0 left-0 z-50 h-full w-72 shadow-lg transition-transform duration-300 md:relative md:translate-x-0 md:shadow-none',
+                    'fixed top-0 left-0 z-50 h-full w-72 shadow-lg transition-transform bg-bg-white duration-300 md:relative md:translate-x-0 md:shadow-none',
                     isOpen ? 'translate-x-0' : '-translate-x-full',
                 )}
             >

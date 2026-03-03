@@ -1,4 +1,4 @@
-import ProductCardAdmin from '@/components/ui/product-card-admin';
+import ProductCardAdmin, { productData } from '@/components/ui/product-card-admin';
 import SaucesCardAdmin from '@/components/ui/product-card-admin';
 import AdminLayout from '@/layouts/admin-layout';
 import { Link } from '@inertiajs/react';
@@ -53,6 +53,7 @@ const saucesData = [
 
 export default function Index() {
     const [showCreateModal, setShowCreateModal] = useState(false);
+    const [editingProduct, setEditingProduct] = useState<productData | null>(null);
     const [photos, setPhotos] = useState<(File | null)[]>([null, null, null, null, null]);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
@@ -61,6 +62,16 @@ export default function Index() {
     const [price, setPrice] = useState('');
     const [dragOver, setDragOver] = useState<number | null>(null);
     const fileInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+    const handleEdit = (product: productData) => {
+        setEditingProduct(product);
+        setTitle(product.name);
+        setDescription(product.description);
+        setCategory(product.category || 'Sweet');
+        setStockLevel(product.available || 10);
+        setPrice(product.price.replace('$', ''));
+        setShowCreateModal(true);
+    };
 
     const handleFileChange = (index: number, file: File | null) => {
         if (!file) return;
@@ -102,6 +113,7 @@ export default function Index() {
 
     const handleCloseModal = () => {
         setShowCreateModal(false);
+        setEditingProduct(null);
         // Reset form
         setPhotos([null, null, null, null, null]);
         setTitle('');
@@ -114,19 +126,19 @@ export default function Index() {
     return (
         <AdminLayout activeSlug={'product-management'}>
             <div className="flex items-center justify-between">
-                <h2 className="font-poppins text-4xl font-medium text-text-title">
+                <h2 className="font-poppins xl sm:text-4xl font-medium text-text-title">
                     Manage your products
                 </h2>
                 <button 
                     onClick={() => setShowCreateModal(true)}
-                    className="rounded-xl bg-bg-button px-6 py-4 font-inter text-xl font-medium text-text-white hover:opacity-90 transition-opacity"
+                    className="rounded-xl bg-bg-button px-3 sm:px-6 py-2 sm:py-4 font-inter text-base sm:text-xl font-medium text-text-white hover:opacity-90 transition-opacity cursor-pointer"
                 >
                     Add a new product
                 </button>
             </div>
             <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 ">
                 {saucesData.map((sauce) => (
-                    <ProductCardAdmin key={sauce.id} product={sauce} />
+                    <ProductCardAdmin key={sauce.id} product={sauce} onEdit={handleEdit} />
                 ))}
             </div>
             <div className="flex items-center justify-between py-4">
@@ -153,7 +165,7 @@ export default function Index() {
                         <div className="flex items-center justify-between">
                             <div>
                                 <h3 className="font-poppins font-medium text-3xl text-text-title mb-8">
-                                    Add new Product
+                                    {editingProduct ? 'Edit Product' : 'Add new Product'}
                                 </h3>
                             </div>
                             <button
@@ -171,7 +183,7 @@ export default function Index() {
                             <div className="flex flex-col gap-6">
                                 {/* Photo Upload Row */}
                                 <div>
-                                    <div className="flex gap-3">
+                                    <div className="flex flex-col sm:flex-row gap-3">
                                         {photos.map((photo, i) => {
                                             const previewUrl = photo ? URL.createObjectURL(photo) : null;
                                             return (
@@ -184,7 +196,7 @@ export default function Index() {
                                                     }}
                                                     onDragLeave={() => setDragOver(null)}
                                                     onDrop={(e) => handleDrop(e, i)}
-                                                    className="flex-1 aspect-square rounded-xl bg-bg-card flex flex-col items-center justify-center cursor-pointer overflow-hidden font-inter font-medium text-xl text-text-body"
+                                                    className="flex-1 aspect-square rounded-xl bg-bg-card flex flex-col mb-2 items-center justify-center cursor-pointer overflow-hidden font-inter font-medium text-xl text-text-body"
                                                     style={{
                                                         borderColor: dragOver === i ? '#9b1c1c' : undefined,
                                                         background: previewUrl ? 'transparent' : undefined,
