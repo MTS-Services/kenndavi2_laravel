@@ -153,7 +153,7 @@ export default function OrderCard({ orders: initialOrders }: Props) {
                                         <td className="px-6 py-4">
                                             <button 
                                                 onClick={() => handleViewOrder(order)}
-                                                className="p-1.5 rounded-full text-text-title font-roboto text-base font-normal hover:bg-bg-card transition-colors" 
+                                                className="p-1.5 rounded-full text-text-title font-roboto text-base font-normal hover:bg-bg-card transition-colors cursor-pointer" 
                                                 aria-label="View order"
                                             >
                                                 <EyeIcon />

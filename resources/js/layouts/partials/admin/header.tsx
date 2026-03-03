@@ -53,7 +53,7 @@ export function AdminHeader({
                             <div className="shrink-0">
                                <Link href={route('admin.dashboard')}>
                                 <img
-                                    className="h-20 w-auto"
+                                    className="hidden sm:block h-20 w-auto"
                                     src="/assets/images/logo.png"
                                     alt="Logo"
                                 />
@@ -62,9 +62,9 @@ export function AdminHeader({
                         </div>
 
                         {/* Right side - Notifications and user menu */}
-                        <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-2">
                             {/* Notifications button */}
-                            <button className="rounded-full p-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none">
+                            <button className="rounded-full text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none">
                                 <Bell className="h-6 w-6" />
                             </button>
 
@@ -75,10 +75,11 @@ export function AdminHeader({
                                         variant="ghost"
                                         className="inline-flex text-start items-center justify-center p-2 text-gray-600 cursor-pointer"
                                     >
-                                        <Avatar className="h-20 w-20">
+                                        <Avatar className="h-16 sm:h-20 w-20">
                                             <AvatarImage
                                                 src="/assets/images/8.png"
                                                 alt={auth.admin.name || 'Admin'}
+                                                className="w-full h-full"
                                             />
                                             <AvatarFallback className="bg-gray-300 text-gray-700">
                                                 {getInitials(
@@ -86,9 +87,9 @@ export function AdminHeader({
                                                 )}
                                             </AvatarFallback>
                                         </Avatar>
-                                        <div className="">
+                                        <div className="hidden sm:block">
                                             <h2 className="font-poppins text-base font-medium text-text-title">
-                                                Atik adnan
+                                                {auth.admin.name || 'Admin'}
                                             </h2>
                                             <h2 className="font-poppins text-sm font-normal text-text-title">
                                                 Admin
