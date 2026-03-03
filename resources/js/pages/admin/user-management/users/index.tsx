@@ -91,35 +91,7 @@ export default function index({
         </div>
       ),
     },
-    // user type
-    {
-      key: 'user_type',
-      label: 'User Type',
-      sortable: true,
-      render: (user) => (
-        <div className="text-text-body">
-          {USER_TYPE_LABELS[user.user_type] ?? user.user_type}
-        </div>
-      ),
-    },
-    {
-      key: 'is_verified',
-      label: 'Verified',
-      sortable: true,
-      render: (user) => (
-        <div className="text-text-body">
-          <span
-            className={`px-3 py-1 rounded-full text-xs font-semibold border ${
-              user.is_verified
-                ? 'bg-bg-light-green text-text-green border-text-green'
-                : 'bg-bg-card text-text-buy-now border-text-buy-now'
-            }`}
-          >
-            {user.is_verified ? 'Verified' : 'Not Verified'}
-          </span>
-        </div>
-      ),
-    },
+
     {
       key: 'created_at',
       label: 'Joined Date',
@@ -186,15 +158,6 @@ export default function index({
           showNumbering={true}
           actions={actions}
           filters={[
-            {
-              key: 'user_type',
-              label: 'User Type',
-              options: [
-                { value: 'property_owner', label: 'Property Owner' },
-                { value: 'realtor', label: 'Realtor' },
-                { value: 'both', label: 'Both' },
-              ],
-            },
             {
               key: 'is_verified',
               label: 'Verification',

@@ -9,6 +9,9 @@ import { update, index } from '@/actions/App/Http/Controllers/Admin/UserManageme
 import FileUpload from '@/components/file-upload';
 import { toast } from 'sonner';
 import { User } from '@/types';
+import { PasswordInput } from '@/components/ui/password-input';
+import InputError from '@/components/input-error';
+import password from '@/routes/password';
 
 interface Props {
     user: User;
@@ -16,13 +19,10 @@ interface Props {
 
 export default function EditUser({ user }: Props) {
     const { data, setData, post, processing, errors, reset } = useForm({
-        name: '',
-        id: '',
-        username: '',
-        email: '',
-        phone: '',
-        brokerage_name: '',
-        license_number: '',
+        name: user.name ?? '',
+        id: user.id ?? '',
+        email: user.email ?? '',
+        phone: user.phone ?? '',
         image: null as File | null,
         password: '',
         password_confirmation: '',
@@ -32,17 +32,7 @@ export default function EditUser({ user }: Props) {
 
     useEffect(() => {
         if (user) {
-            setData({
-                name: user.name,
-                id: user.id,
-                username: user.username || '',
-                email: user.email,
-                phone: user.phone || '',
-                brokerage_name: user.brokerage_name || '',
-                license_number: user.license_number || '',
-                image: null,
-                _method: 'PUT',
-            });
+            
 
             // Update existing files whenever information changes
             if (user.image) {
@@ -69,7 +59,7 @@ export default function EditUser({ user }: Props) {
         e.preventDefault();
 
         // @ts-ignore - Inertia will handle FormData correctly
-        post(update.url(user.id), {
+        post(route('admin.um.user.update', user.id), {
             forceFormData: true,
             onSuccess: () => {
                 // Clear the "New Files" preview after successful upload
@@ -111,17 +101,6 @@ export default function EditUser({ user }: Props) {
                         </div>
                         <div></div>
                         <div className="grid gap-2">
-                            <Label htmlFor="username">Username</Label>
-                            <Input
-                                id="username"
-                                type="text"
-                                value={data.username}
-                                onChange={(e) => setData('username', e.target.value)}
-                                required
-                            />
-                            {errors.username && <div className="text-red-500 text-sm">{errors.username}</div>}
-                        </div>
-                        <div className="grid gap-2">
                             <Label htmlFor="name">Name</Label>
                             <Input
                                 id="name"
@@ -155,28 +134,32 @@ export default function EditUser({ user }: Props) {
                             />
                             {errors.phone && <div className="text-red-500 text-sm">{errors.phone}</div>}
                         </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="brokerage_name">Brokerage Name</Label>
-                            <Input
-                                id="brokerage_name"
-                                type="text"
-                                value={data.brokerage_name}
-                                onChange={(e) => setData('brokerage_name', e.target.value)}
-                                
-                            />
-                            {errors.brokerage_name && <div className="text-red-500 text-sm">{errors.brokerage_name}</div>}
-                        </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="license_number">License Number</Label>
-                            <Input
-                                id="license_number"
-                                type="text"
-                                value={data.license_number}
-                                onChange={(e) => setData('license_number', e.target.value)}
-                                
-                            />
-                            {errors.license_number && <div className="text-red-500 text-sm">{errors.license_number}</div>}
-                        </div>
+                         <div className="grid gap-2">
+                                <Label htmlFor="password">Password</Label>
+                                <PasswordInput
+                                    id="password"
+                                    name="password"
+                                    value={data.password}
+                                    onChange={(e) => setData('password', e.target.value)}
+                                    required
+                                    placeholder=""
+                                    className="h-11 border-gray-200 bg-white/50 px-4! py-3!"
+                                />
+                                <InputError message={errors.password} />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="password_confirmation">Confirm Password</Label>
+                                <PasswordInput
+                                    id="password_confirmation"
+                                    name="password_confirmation"
+                                    value={data.password_confirmation}
+                                    onChange={(e) => setData('password_confirmation', e.target.value)}
+                                    required
+                                    placeholder=""
+                                    className="h-11 border-gray-200 bg-white/50 px-4! py-3!"
+                                />
+                                <InputError message={errors.password_confirmation} />
+                            </div>
                     </div>
 
                     <div className="flex items-center gap-4">
