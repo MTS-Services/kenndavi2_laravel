@@ -5,8 +5,6 @@ namespace App\Http\Controllers\User;
 use App\Concerns\PasswordValidationRules;
 use App\Enums\ActiveInactive;
 use App\Http\Controllers\Controller;
-use App\Mail\FoundingAdminRegistrationMail;
-use App\Mail\FoundingPartnerRegistrationMail;
 use App\Mail\UserPasswordResetOtpMail;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -33,11 +31,7 @@ class UserAuthController extends Controller
     {
         Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
-            'username' => ['required', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:20'],
-            'your_self' => ['nullable', 'string', 'max:255'],
-            'brokerage_name' => ['nullable', 'string', 'max:255'],
-            'license_number' => ['nullable', 'string', 'max:255'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:2048'],
             'email' => [
                 'required',
@@ -58,27 +52,14 @@ class UserAuthController extends Controller
         $user = User::create([
             'name' => $request['name'],
             'email' => $request['email'],
-            'username' => $request['username'],
             'phone' => $request['phone'],
-            'user_type' => $request['type'],
-            'your_self' => $request['your_self'],
-            'brokerage_name' => $request['brokerage_name'],
-            'license_number' => $request['license_number'],
             'image' => isset($imageName) ? $imageName : null,
-            'status' => ActiveInactive::INACTIVE->value,
+            'status' => ActiveInactive::ACTIVE->value,
             'password' => Hash::make($request['password']),
         ]);
-        if (! $user) {
-            return redirect()->back()->withErrors(['error' => 'Failed to register user.'])->withInput();
-        }
-        // Mail::to($user->email)->send(new FoundingPartnerRegistrationMail($user));
-        if ($user->email) {
-            Mail::to($user->email)->later(now()->addSeconds(5), new FoundingPartnerRegistrationMail($user));
-        }
-        Mail::to(config('mail.from.address'))->send(new FoundingAdminRegistrationMail($user));
         Auth::login($user);
 
-        return redirect()->route('user.pending-verification');
+        return redirect()->route('user.dashboard');
     }
 
     public function logout(Request $request)
