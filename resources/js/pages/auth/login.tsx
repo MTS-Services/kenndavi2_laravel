@@ -52,7 +52,7 @@ export default function Login({ status, userType }: LoginProps) {
                                         >
                                             Email address
                                         </Label>
-                                        <input
+                                        <Input
                                             id="email"
                                             type="email"
                                             name="email"
@@ -71,7 +71,7 @@ export default function Login({ status, userType }: LoginProps) {
                                         >
                                             Password
                                         </Label>
-                                        <input
+                                        <PasswordInput
                                             id="password"
                                             name="password"
                                             required

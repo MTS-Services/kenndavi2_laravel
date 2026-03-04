@@ -15,11 +15,18 @@ function FrontendHeader({ activePage, subPage, cartImage }: Props) {
     const user = auth?.user;
 
     return (
-        <header className="bg-bg-header py-1.5 md:py-3 lg:py-6">
+        <header className="bg-bg-header py-0.5 md:py-1 lg:py-2">
             <div className="container mx-auto px-4">
-                {/* Desktop Layout */}
+                 {/* Desktop Layout */}
                 <div className="hidden md:flex items-center justify-between">
-                    {/* Left Navigation */}
+                     {/* left Logo */}
+                    <div className="flex transform flex-col items-center">
+                       <Link href="/" className="text-text-white transition-colors hover:text-gray-300">
+                            <img src="/assets/images/logo.png" alt="logo" className="max-w-40 max-h-40" />
+                        </Link>
+                    </div>
+               
+                    {/* center Navigation */}
                     <nav className="flex items-center space-x-8">
                         <Link
                             href="/"
@@ -32,23 +39,25 @@ function FrontendHeader({ activePage, subPage, cartImage }: Props) {
                             HOME
                         </Link>
                         <Link
-                            href="/sauce-recipes"
-                            className={`font-normal text-text-white text-4xl transition-colors font-bebas-neue border-b-2 ${
+                            href="#our-sauces"
+                            className={`font-normal text-text-white text-4xl transition-colors font-bebas-neue border-b-2 uppercase ${
                                 activePage === 'sauce-recipes'
                                     ? 'border-white'
                                     : 'border-transparent hover:border-gray-400'
                             }`}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                const element = document.getElementById('our-sauces');
+                                if (element) {
+                                    element.scrollIntoView({ behavior: 'smooth' });
+                                }
+                            }}
                         >
-                            RECIPES
+                            Sauces
                         </Link>
                     </nav>
 
-                    {/* Center Logo */}
-                    <div className="flex transform flex-col items-center">
-                       <Link href="/" className="text-text-white transition-colors hover:text-gray-300">
-                            <img src="/assets/images/logo.png" alt="logo" className="max-w-25 max-h-25" />
-                        </Link>
-                    </div>
+                   
 
                     {/* Right Icons */}
                     <div className="flex items-center space-x-4">
@@ -101,15 +110,22 @@ function FrontendHeader({ activePage, subPage, cartImage }: Props) {
                                 HOME
                             </Link>
                             <Link
-                                href="sauce-recipes"
+                                href="#our-sauces"
                                 className={`font-normal text-text-white text-xl transition-colors font-bebas-neue ${
                                     activePage === 'sauce-recipes'
                                         ? 'border-b-2 border-text-white'
                                         : 'hover:border-gray-400'
                                 }`}
-                                onClick={() => setIsMobileMenuOpen(false)}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    const element = document.getElementById('our-sauces');
+                                    if (element) {
+                                        element.scrollIntoView({ behavior: 'smooth' });
+                                    }
+                                    setIsMobileMenuOpen(false);
+                                }}
                             >
-                                RECIPES
+                                Sauces
                             </Link>
                             <div className="flex items-center space-x-4 pt-4">
                                 <Link className="text-text-white transition-colors hover:text-gray-300">
