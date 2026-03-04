@@ -1,20 +1,19 @@
 import AuthLayout from '@/layouts/auth-layout';
-import { forgotPassword } from '@/routes/admin';
-import { Link, useForm } from '@inertiajs/react';
+import { Link, useForm, router } from '@inertiajs/react';
 import { ArrowRight } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import InputError from '@/components/input-error';
 
 export default function ForgetPassword() {
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, processing, errors } = useForm({
         email: '',
     });
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         
-        // Send data to Laravel login route
-        post(forgotPassword.url()); // Laravel route URL
+        router.post(route('admin.forgot-password.post'), data);
     };
 
     return (
@@ -42,11 +41,7 @@ export default function ForgetPassword() {
                         placeholder="you@example.com"   
                         required
                     />
-                    {errors.email && (
-                        <p className="mt-1 text-sm text-red-500">
-                            {errors.email}
-                        </p>
-                    )}
+                      <InputError message={errors.email} />
                 </div>
 
                 <button

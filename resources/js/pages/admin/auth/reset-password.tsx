@@ -1,7 +1,6 @@
 import TextLink from '@/components/text-link';
 import { PasswordInput } from '@/components/ui/password-input';
 import AuthLayout from '@/layouts/auth-layout';
-import { login } from '@/routes/admin';
 import { Link, useForm } from '@inertiajs/react';
 import { Label } from '@radix-ui/react-label';
 import { ArrowRightIcon } from 'lucide-react';
@@ -18,7 +17,7 @@ export default function ResetPassword() {
         e.preventDefault();
 
         // Send data to Laravel login route
-        post(login.url()); // Laravel route URL
+        post(route('admin.reset-password.post')); // Laravel route URL
     };
 
     return (

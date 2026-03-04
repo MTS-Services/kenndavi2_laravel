@@ -1,6 +1,6 @@
 export default function OurStory() {
     return (
-        <div className="bg-bg-button py-12 sm:py-16 lg:py-20 mt-20">
+        <div className="mt-20 bg-bg-button py-12 sm:py-16 lg:py-20">
             <div className="container mx-auto px-4">
                 <div className="grid grid-cols-1 gap-[100px] lg:grid-cols-2 xl:gap-[120px]">
                     {/* Left Column */}
@@ -8,10 +8,10 @@ export default function OurStory() {
                         <div className="mb-6 flex items-center lg:justify-center">
                             <div className="mr-4 h-24 w-4 bg-gradient-to-b from-[#CC1610] to-[#E6F5F0]"></div>
                             <div>
-                                <p className="text-text-white text-sm font-normal mb-4">
+                                <p className="mb-4 text-sm font-normal text-text-white">
                                     Our Story
                                 </p>
-                                <h2 className="font-bebas-neue text-3xl sm:text-4xl font-normal text-text-white">
+                                <h2 className="font-bebas-neue text-3xl font-normal text-text-white sm:text-4xl">
                                     GREETINGS FAMILY,
                                     <br />
                                     THE TASTE OF THA NORTHSIDE
@@ -23,10 +23,10 @@ export default function OurStory() {
                             alt="Grandmother preparing food"
                             className="mb-6 w-full max-w-md lg:max-w-lg"
                         />
-                        <p className="mb-4 font-aktiv-grotesk text-lg sm:text-xl lg:text-2xl font-normal text-text-white">
+                        <p className="mb-4 font-aktiv-grotesk text-lg font-normal text-text-white sm:text-xl lg:text-2xl">
                             Just remember when you are enjoying every savory
                             taste of my bar-b-que sauce you are tasting…{' '}
-                            <span className="text-lg sm:text-xl lg:text-2xl font-normal text-text-white">
+                            <span className="text-lg font-normal text-text-white sm:text-xl lg:text-2xl">
                                 Legacy in Every Drop.
                             </span>
                         </p>
@@ -42,37 +42,50 @@ export default function OurStory() {
 
                     {/* Right Column */}
                     <div className="flex flex-col items-start">
-                        <div className="mb-6 flex flex-col sm:flex-row gap-4 lg:justify-center">
+                        <div className="mb-6 flex flex-col gap-4 sm:flex-row lg:justify-center">
                             <img
                                 src="/assets/images/home/Rectangle 4339.png"
                                 alt="Family member 1"
-                                className="w-full sm:w-1/2 max-w-full"
+                                className="w-full max-w-full sm:w-1/2"
                             />
                             <img
                                 src="/assets/images/home/Rectangle 4338.png"
                                 alt="Family member 2"
-                                className="w-full sm:w-1/2 max-w-full"
+                                className="w-full max-w-full sm:w-1/2"
                             />
                         </div>
-                        <p className="mb-8 font-aktiv-grotesk text-base lg:text-lg text-text-white">
-                            Aces In DA Hole was created to celebrate a brotherhood built over 30+ years, not by blood, but by loyalty. Through every setback, hardship, and triumph, we've stood together, uplifted each other, and grown stronger as one. Our brand reflects that same standard, crafted to stand the test of time, just like real brotherhood does. Aces In DA Hole - "Built on Loyalty Designed to Last".
+                        <p className="mb-8 font-aktiv-grotesk text-base text-text-white lg:text-lg">
+                            I have created a brand-new twist to a great family
+                            bar-b-que sauce recipe.  The recipe was originally
+                            made by my grandmother “Sylvia.”  She passed the
+                            recipe down to my father “Kenneth Sr.” My dad did
+                            not know I was watching him and my grandmother the
+                            whole time in the kitchen making it from scratch.I
+                            thought of a great way to honor my family legacy by
+                            adding my twist to the family recipe by creating
+                            three new favors from my grandma’s original
+                            recipe.So, I would like to introduce you to the
+                            following three new flavors of Sweet, Honey,
+                            Teriyaki.  Each bottle is a celebration of where we
+                            come from…shared meals, laughter around the table,
+                            and generations connecting through food.
                         </p>
 
                         {/* Statistics */}
                         <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
                             <div className="text-center">
-                                <h3 className="font-bebas-neue text-4xl sm:text-5xl lg:text-6xl font-normal text-text-white">
+                                <h3 className="font-bebas-neue text-4xl font-normal text-text-white sm:text-5xl lg:text-6xl">
                                     15K {'+'}
                                 </h3>
-                                <p className="font-aktiv-grotesk text-lg sm:text-xl lg:text-2xl font-normal text-text-white">
+                                <p className="font-aktiv-grotesk text-lg font-normal text-text-white sm:text-xl lg:text-2xl">
                                     Satisfied Customer
                                 </p>
                             </div>
                             <div className="text-center">
-                                <h3 className="font-bebas-neue text-4xl sm:text-5xl lg:text-6xl font-normal text-text-white">
-                                    30 YEARS {'+'}
+                                <h3 className="font-bebas-neue text-4xl font-normal text-text-white sm:text-5xl lg:text-6xl">
+                                    10 YEARS {'+'}
                                 </h3>
-                                <p className="font-aktiv-grotesk text-lg sm:text-xl lg:text-2xl font-normal text-text-white">
+                                <p className="font-aktiv-grotesk text-lg font-normal text-text-white sm:text-xl lg:text-2xl">
                                     Experience
                                 </p>
                             </div>

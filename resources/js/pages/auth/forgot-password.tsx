@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import FrontendLayout from '@/layouts/frontend-layout';
-import { email } from '@/routes/password';
+
 
 export default function ForgotPassword({ status }: { status?: string }) {
     return (
@@ -30,7 +30,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
                         </div>
                     )}
 
-                    <Form {...email.form()} className="space-y-6">
+                    <Form method="post" action={route('forgot-password.post')} className="space-y-6">
                         {({ processing, errors }) => (
                             <>
                                 <div className="grid gap-2">

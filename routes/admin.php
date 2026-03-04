@@ -13,8 +13,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('guest:admin')->group(function () {
         Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('login');
         Route::post('/login', [AdminAuthController::class, 'login'])->name('login.post');
-        Route::get('/register', [AdminAuthController::class, 'register'])->name('register');
-        Route::post('/register', [AdminAuthController::class, 'registerStore'])->name('register.post');
         Route::get('/forgot-password', [AdminAuthController::class, 'forgotPassword'])->name('forgot-password');
         Route::post('/forgot-password', [AdminAuthController::class, 'forgotPasswordStore'])->name('forgot-password.post');
         Route::get('/otp-verification', [AdminAuthController::class, 'otpVerification'])->name('otp-verification');
