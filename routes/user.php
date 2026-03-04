@@ -10,8 +10,11 @@ Route::post('/login', [LoginController::class, 'store'])->name('login.post');
 Route::get('/register', [UserAuthController::class, 'register'])->name('register');
 Route::post('/register', [UserAuthController::class, 'registerStore'])->name('register.post');
 Route::get('forgot-password', [UserAuthController::class, 'forgotPassword'])->name('forgot-password');
+Route::post('forgot-password', [UserAuthController::class, 'forgotPasswordStore'])->name('forgot-password.post');
 Route::get('/otp-verification', [UserAuthController::class, 'otpVerification'])->name('otp-verification');
+Route::post('/otp-verification', [UserAuthController::class, 'otpVerificationStore'])->name('otp-verification.post');
 Route::get('reset-password', [UserAuthController::class, 'resetPassword'])->name('reset-password');
+Route::post('reset-password', [UserAuthController::class, 'resetPasswordStore'])->name('reset-password.post');
 
 Route::prefix('user')->name('user.')->group(function () {
     // Authentication Routes...
