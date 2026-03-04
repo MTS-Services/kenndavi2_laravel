@@ -1,18 +1,69 @@
+import { Input } from '@/components/ui/input';
 import AuthLayout from '@/layouts/auth-layout';
-import { forgotPassword } from '@/routes/admin';
-import { Link,  useForm } from '@inertiajs/react';
-import { ArrowRight } from 'lucide-react';
+import { Link, useForm } from '@inertiajs/react';
+import { useRef, useState } from 'react';
 
-export default function OtpVerification() {
+const userType = new URLSearchParams(window.location.search).get('type');
+interface LoginProps {
+    userType: string;
+    status?: string;
+    canResetPassword: boolean;
+    canRegister: boolean;
+}
+
+export default function OtpVerification({ status, userType }: LoginProps) {
     const { data, setData, post, processing, errors } = useForm({
         otp: '',
     });
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const [otpValues, setOtpValues] = useState(['', '', '', '', '', '']);
+    const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-        // Send data to Laravel login route
-        post(forgotPassword.url()); // Laravel route URL
+    const handleInputChange = (index: number, value: string) => {
+        // Only allow numbers
+        const numericValue = value.replace(/[^0-9]/g, '');
+
+        const newValues = [...otpValues];
+        newValues[index] = numericValue;
+        setOtpValues(newValues);
+
+        // Auto-focus next input
+        if (numericValue && index < 5) {
+            inputRefs.current[index + 1]?.focus();
+        }
+    };
+
+    const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
+        // Handle backspace
+        if (e.key === 'Backspace' && !otpValues[index] && index > 0) {
+            inputRefs.current[index - 1]?.focus();
+        }
+    };
+
+    const handlePaste = (e: React.ClipboardEvent) => {
+        e.preventDefault();
+        const pastedData = e.clipboardData
+            .getData('text')
+            .replace(/[^0-9]/g, '')
+            .slice(0, 6);
+
+        const newValues = ['', '', '', '', '', ''];
+        for (let i = 0; i < pastedData.length; i++) {
+            newValues[i] = pastedData[i];
+        }
+        setOtpValues(newValues);
+
+        // Focus the next empty input or the last one
+        const nextEmptyIndex = newValues.findIndex((val) => val === '');
+        const focusIndex = nextEmptyIndex === -1 ? 5 : nextEmptyIndex;
+        inputRefs.current[focusIndex]?.focus();
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        const fullOtp = otpValues.join('');
+        setData('otp', fullOtp);
+        post(route('admin.otp.verify'));
     };
 
     return (
@@ -24,60 +75,31 @@ export default function OtpVerification() {
                 <h2 className=""></h2>
             </div>
             <form className="space-y-4" onSubmit={handleSubmit}>
-                <div className="flex gap-2">
-                
-                    <input
-                        type="text"
-                        id="otp"
-                        value={data.otp}
-                        onChange={(e) => setData('otp', e.target.value)}
-                        className="w-full rounded-md border border-gray-300 px-4 py-3"
-                        placeholder="you@example.com"
-                        required
-                    />
-                    <input
-                        type="text"
-                        id="otp"
-                        value={data.otp}
-                        onChange={(e) => setData('otp', e.target.value)}
-                        className="w-full rounded-md border border-gray-300 px-4 py-3"
-                        placeholder="you@example.com"
-                        required
-                    />
-                    <input
-                        type="text"
-                        id="otp"
-                        value={data.otp}
-                        onChange={(e) => setData('otp', e.target.value)}
-                        className="w-full rounded-md border border-gray-300 px-4 py-3"
-                        placeholder="you@example.com"
-                        required
-                    />
-                    <input
-                        type="text"
-                        id="otp"
-                        value={data.otp}
-                        onChange={(e) => setData('otp', e.target.value)}
-                        className="w-full rounded-md border border-gray-300 px-4 py-3"
-                        placeholder="you@example.com"
-                        required
-                    />
-                    <input
-                        type="text"
-                        id="otp"
-                        value={data.otp}
-                        onChange={(e) => setData('otp', e.target.value)}
-                        className="w-full rounded-md border border-gray-300 px-4 py-3"
-                        placeholder="you@example.com"
-                        required
-                    />
-                    {errors.otp && (
-                        <p className="mt-1 text-sm text-red-500">
-                            {errors.otp}
-                        </p>
-                    )}
+                <div className="flex justify-center gap-2 items-center">
+                    {/* OTP Input Boxes */}
+                    <div className="flex justify-center gap-2">
+                        {otpValues.map((value, index) => (
+                            <Input
+                                key={index}
+                                ref={(el) => {
+                                    inputRefs.current[index] = el;
+                                }}
+                                type="text"
+                                inputMode="numeric"
+                                pattern="[0-9]"
+                                maxLength={1}
+                                value={value}
+                                onChange={(e) =>
+                                    handleInputChange(index, e.target.value)
+                                }
+                                onKeyDown={(e) => handleKeyDown(index, e)}
+                                onPaste={index === 0 ? handlePaste : undefined}
+                                className="h-12 w-12 rounded-lg border border-text-gray-300 text-center text-lg font-semibold transition-all outline-none focus:border-text-buy-now focus:ring-2 focus:ring-text-buy-now/20"
+                                style={{ fontFamily: 'monospace' }}
+                            />
+                        ))}
+                    </div>
                 </div>
-
 
                 <button
                     type="submit"

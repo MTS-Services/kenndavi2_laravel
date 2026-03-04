@@ -40,7 +40,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
                                     >
                                         Email Address
                                     </Label>
-                                    <input
+                                    <Input
                                         id="email"
                                         type="email"
                                         name="email"

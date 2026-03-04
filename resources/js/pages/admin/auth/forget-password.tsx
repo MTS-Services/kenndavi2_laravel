@@ -2,6 +2,8 @@ import AuthLayout from '@/layouts/auth-layout';
 import { forgotPassword } from '@/routes/admin';
 import { Link, useForm } from '@inertiajs/react';
 import { ArrowRight } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 
 export default function ForgetPassword() {
     const { data, setData, post, processing, errors } = useForm({
@@ -10,7 +12,7 @@ export default function ForgetPassword() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
+        
         // Send data to Laravel login route
         post(forgotPassword.url()); // Laravel route URL
     };
@@ -25,18 +27,18 @@ export default function ForgetPassword() {
             </div>
             <form className="space-y-4" onSubmit={handleSubmit}>
                 <div>
-                    <label
+                    <Label
                         htmlFor="email"
                         className="mb-2 font-inter text-base font-normal text-text-title"
                     >
                         Email address
-                    </label>
-                    <input
+                    </Label>
+                    <Input
                         type="email"
                         id="email"
                         value={data.email}
                         onChange={(e) => setData('email', e.target.value)}
-                        className="w-full rounded-md border border-gray-300 px-4 py-3"
+                        className="lock w-full appearance-none rounded-md border border-text-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm"
                         placeholder="you@example.com"   
                         required
                     />

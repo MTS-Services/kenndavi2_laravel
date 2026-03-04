@@ -101,7 +101,7 @@ export default function OtpVerification({ status, userType }: LoginProps) {
                                         {/* OTP Input Boxes */}
                                         <div className="flex justify-center gap-2">
                                             {otpValues.map((value, index) => (
-                                                <input
+                                                <Input
                                                     key={index}
                                                     ref={(el) => {
                                                         inputRefs.current[index] = el;

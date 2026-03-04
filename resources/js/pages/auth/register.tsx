@@ -59,7 +59,7 @@ export default function Register() {
                                         >
                                            Full Name
                                         </Label>
-                                        <input
+                                        <Input
                                             id="name"
                                             type="text"
                                             name="name"
@@ -78,7 +78,7 @@ export default function Register() {
                                         >
                                             Email address
                                         </Label>
-                                        <input
+                                        <Input
                                             id="email"
                                             type="email"
                                             name="email"
@@ -92,12 +92,12 @@ export default function Register() {
 
                                     <div>
                                         <Label
-                                            htmlFor="password"
+                                            htmlFor="pasLabelsword"
                                             className="mb-2 font-aktiv-grotesk text-sm font-normal text-text-title focus:border-text-gray-300!"
                                         >
                                             Password
                                         </Label>
-                                        <input
+                                        <PasswordInput
                                             id="password"
                                             name="password"
                                             required
@@ -113,11 +113,15 @@ export default function Register() {
                                         <Checkbox
                                             id="remember"
                                             name="remember"
-                                            className="h-4 w-4 rounded  text-orange-600 focus:ring-orange-500"
-                                        />
+                                            className="group relative h-5 w-5 rounded border border-text-gray-300 bg-white data-[checked]:bg-bg-button data-[checked]:border-bg-button focus:ring-2 focus:ring-bg-button/20"
+                                        >
+                                            <svg className="pointer-events-none absolute top-1/2 left-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 group-data-[checked]:opacity-100 transition-opacity" fill="currentColor" viewBox="0 0 16 16">
+                                                <path fillRule="evenodd" d="M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                            </svg>
+                                        </Checkbox>
                                         <Label
                                             htmlFor="remember"
-                                            className="ml-2 block text-sm text-text-gray-300"
+                                            className="ml-2 block font-aktiv-grotesk font-normal text-sm text-text-title"
                                         >
                                             Keep me logged in
                                         </Label>
