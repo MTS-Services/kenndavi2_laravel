@@ -5,27 +5,17 @@ import { Label } from '@/components/ui/label';
 import { PasswordInput } from '@/components/ui/password-input';
 import { Spinner } from '@/components/ui/spinner';
 import FrontendLayout from '@/layouts/frontend-layout';
-import { store } from '@/routes/admin';
 import { Checkbox } from '@headlessui/react';
 import { Form, Head, Link, useForm } from '@inertiajs/react';
 import { ArrowRightIcon } from 'lucide-react';
 import React from 'react';
 
 export default function Register() {
-    const userType = new URLSearchParams(window.location.search).get('type');
-
     const { data, setData, post, processing, errors } = useForm({
-        username: '',
         name: '',
         email: '',
         password: '',
         password_confirmation: '',
-        phone: '',
-        license_number: '',
-        brokerage_name: '',
-        image: '',
-        your_self: '',
-        type: userType,
     });
 
     function handleSubmit(e: React.FormEvent) {
@@ -44,69 +34,107 @@ export default function Register() {
                         </h2>
                     </div>
 
-                    <Form
-                        {...store.form()}
-                        resetOnSuccess={['password']}
-                        className="mt-8 space-y-6"
-                    >
-                        {({ processing, errors }) => (
-                            <>
-                                <div className="space-y-4">
-                                       <div>
-                                        <Label
-                                            htmlFor="name"
-                                            className="mb-2 font-aktiv-grotesk text-sm font-normal text-text-title focus:border-text-gray-300!"
-                                        >
-                                           Full Name
-                                        </Label>
-                                        <Input
-                                            id="name"
-                                            type="text"
-                                            name="name"
-                                            required
-                                            autoFocus
-                                            placeholder="Full Name"
-                                            className="block w-full appearance-none rounded-md border border-text-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm"
-                                        />
-                                        <InputError message={errors.name} />
-                                    </div>
+                    <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+                        <div className="space-y-4">
+                            <div>
+                                <Label
+                                    htmlFor="name"
+                                    className="mb-2 font-aktiv-grotesk text-sm font-normal text-text-title focus:border-text-gray-300!"
+                                >
+                                    Full Name
+                                </Label>
+                                <Input
+                                    id="name"
+                                    type="text"
+                                    name="name"
+                                    required
+                                    autoFocus
+                                    placeholder="Full Name"
+                                    className="block w-full appearance-none rounded-md border border-text-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm"
+                                    value={data.name}
+                                    onChange={(e) => setData('name', e.target.value)}
+                                />
+                                <InputError message={errors.name} />
+                            </div>
 
-                                    <div>
-                                        <Label
-                                            htmlFor="email"
-                                            className="mb-2 font-aktiv-grotesk text-sm font-normal text-text-title focus:border-text-gray-300!"
-                                        >
-                                            Email address
-                                        </Label>
-                                        <Input
-                                            id="email"
-                                            type="email"
-                                            name="email"
-                                            required
-                                            autoFocus
-                                            placeholder="Email Address"
-                                            className="block w-full appearance-none rounded-md border border-text-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm"
-                                        />
-                                        <InputError message={errors.email} />
-                                    </div>
+                            <div>
+                                <Label
+                                    htmlFor="username"
+                                    className="mb-2 font-aktiv-grotesk text-sm font-normal text-text-title focus:border-text-gray-300!"
+                                >
+                                    Username
+                                </Label>
+                                <Input
+                                    id="username"
+                                    type="text"
+                                    name="username"
+                                    required
+                                    placeholder="Username"
+                                    className="block w-full appearance-none rounded-md border border-text-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm"
+                                    value={data.username}
+                                    onChange={(e) => setData('username', e.target.value)}
+                                />
+                                <InputError message={errors.username} />
+                            </div>
 
-                                    <div>
-                                        <Label
-                                            htmlFor="pasLabelsword"
-                                            className="mb-2 font-aktiv-grotesk text-sm font-normal text-text-title focus:border-text-gray-300!"
-                                        >
-                                            Password
-                                        </Label>
-                                        <PasswordInput
-                                            id="password"
-                                            name="password"
-                                            required
-                                            placeholder="Password"
-                                            className="block w-full appearance-none rounded-md border border-text-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm"
-                                        />
-                                        <InputError message={errors.password} />
-                                    </div>
-                                </div>
+                            <div>
+                                <Label
+                                    htmlFor="email"
+                                    className="mb-2 font-aktiv-grotesk text-sm font-normal text-text-title focus:border-text-gray-300!"
+                                >
+                                    Email address
+                                </Label>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    name="email"
+                                    required
+                                    placeholder="Email Address"
+                                    className="block w-full appearance-none rounded-md border border-text-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm"
+                                    value={data.email}
+                                    onChange={(e) => setData('email', e.target.value)}
+                                />
+                                <InputError message={errors.email} />
+                            </div>
+
+                            <div>
+                                <Label
+                                    htmlFor="password"
+                                    className="mb-2 font-aktiv-grotesk text-sm font-normal text-text-title focus:border-text-gray-300!"
+                                >
+                                    Password
+                                </Label>
+                                <PasswordInput
+                                    id="password"
+                                    name="password"
+                                    required
+                                    placeholder="Password"
+                                    className="block w-full appearance-none rounded-md border border-text-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm"
+                                    value={data.password}
+                                    onChange={(e) => setData('password', e.target.value)}
+                                />
+                                <InputError message={errors.password} />
+                            </div>
+
+                            <div>
+                                <Label
+                                    htmlFor="password_confirmation"
+                                    className="mb-2 font-aktiv-grotesk text-sm font-normal text-text-title focus:border-text-gray-300!"
+                                >
+                                    Confirm Password
+                                </Label>
+                                <PasswordInput
+                                    id="password_confirmation"
+                                    name="password_confirmation"
+                                    required
+                                    placeholder="Confirm Password"
+                                    className="block w-full appearance-none rounded-md border border-text-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm"
+                                    value={data.password_confirmation}
+                                    onChange={(e) => setData('password_confirmation', e.target.value)}
+                                />
+                                <InputError message={errors.password_confirmation} />
+                            </div>
+                        </div>
 
                                 <div className="flex items-center justify-between">
                                      <div className="flex items-center">
@@ -137,7 +165,7 @@ export default function Register() {
                                         {processing ? (
                                             <Spinner className="h-4 w-4" />
                                         ) : (
-                                            'Log In'
+                                            'Sign Up'
                                         )}
                                         <ArrowRightIcon className="ml-1 h-4 w-4" />
                                     </Button>
@@ -190,9 +218,7 @@ export default function Register() {
                                         </svg>
                                     </Link>
                                 </div>
-                            </>
-                        )}
-                    </Form>
+                            </form>
 
                     {status && (
                         <div className="mt-4 rounded-md bg-green-50 p-4">
