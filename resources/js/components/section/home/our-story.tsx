@@ -19,7 +19,7 @@ export default function OurStory() {
                             </div>
                         </div>
                         <img
-                            src="/assets/images/home/Rectangle 4336.png"
+                            src="/assets/images/home/Rectangle 4338.png"
                             alt="Grandmother preparing food"
                             className="mb-6 w-full max-w-md lg:max-w-lg"
                         />
