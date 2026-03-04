@@ -94,12 +94,12 @@ class UserAuthController extends Controller
     {
         return Inertia::render('auth/forgot-password');
     }
-    public function resetPassword()
-    {
-        return Inertia::render('auth/reset-password');
-    }
     public function otpVerification()
     {
         return Inertia::render('auth/otp-verification');
+    }
+        public function resetPassword()
+    {
+        return Inertia::render('auth/reset-password');
     }
 }

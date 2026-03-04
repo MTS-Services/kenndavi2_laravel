@@ -9,7 +9,7 @@ import { PasswordInput } from '@/components/ui/password-input';
 import { Spinner } from '@/components/ui/spinner';
 // import { request } from '@/routes/password';
 import { store } from '@/actions/App/Http/Controllers/Auth/LoginController';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Checkbox } from '@headlessui/react';
 import FrontendLayout from '@/layouts/frontend-layout';
 import { SharedData } from '@/types';
 import { ArrowRightIcon } from 'lucide-react';
@@ -20,7 +20,6 @@ interface LoginProps {
     status?: string;
     canResetPassword: boolean;
     canRegister: boolean;
-
 }
 
 export default function Login({ status, userType }: LoginProps) {
@@ -87,11 +86,23 @@ export default function Login({ status, userType }: LoginProps) {
                                         <Checkbox
                                             id="remember"
                                             name="remember"
-                                            className="h-4 w-4 rounded  text-orange-600 focus:ring-orange-500"
-                                        />
+                                            className="group relative h-5 w-5 rounded border border-text-gray-300 bg-white focus:ring-2 focus:ring-bg-button/20 data-[checked]:border-bg-button data-[checked]:bg-bg-button"
+                                        >
+                                            <svg
+                                                className="pointer-events-none absolute top-1/2 left-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 transition-opacity group-data-[checked]:opacity-100"
+                                                fill="currentColor"
+                                                viewBox="0 0 16 16"
+                                            >
+                                                <path
+                                                    fillRule="evenodd"
+                                                    d="M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z"
+                                                    clipRule="evenodd"
+                                                />
+                                            </svg>
+                                        </Checkbox>
                                         <Label
                                             htmlFor="remember"
-                                            className="ml-2 block text-sm text-text-gray-300"
+                                            className="ml-2 block font-aktiv-grotesk font-normal text-sm text-text-gray-300"
                                         >
                                             Keep me logged in
                                         </Label>

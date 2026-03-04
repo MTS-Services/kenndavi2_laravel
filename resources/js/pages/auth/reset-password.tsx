@@ -8,6 +8,8 @@ import FrontendLayout from '@/layouts/frontend-layout';
 import { store } from '@/routes/admin';
 import { ArrowRightIcon } from 'lucide-react';
 import TextLink from '@/components/text-link';
+import { Input } from '@/components/ui/input';
+import { PasswordInput } from '@/components/ui/password-input';
 
 interface ResetPasswordProps {
     token: string;
@@ -46,7 +48,7 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
                                         >
                                             Password
                                         </Label>
-                                        <input
+                                        <PasswordInput
                                             id="password"
                                             name="password"
                                             required
@@ -62,7 +64,7 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
                                         >
                                             Confirm Password
                                         </Label>
-                                        <input
+                                        <PasswordInput
                                             id="password"
                                             name="password"
                                             required

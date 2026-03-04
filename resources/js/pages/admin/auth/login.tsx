@@ -1,7 +1,10 @@
 import TextLink from '@/components/text-link';
+import { Input } from '@/components/ui/input';
+import { PasswordInput } from '@/components/ui/password-input';
 import AuthLayout from '@/layouts/auth-layout';
 import { login } from '@/routes/admin';
 import { Link, useForm } from '@inertiajs/react';
+import { Label } from '@radix-ui/react-label';
 
 export default function Login() {
     const { data, setData, post, processing, errors } = useForm({
@@ -27,13 +30,13 @@ export default function Login() {
             </div>
             <form className="space-y-4" onSubmit={handleSubmit}>
                 <div>
-                    <label
+                    <Label
                         htmlFor="email"
                         className="mb-2 font-inter text-base font-normal text-text-title"
                     >
                         Email address
-                    </label>
-                    <input
+                    </Label>
+                    <Input
                         type="email"
                         id="email"
                         value={data.email}
@@ -50,20 +53,18 @@ export default function Login() {
                 </div>
 
                 <div>
-                    <label
+                    <Label
                         htmlFor="password"
                         className="mb-2 font-inter text-base font-normal text-text-title"
                     >
                         Password
-                    </label>
-                    <input
-                        type="password"
+                    </Label>
+                    <PasswordInput
                         id="password"
-                        value={data.password}
-                        onChange={(e) => setData('password', e.target.value)}
-                        className="w-full rounded-md border border-gray-300 px-4 py-3"
-                        placeholder="••••••••"
+                        name="password"
                         required
+                        placeholder="••••••••"
+                        className="w-full rounded-md border border-gray-300 px-4 py-3"
                     />
                     {errors.password && (
                         <p className="mt-1 text-sm text-red-500">
