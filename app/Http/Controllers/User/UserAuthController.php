@@ -4,7 +4,6 @@ namespace App\Http\Controllers\User;
 
 use App\Concerns\PasswordValidationRules;
 use App\Enums\ActiveInactive;
-use App\Enums\UserType;
 use App\Http\Controllers\Controller;
 use App\Mail\FoundingAdminRegistrationMail;
 use App\Mail\FoundingPartnerRegistrationMail;

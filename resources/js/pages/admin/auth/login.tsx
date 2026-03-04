@@ -13,7 +13,7 @@ export default function Login() {
         remember: false,
     });
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
         // Send data to Laravel login route
@@ -65,6 +65,8 @@ export default function Login() {
                         required
                         placeholder="••••••••"
                         className="w-full rounded-md border border-gray-300 px-4 py-3"
+                        value={data.password}
+                        onChange={(e) => setData('password', e.target.value)}
                     />
                     {errors.password && (
                         <p className="mt-1 text-sm text-red-500">

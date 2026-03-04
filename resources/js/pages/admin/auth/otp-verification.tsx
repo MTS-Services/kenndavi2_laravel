@@ -1,31 +1,33 @@
+import { Link, useForm } from '@inertiajs/react';
+
+import InputError from '@/components/input-error';
 import { Input } from '@/components/ui/input';
 import AuthLayout from '@/layouts/auth-layout';
-import { Link, useForm } from '@inertiajs/react';
-import { useRef, useState } from 'react';
+import { useState, useRef } from 'react';
 
-const userType = new URLSearchParams(window.location.search).get('type');
 interface LoginProps {
-    userType: string;
     status?: string;
-    canResetPassword: boolean;
-    canRegister: boolean;
 }
 
-export default function OtpVerification({ status, userType }: LoginProps) {
+export default function OtpVerification({ status }: LoginProps) {
     const { data, setData, post, processing, errors } = useForm({
         otp: '',
     });
-
+    
     const [otpValues, setOtpValues] = useState(['', '', '', '', '', '']);
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
     const handleInputChange = (index: number, value: string) => {
         // Only allow numbers
         const numericValue = value.replace(/[^0-9]/g, '');
-
+        
         const newValues = [...otpValues];
         newValues[index] = numericValue;
         setOtpValues(newValues);
+
+        // Update form data
+        const fullOtp = newValues.join('');
+        setData('otp', fullOtp);
 
         // Auto-focus next input
         if (numericValue && index < 5) {
@@ -42,19 +44,20 @@ export default function OtpVerification({ status, userType }: LoginProps) {
 
     const handlePaste = (e: React.ClipboardEvent) => {
         e.preventDefault();
-        const pastedData = e.clipboardData
-            .getData('text')
-            .replace(/[^0-9]/g, '')
-            .slice(0, 6);
-
+        const pastedData = e.clipboardData.getData('text').replace(/[^0-9]/g, '').slice(0, 6);
+        
         const newValues = ['', '', '', '', '', ''];
         for (let i = 0; i < pastedData.length; i++) {
             newValues[i] = pastedData[i];
         }
         setOtpValues(newValues);
-
+        
+        // Update form data
+        const fullOtp = newValues.join('');
+        setData('otp', fullOtp);
+        
         // Focus the next empty input or the last one
-        const nextEmptyIndex = newValues.findIndex((val) => val === '');
+        const nextEmptyIndex = newValues.findIndex(val => val === '');
         const focusIndex = nextEmptyIndex === -1 ? 5 : nextEmptyIndex;
         inputRefs.current[focusIndex]?.focus();
     };
@@ -63,14 +66,11 @@ export default function OtpVerification({ status, userType }: LoginProps) {
         e.preventDefault();
         const fullOtp = otpValues.join('');
         setData('otp', fullOtp);
-        post(route('admin.otp.verify'));
+        post(route('admin.otp-verification.post'));
     };
 
     return (
-        <AuthLayout
-            title="OTP Verification"
-            description="Enter the verification code we just sent to your email address"
-        >
+        <AuthLayout title="OTP Verification" description="Enter the verification code we just sent to your email address">
             <div className="">
                 <h2 className=""></h2>
             </div>
@@ -101,6 +101,8 @@ export default function OtpVerification({ status, userType }: LoginProps) {
                     </div>
                 </div>
 
+                <InputError message={errors.otp} className="text-center" />
+
                 <button
                     type="submit"
                     disabled={processing}
@@ -111,7 +113,7 @@ export default function OtpVerification({ status, userType }: LoginProps) {
 
                 <div className="text-sm">
                     <p className="mb-2 font-inter text-base font-normal text-text-body">
-                        Didn’t receive a code?{' '}
+                        Didn't receive a code?{' '}
                         <Link
                             href={route('admin.forgot-password')}
                             className="font-inter text-base font-normal text-text-body underline"
@@ -121,6 +123,14 @@ export default function OtpVerification({ status, userType }: LoginProps) {
                     </p>
                 </div>
             </form>
+
+            {status && (
+                <div className="mt-4 rounded-md bg-green-50 p-4">
+                    <div className="text-sm text-green-800">
+                        {status}
+                    </div>
+                </div>
+            )}
         </AuthLayout>
     );
 }
