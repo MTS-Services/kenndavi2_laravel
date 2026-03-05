@@ -11,7 +11,7 @@ interface Props {
 
 export default function TestimonialCard({ testimonial }: Props) {
     return (
-        <div className="bg-bg-white  px-5 py-8">
+        <div className="bg-bg-white shadow-lg px-5 py-8 rounded-sm border border-gray-100">
             {/* Star Rating */}
             <div className="flex mb-8">
                 {[...Array(5)].map((_, i) => (
@@ -27,7 +27,7 @@ export default function TestimonialCard({ testimonial }: Props) {
             </div>
             
             {/* Review Text */}
-            <p className="text-base font-normal font-inter text-text-testimonial-desc mb-6">
+            <p className="text-base font-normal font-inter text-text-testimonial-desc mb-6 line-clamp-3">
                 {testimonial.review}
             </p>
             
