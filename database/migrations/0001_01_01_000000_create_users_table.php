@@ -17,10 +17,21 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('phone')->nullable();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('image')->nullable();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('otp')->nullable();
             $table->string('status')->default(ActiveInactive::ACTIVE->value);   
             $table->string('password');
+
+
+            $table->string('provider')->nullable();
+            $table->string('provider_id')->nullable();
+            $table->string('provider_avatar')->nullable();
+            $table->text('provider_token')->nullable();
+            $table->text('provider_refresh_token')->nullable();
+
+
+
             $table->rememberToken();
             $table->timestamps();
         });

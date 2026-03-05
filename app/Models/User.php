@@ -18,6 +18,19 @@ class User extends Authenticatable
         'status',
         'password',
         'image',
+
+
+        'provider',
+        'provider_id',
+        'provider_avatar',
+        'provider_token',
+        'provider_refresh_token',
+
+        'created_at',
+        'updated_at',
+        'created_by',
+        'updated_by'
+
     ];
 
     protected $hidden = [
