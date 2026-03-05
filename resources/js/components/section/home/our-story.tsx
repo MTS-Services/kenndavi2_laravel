@@ -19,9 +19,9 @@ export default function OurStory() {
                             </div>
                         </div>
                         <img
-                            src="/assets/images/home/Rectangle 4338.png"
+                            src="/assets/images/home/grandmother.jpeg"
                             alt="Grandmother preparing food"
-                            className="mb-6 w-full max-w-md lg:max-w-lg"
+                            className="mb-6 w-full rounded-sm"
                         />
                         <p className="mb-4 font-aktiv-grotesk text-lg font-normal text-text-white sm:text-xl lg:text-2xl">
                             Just remember when you are enjoying every savory
@@ -43,16 +43,30 @@ export default function OurStory() {
                     {/* Right Column */}
                     <div className="flex flex-col items-start">
                         <div className="mb-6 flex flex-col gap-4 sm:flex-row lg:justify-center">
-                            <img
+                            {/* <img
                                 src="/assets/images/home/Rectangle 4339.png"
                                 alt="Family member 1"
-                                className="w-full max-w-full sm:w-1/2"
+                                className="w-full sm:w-1/2 aspect-[4/3] object-cover rounded-lg"
                             />
                             <img
-                                src="/assets/images/home/Rectangle 4338.png"
+                                src="/assets/images/home/dad.jpeg"
                                 alt="Family member 2"
-                                className="w-full max-w-full sm:w-1/2"
-                            />
+                                className="w-full sm:w-1/2 aspect-[4/3] object-cover rounded-lg"
+                            /> */}
+                            <div className="w-full overflow-hidden rounded-sm sm:w-1/2">
+                                <img
+                                    src="/assets/images/home/Rectangle 4339.png"
+                                    alt="Family member 1"
+                                    className="aspect-[4/3] h-full w-full object-cover"
+                                />
+                            </div>
+                            <div className="w-full overflow-hidden rounded-sm sm:w-1/2">
+                                <img
+                                    src="/assets/images/home/dad.jpeg"
+                                    alt="Family member 2"
+                                    className="aspect-[4/3] h-full w-full object-cover"
+                                />
+                            </div>
                         </div>
                         <p className="mb-8 font-aktiv-grotesk text-base text-text-white lg:text-lg">
                             I have created a brand-new twist to a great family
