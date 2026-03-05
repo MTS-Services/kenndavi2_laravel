@@ -10,6 +10,23 @@ use Illuminate\Http\UploadedFile;
 
 class ProductService
 {
+
+
+    public function getAll()
+    {
+        return Product::with('images')->latest()->get();
+    }
+
+    public function getById(int $id): Product
+    {
+        return Product::with('images')->findOrFail($id);
+    }
+
+    public function getPaginated(int $perPage = 10)
+    {
+        return Product::with('images')->latest()->paginate($perPage);
+    }
+
     public function create(array $productData, array $images = []): Product
     {
         $productData['created_by'] = Auth::id();
@@ -88,20 +105,7 @@ class ProductService
         return $product->delete();
     }
 
-    public function getAll()
-    {
-        return Product::with('images')->latest()->get();
-    }
-
-    public function getById(int $id): Product
-    {
-        return Product::with('images')->findOrFail($id);
-    }
-
-    public function getPaginated(int $perPage = 10)
-    {
-        return Product::with('images')->latest()->paginate($perPage);
-    }
+    
 
     public function updateQuantity(Product $product, int $quantity): Product
     {

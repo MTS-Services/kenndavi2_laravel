@@ -49,6 +49,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/index', [ProductController::class, 'index'])->name('index');
             Route::get('/create', [ProductController::class, 'create'])->name('create');
             Route::post('/store', [ProductController::class, 'store'])->name('store');
+            Route::get('/edit/{id}', [ProductController::class, 'edit'])->name('edit');
+            Route::put('/update/{id}', [ProductController::class, 'update'])->name('update');
         });
         Route::group(['prefix' => 'order-management', 'as' => 'om.'], function () {
             Route::get('/index', [OrderController::class, 'index'])->name('index');

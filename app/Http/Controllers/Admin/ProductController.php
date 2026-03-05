@@ -48,7 +48,7 @@ class ProductController extends Controller
         $product = $this->productService->create($validated, $images);
 
         return redirect()
-            ->route('admin.products.index')
+            ->route('admin.pm.index')
             ->with('success', 'Product created successfully!');
     }
 
@@ -89,7 +89,7 @@ class ProductController extends Controller
         $this->productService->update($product, $validated, $images);
 
         return redirect()
-            ->route('admin.products.index')
+            ->route('admin.pm.index')
             ->with('success', 'Product updated successfully!');
     }
 
@@ -119,7 +119,7 @@ class ProductController extends Controller
         $this->productService->delete($product);
 
         return redirect()
-            ->route('admin.products.index')
+            ->route('admin.pm.index')
             ->with('success', 'Product deleted successfully!');
     }
 }

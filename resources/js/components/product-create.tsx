@@ -1,7 +1,272 @@
-export default function ProductCreate() {
+import { useRef, useState } from 'react';
+import { useForm } from '@inertiajs/react';
+
+interface ProductFormData {
+    title: string;
+    description: string;
+    tag: string;
+    price: string;
+    discount_price: string;
+    ingredients: string;
+    quantity: number;
+    images: File[];
+}
+
+const TAGS = [
+    { value: 'sweet', label: 'Sweet' },
+    { value: 'honey', label: 'Honey' },
+    { value: 'spicy', label: 'Spicy' },
+];
+
+interface ProductCreateProps {
+    onClose?: () => void;
+}
+
+export default function ProductCreate({ onClose }: ProductCreateProps) {
+    const [photos, setPhotos] = useState<(File | null)[]>([null, null, null, null, null]);
+    const [dragOver, setDragOver] = useState<number | null>(null);
+
+    const { data, setData, post, processing, errors } = useForm<ProductFormData>({
+        title: '',
+        description: '',
+        tag: 'sweet',
+        price: '',
+        discount_price: '',
+        ingredients: '',
+        quantity: 10,
+        images: [],
+    });
+
+    const fileInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+    const handleFileChange = (index: number, file: File | null) => {
+        if (!file) return;
+        const updated = [...photos];
+        updated[index] = file;
+        setPhotos(updated);
+        const validPhotos = updated.filter((p): p is File => p !== null);
+        setData('images', validPhotos);
+    };
+
+    const handleDrop = (e: React.DragEvent, index: number) => {
+        e.preventDefault();
+        setDragOver(null);
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+            handleFileChange(index, file);
+        }
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        post(route('admin.pm.store'), {
+            onSuccess: () => {
+                onClose?.();
+                // Reset form
+                setPhotos([null, null, null, null, null]);
+                setData({
+                    title: '',
+                    description: '',
+                    tag: 'sweet',
+                    price: '',
+                    discount_price: '',
+                    ingredients: '',
+                    quantity: 10,
+                    images: [],
+                });
+            }
+        });
+    };
+
+    const removePhoto = (index: number) => {
+        const updated = [...photos];
+        updated[index] = null;
+        setPhotos(updated);
+        const validPhotos = updated.filter((p): p is File => p !== null);
+        setData('images', validPhotos);
+    };
+
     return (
-        <div>
-            <h1>Product Create</h1>
+        <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+                {/* Photo Upload Row */}
+                <div>
+                    <label className="mb-2 block text-sm font-semibold text-gray-800">Photos</label>
+                    <div className="flex gap-3">
+                        {photos.map((photo, i) => {
+                            const previewUrl = photo ? URL.createObjectURL(photo) : null;
+                            return (
+                                <div
+                                    key={i}
+                                    onClick={() => fileInputRefs.current[i]?.click()}
+                                    onDragOver={(e) => { e.preventDefault(); setDragOver(i); }}
+                                    onDragLeave={() => setDragOver(null)}
+                                    onDrop={(e) => handleDrop(e, i)}
+                                    className="relative"
+                                    style={{
+                                        flex: 1,
+                                        aspectRatio: '1',
+                                        borderRadius: '12px',
+                                        border: dragOver === i ? '2px dashed #9b1c1c' : '2px dashed #d9d0cc',
+                                        background: previewUrl ? 'transparent' : '#f5f1ef',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        cursor: 'pointer',
+                                        overflow: 'hidden',
+                                        transition: 'border-color 0.2s, background 0.2s',
+                                    }}
+                                >
+                                    {previewUrl ? (
+                                        <>
+                                            <img
+                                                src={previewUrl}
+                                                alt={`Photo ${i + 1}`}
+                                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={(e) => { e.stopPropagation(); removePhoto(i); }}
+                                                className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-800 text-white text-xs hover:bg-red-900"
+                                            >
+                                                ×
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ marginBottom: 5, opacity: 0.4 }}>
+                                                <path d="M12 16V8M12 8L9 11M12 8L15 11" stroke="#6b7280" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                <rect x="3" y="3" width="18" height="18" rx="4" stroke="#6b7280" strokeWidth="1.5" />
+                                            </svg>
+                                            <span style={{ fontSize: '0.68rem', color: '#9ca3af', fontFamily: 'sans-serif' }}>
+                                                Add Photo
+                                            </span>
+                                        </>
+                                    )}
+                                    <input
+                                        type="file"
+                                        ref={(el) => { fileInputRefs.current[i] = el; }}
+                                        onChange={(e) => handleFileChange(i, e.target.files?.[0] || null)}
+                                        accept="image/*"
+                                        style={{ display: 'none' }}
+                                    />
+                                </div>
+                            );
+                        })}
+                    </div>
+                    {errors.images && <p className="mt-1 text-sm text-red-600">{errors.images}</p>}
+                </div>
+
+                {/* Title */}
+                <div>
+                    <label className="mb-2 block text-sm font-semibold text-gray-800">Title</label>
+                    <input
+                        type="text"
+                        value={data.title}
+                        onChange={(e) => setData('title', e.target.value)}
+                        className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 focus:border-red-800 focus:outline-none focus:ring-1 focus:ring-red-800"
+                        placeholder="Enter product title"
+                    />
+                    {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title}</p>}
+                </div>
+
+                {/* Description */}
+                <div>
+                    <label className="mb-2 block text-sm font-semibold text-gray-800">Description</label>
+                    <textarea
+                        value={data.description}
+                        onChange={(e) => setData('description', e.target.value)}
+                        rows={4}
+                        className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 focus:border-red-800 focus:outline-none focus:ring-1 focus:ring-red-800"
+                        placeholder="Enter product description"
+                    />
+                    {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description}</p>}
+                </div>
+
+                {/* Tag */}
+                <div>
+                    <label className="mb-2 block text-sm font-semibold text-gray-800">Tag</label>
+                    <select
+                        value={data.tag}
+                        onChange={(e) => setData('tag', e.target.value)}
+                        className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 focus:border-red-800 focus:outline-none focus:ring-1 focus:ring-red-800"
+                    >
+                        {TAGS.map((tag) => (
+                            <option key={tag.value} value={tag.value}>{tag.label}</option>
+                        ))}
+                    </select>
+                    {errors.tag && <p className="mt-1 text-sm text-red-600">{errors.tag}</p>}
+                </div>
+
+                {/* Price and Discount Price */}
+                <div className="grid grid-cols-2 gap-4">
+                    <div>
+                        <label className="mb-2 block text-sm font-semibold text-gray-800">Price</label>
+                        <input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            value={data.price}
+                            onChange={(e) => setData('price', e.target.value)}
+                            className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 focus:border-red-800 focus:outline-none focus:ring-1 focus:ring-red-800"
+                            placeholder="0.00"
+                        />
+                        {errors.price && <p className="mt-1 text-sm text-red-600">{errors.price}</p>}
+                    </div>
+                    <div>
+                        <label className="mb-2 block text-sm font-semibold text-gray-800">Discount Price</label>
+                        <input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            value={data.discount_price}
+                            onChange={(e) => setData('discount_price', e.target.value)}
+                            className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 focus:border-red-800 focus:outline-none focus:ring-1 focus:ring-red-800"
+                            placeholder="0.00"
+                        />
+                        {errors.discount_price && <p className="mt-1 text-sm text-red-600">{errors.discount_price}</p>}
+                    </div>
+                </div>
+
+                {/* Ingredients */}
+                <div>
+                    <label className="mb-2 block text-sm font-semibold text-gray-800">Ingredients</label>
+                    <textarea
+                        value={data.ingredients}
+                        onChange={(e) => setData('ingredients', e.target.value)}
+                        rows={3}
+                        className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 focus:border-red-800 focus:outline-none focus:ring-1 focus:ring-red-800"
+                        placeholder="Enter ingredients"
+                    />
+                    {errors.ingredients && <p className="mt-1 text-sm text-red-600">{errors.ingredients}</p>}
+                </div>
+
+                {/* Quantity */}
+                <div>
+                    <label className="mb-2 block text-sm font-semibold text-gray-800">Quantity</label>
+                    <input
+                        type="number"
+                        min="0"
+                        value={data.quantity}
+                        onChange={(e) => setData('quantity', parseInt(e.target.value) || 0)}
+                        className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 focus:border-red-800 focus:outline-none focus:ring-1 focus:ring-red-800"
+                        placeholder="0"
+                    />
+                    {errors.quantity && <p className="mt-1 text-sm text-red-600">{errors.quantity}</p>}
+                </div>
+
+                {/* Submit Button */}
+                <div className="pt-1">
+                    <button
+                        type="submit"
+                        disabled={processing}
+                        className="rounded-lg bg-red-800 px-8 py-2.5 text-sm font-bold text-white transition-all hover:bg-red-900 active:scale-95 disabled:opacity-60 cursor-pointer"
+                    >
+                        {processing ? 'Creating...' : 'Create Product'}
+                    </button>
+                </div>
+            </form>
         </div>
     );
 }
