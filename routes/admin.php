@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\RecipeController;
+use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\TermsConditionsController;
 use App\Http\Controllers\Admin\UserManagement\UserController;
 use Illuminate\Support\Facades\Route;
@@ -63,6 +64,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::group(['prefix' => 'terms-conditions', 'as' => 'tc.'], function () {
             Route::get('/index', [TermsConditionsController::class, 'index'])->name('index');
             Route::get('/create', [TermsConditionsController::class, 'create'])->name('create');
+        });
+
+        Route::group(['prefix' => 'tag-management', 'as' => 'tm.'], function () {
+            Route::get('/index', [TagController::class, 'index'])->name('index');
+            Route::get('/create', [TagController::class, 'create'])->name('create');
+            Route::post('/store', [TagController::class, 'store'])->name('store');
+            Route::get('/edit/{id}', [TagController::class, 'edit'])->name('edit');
+            Route::put('/update/{id}', [TagController::class, 'update'])->name('update');
+            Route::get('/delete/{id}', [TagController::class, 'delete'])->name('delete');
         });
 
     });

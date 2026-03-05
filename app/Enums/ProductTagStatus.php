@@ -2,27 +2,24 @@
 
 namespace App\Enums;
 
-enum ProductTag: string
+enum ProductTagStatus: string
 {
-    case SWEET = 'sweet';
-    case HONEY = 'honey';
-    case SPICY = 'spicy';
-
+    case ACTIVE = 'active';
+    case INACTIVE = 'inactive';
+    
     public function label(): string
     {
-        return match($this) {
-            self::SWEET => 'Sweet',
-            self::HONEY => 'Honey',
-            self::SPICY => 'Spicy',
+        return match ($this) {
+            self::ACTIVE => 'Active',
+            self::INACTIVE => 'Inactive',
         };
     }
 
     public function color(): string
     {
         return match($this) {
-            self::SWEET => 'badge-success',
-            self::HONEY => 'badge-warning',
-            self::SPICY => 'badge-error',
+            self::ACTIVE => 'badge-success',
+            self::INACTIVE => 'badge-error',
         };
     }
 
