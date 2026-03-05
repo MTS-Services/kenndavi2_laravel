@@ -22,6 +22,12 @@ const adminNavItems: NavItemType[] = [
         slug: 'user-management',
     },
     {
+        title: 'Tag Management',
+        href: route('admin.tm.index'),
+        icon: LayoutGrid,
+        slug: 'tag-management',
+    },
+    {
         title: 'Product',
         href: route('admin.pm.index'),
         icon: Box,

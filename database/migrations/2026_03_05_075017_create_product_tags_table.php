@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ProductTagStatus;
 use App\Traits\AuditColumnsTrait;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -13,14 +14,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('products', function (Blueprint $table) {
+        Schema::create('product_tags', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->text('description');
-            $table->decimal('price', 10, 2);
-            $table->decimal('discount_price', 10, 2);
-            $table->text('ingredients');
-            $table->integer('quantity');
+            $table->string('name');
+            $table->string('status')->index()->default(ProductTagStatus::ACTIVE);
+
 
             $table->timestamps();
             $this->addAdminAuditColumns($table);
@@ -32,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('products');
+        Schema::dropIfExists('product_tags');
     }
 };

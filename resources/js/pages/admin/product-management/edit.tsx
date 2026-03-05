@@ -1,5 +1,5 @@
 import AdminLayout from '@/layouts/admin-layout';
-import { useForm } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import { useRef, useState } from 'react';
 
 interface ProductFormData {
@@ -19,7 +19,10 @@ const TAGS = [
     { value: 'spicy', label: 'Spicy' },
 ];
 
-export default function Create() {
+export default function Edit() {
+    const { props } = usePage();
+    const product = props.product as any;
+
     const [photos, setPhotos] = useState<(File | null)[]>([
         null,
         null,
@@ -29,17 +32,18 @@ export default function Create() {
     ]);
     const [dragOver, setDragOver] = useState<number | null>(null);
 
-    const { data, setData, post, processing, errors } =
-        useForm<ProductFormData>({
-            title: '',
-            description: '',
-            tag: 'sweet',
-            price: '',
-            discount_price: '',
-            ingredients: '',
-            quantity: 10,
+    const { data, setData, put, processing, errors } = useForm<ProductFormData>(
+        {
+            title: product?.title || '',
+            description: product?.description || '',
+            tag: product?.tag || 'sweet',
+            price: product?.price || '',
+            discount_price: product?.discount_price || '',
+            ingredients: product?.ingredients || '',
+            quantity: product?.quantity || 10,
             images: [],
-        });
+        },
+    );
 
     const fileInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -63,20 +67,9 @@ export default function Create() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post(route('admin.pm.store'), {
+        put(route('admin.pm.update', product.id), {
             onSuccess: () => {
-                // Reset form
-                setPhotos([null, null, null, null, null]);
-                setData({
-                    title: '',
-                    description: '',
-                    tag: 'sweet',
-                    price: '',
-                    discount_price: '',
-                    ingredients: '',
-                    quantity: 10,
-                    images: [],
-                });
+                // Redirect happens automatically via Inertia
             },
         });
     };
@@ -88,27 +81,56 @@ export default function Create() {
         const validPhotos = updated.filter((p): p is File => p !== null);
         setData('images', validPhotos);
     };
+
     return (
         <AdminLayout activeSlug="product-management">
             <div className="mx-auto max-w-4xl">
+                {/* Edit Form */}
                 <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
                     {/* Page Header */}
                     <div className="mb-6">
                         <h1 className="text-2xl font-bold text-gray-900">
-                            Add new Product
+                            Edit Product
                         </h1>
                         <p className="mt-1 text-sm text-gray-500">
-                            Fill in the details below to add a new product.
+                            Update the product details below.
                         </p>
                     </div>
                     <form
                         onSubmit={handleSubmit}
                         className="flex flex-col gap-6"
                     >
+                        {/* Existing Images Display */}
+                        {product?.images && product.images.length > 0 && (
+                            <div>
+                                <label className="mb-2 block text-sm font-semibold text-gray-800">
+                                    Current Images
+                                </label>
+                                <div className="flex gap-3">
+                                    {product.images.map(
+                                        (img: any, i: number) => (
+                                            <div key={i} className="relative">
+                                                <img
+                                                    src={img.image}
+                                                    alt={`Product image ${i + 1}`}
+                                                    className="h-20 w-20 rounded-lg border object-cover"
+                                                />
+                                                {img.is_primary && (
+                                                    <span className="absolute top-0 right-0 rounded-bl bg-green-500 px-1 text-xs text-white">
+                                                        Primary
+                                                    </span>
+                                                )}
+                                            </div>
+                                        ),
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
                         {/* Photo Upload Row */}
                         <div>
                             <label className="mb-2 block text-sm font-semibold text-gray-800">
-                                Photos
+                                Add New Photos
                             </label>
                             <div className="flex gap-3">
                                 {photos.map((photo, i) => {
@@ -410,7 +432,7 @@ export default function Create() {
                                 disabled={processing}
                                 className="cursor-pointer rounded-lg bg-red-800 px-8 py-2.5 text-sm font-bold text-white transition-all hover:bg-red-900 active:scale-95 disabled:opacity-60"
                             >
-                                {processing ? 'Creating...' : 'Create Product'}
+                                {processing ? 'Updating...' : 'Update Product'}
                             </button>
                         </div>
                     </form>

@@ -1,12 +1,19 @@
 import { Link } from "@inertiajs/react";
-import { EditIcon,  Trash2 } from "lucide-react";
+import { EditIcon, Trash2 } from "lucide-react";
+
+export interface ProductImage {
+    id: string;
+    image: string;
+    is_primary: boolean;
+}
 
 export interface productData {
     id: string;
-    name: string;
+    title: string;
     description: string;
     price: string;
-    image: string;
+    image?: string; 
+    images?: ProductImage[]; 
     category?: string;
     href: string;
     available?: number;
@@ -14,17 +21,19 @@ export interface productData {
 
 interface Props {
     product: productData;
-    onEdit?: (product: productData) => void;
 }
 
-export default function ProductCardAdmin({ product, onEdit }: Props) {
+export default function ProductCardAdmin({ product }: Props) {
+    const primaryImage = product.images?.find(img => img.is_primary);
+    const imageUrl = primaryImage?.image || product.image || '/assets/images/placeholder.jpg';
+
     return (
         <div className="rounded-md bg-bg-card shadow-md px-4 py-3">
             <Link href={product.href} target="_blank" rel="noopener noreferrer">
             <div className="relative">
                 <img
-                    src={product.image}
-                    alt={product.name}
+                    src={imageUrl}
+                    alt={product.title}
                     className="w-full h-64 object-cover rounded-t-md"
                 />
                 {product.category && (
@@ -42,7 +51,7 @@ export default function ProductCardAdmin({ product, onEdit }: Props) {
             <div className="mt-3">   
                 <Link href={product.href} target="_blank" rel="noopener noreferrer">
                 <h3 className="mb-2 font-inter text-xl font-medium text-text-title">
-                    {product.name}
+                    {product.title}
                 </h3>
                 </Link>
                 <Link href={product.href} target="_blank" rel="noopener noreferrer">
@@ -51,12 +60,11 @@ export default function ProductCardAdmin({ product, onEdit }: Props) {
                 </p>
                 </Link>
                 <div className="flex items-center justify-between">
-                    <button 
-                        onClick={() => onEdit?.(product)}
+                    <Link href={route('admin.pm.edit', product.id)}
                         className="flex items-center gap-3.5 font-inter text-base font-medium text-text-green border border-text-green px-8 py-2.5 rounded-md bg-bg-our-story cursor-pointer"
                     >
                         <EditIcon /> Edit
-                    </button>
+                    </Link>
                     <Link 
                         href="#"
                         className="flex items-center gap-3.5 font-inter text-base font-medium text-text-buy-now border border-text-buy-now px-8 py-2.5 rounded-md bg-text-buy-now/5"

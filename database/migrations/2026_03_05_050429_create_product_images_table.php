@@ -13,17 +13,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('products', function (Blueprint $table) {
+        Schema::create('product_images', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->text('description');
-            $table->decimal('price', 10, 2);
-            $table->decimal('discount_price', 10, 2);
-            $table->text('ingredients');
-            $table->integer('quantity');
+            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
+            $table->string('image');
+            $table->boolean('is_primary')->default(false);
 
             $table->timestamps();
-            $this->addAdminAuditColumns($table);
+           $this->addAdminAuditColumns($table);
         });
     }
 
@@ -32,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('products');
+        Schema::dropIfExists('product_images');
     }
 };
