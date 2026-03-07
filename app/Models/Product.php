@@ -42,4 +42,8 @@ class Product extends Model
     {
         return $this->belongsTo(ProductTag::class);
     }
+    public function relatedProducts()
+    {
+        return $this->belongsToMany(Recipe::class, 'recipe_related_products', 'product_id', 'recipe_id');
+    }
 }
