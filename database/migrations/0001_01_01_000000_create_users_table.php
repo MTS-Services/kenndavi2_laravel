@@ -1,12 +1,14 @@
 <?php
 
 use App\Enums\ActiveInactive;
+use App\Traits\AuditColumnsTrait;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    use AuditColumnsTrait;
     /**
      * Run the migrations.
      */
@@ -34,6 +36,7 @@ return new class extends Migration
 
             $table->rememberToken();
             $table->timestamps();
+            $this->addMorphedAuditColumns($table);
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
