@@ -70,7 +70,7 @@ class RecipeService
     {
 
         $recipe = $this->model->findOrFail($id);
-        dd($recipe);
+        // dd($recipe);
 
         $validated = $request->validate([
             'title' => 'nullable|string|max:255',

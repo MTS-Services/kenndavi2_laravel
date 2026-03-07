@@ -40,7 +40,12 @@ class UserController extends Controller
     public function accountSettings(): Response
     {
         $data = $this->userAccountService->getUserWithAddresses();
+
+        if($data['user']) {
+            $data['user']->load('addresses');
+        }
         
+
         return Inertia::render('user/account-settings/account-settings', $data);
     }
 
@@ -90,10 +95,7 @@ class UserController extends Controller
         try {
             $this->userAccountService->updateBillingAddress($request->all());
 
-            
-            return redirect()
-                ->back()
-                ->with('success', 'Billing address updated successfully.');
+            return redirect()->route('user.account-settings')->with('success', 'Billing address updated successfully.');
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Failed to update billing address.']);
         }

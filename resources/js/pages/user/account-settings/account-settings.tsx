@@ -35,9 +35,12 @@ interface PageProps {
 }
 
 export default function AccountSettings(){
+
+
     const { props } = usePage<PageProps>();
     const { user, addresses } = props;
-
+    const billingAddresses = addresses.filter(addr => addr.type === 'billing');
+    const shippingAddresses = addresses.filter(addr => addr.type === 'shipping');
     return(
         <UserDashboardLayout>
             <Head title="Account Settings" />
@@ -57,14 +60,12 @@ export default function AccountSettings(){
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {/* Billing Address */}
                     <BillingAddress 
-                        addresses={addresses} 
-                        userEmail={user?.email || ''} 
-                        userPhone={user?.phone || ''} 
+                        address={billingAddresses} 
                     />
 
                     {/* Shipping Address */}
                     <ShippingAddress 
-                        addresses={addresses} 
+                        addresses={shippingAddresses} 
                         userEmail={user?.email || ''} 
                         userPhone={user?.phone || ''} 
                     />

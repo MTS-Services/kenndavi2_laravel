@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { use } from 'react';
 import { useForm } from '@inertiajs/react';
 import { Input } from '@/components/ui/input';
+
 
 interface Address {
     id: number;
@@ -13,53 +14,44 @@ interface Address {
     state: string;
     postal_code: string;
     country: string;
+    email: string;
     is_default: boolean;
 }
 
 interface BillingAddressProps {
-    addresses: Address[];
+    address: Address[] | null;
     userEmail: string;
     userPhone: string;
 }
 
-export default function BillingAddress({ addresses, userEmail, userPhone }: BillingAddressProps) {
-    const billingForm = useForm({
-        full_name: '',
-        company_name: '',
-        address_line1: '',
-        address_line2: '',
-        city: '',
-        state: '',
-        postal_code: '',
-        country: '',
-        email: userEmail || '',
-        phone: userPhone || '',
+export default function BillingAddress({ address, userEmail, userPhone }: BillingAddressProps) {
+
+
+    const {data, setData, post, processing, errors} = useForm({
+        full_name: address?.[0]?.full_name || '',
+        address_line1: address?.[0]?.address_line1 || '',
+        address_line2: address?.[0]?.address_line2 || '',
+        city: address?.[0]?.city || '',
+        state: address?.[0]?.state || '',
+        postal_code: address?.[0]?.postal_code || '',
+        country: address?.[0]?.country || '',
+        email: address?.[0]?.email || '',
+        phone: address?.[0]?.phone || '',
+        user_email: userEmail,
+        user_phone: userPhone,
     });
 
-    // Pre-fill form with existing billing address
-    React.useEffect(() => {
-        const billingAddress = addresses.find(addr => addr.type === 'billing');
-        if (billingAddress) {
-            billingForm.setData({
-                full_name: billingAddress.full_name,
-                address_line1: billingAddress.address_line1,
-                address_line2: billingAddress.address_line2 || '',
-                city: billingAddress.city,
-                state: billingAddress.state,
-                postal_code: billingAddress.postal_code,
-                country: billingAddress.country,
-                phone: billingAddress.phone,
-                email: userEmail || '',
-            });
-        }
-    }, [addresses, userEmail]);
+
 
     const handleBillingSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        billingForm.post(route('user.billing-address'), {
-            onSuccess: () => billingForm.reset(),
-        });
+
+        console.log(data);
+
+        post(route('user.billing-address'));
     };
+
+    
 
     return (
         <div className="rounded-sm border border-text-gray-300">
@@ -74,23 +66,11 @@ export default function BillingAddress({ addresses, userEmail, userPhone }: Bill
                         </label>
                         <Input
                             type="text"
-                            value={billingForm.data.full_name}
-                            onChange={(e) => billingForm.setData('full_name', e.target.value)}
+                            defaultValue={data.full_name}
+                            onChange={(e) => setData('full_name', e.target.value)}
                             className="w-full px-3 py-2 border border-text-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-text-buy-now"
                         />
-                        {billingForm.errors.full_name && <div className="text-red-500 text-sm">{billingForm.errors.full_name}</div>}
-                    </div>
-                    <div>
-                        <label className="block text-base font-public-sans text-text-title font-normal mb-2">
-                            Company Name (Optional)
-                        </label>
-                        <Input
-                            type="text"
-                            value={billingForm.data.company_name}
-                            onChange={(e) => billingForm.setData('company_name', e.target.value)}
-                            className="w-full px-3 py-2 border border-text-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-text-buy-now"
-                        />
-                        {billingForm.errors.company_name && <div className="text-red-500 text-sm">{billingForm.errors.company_name}</div>}
+                        {errors.full_name && <div className="text-red-500 text-sm">{errors.full_name}</div>}
                     </div>
                 </div>
                 <div>
@@ -99,11 +79,11 @@ export default function BillingAddress({ addresses, userEmail, userPhone }: Bill
                     </label>
                     <Input
                         type="text"
-                        value={billingForm.data.address_line1}
-                        onChange={(e) => billingForm.setData('address_line1', e.target.value)}
+                        defaultValue={data.address_line1}
+                        onChange={(e) => setData('address_line1', e.target.value)}
                         className="w-full px-3 py-2 border border-text-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-text-buy-now"
                     />
-                    {billingForm.errors.address_line1 && <div className="text-red-500 text-sm">{billingForm.errors.address_line1}</div>}
+                    {errors.address_line1 && <div className="text-red-500 text-sm">{errors.address_line1}</div>}
                 </div>
                 <div>
                     <label className="block text-base font-public-sans text-text-title font-normal mb-2">
@@ -111,11 +91,11 @@ export default function BillingAddress({ addresses, userEmail, userPhone }: Bill
                     </label>
                     <Input
                         type="text"
-                        value={billingForm.data.address_line2}
-                        onChange={(e) => billingForm.setData('address_line2', e.target.value)}
+                        defaultValue={data.address_line2}
+                        onChange={(e) => setData('address_line2', e.target.value)}
                         className="w-full px-3 py-2 border border-text-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-text-buy-now"
                     />
-                    {billingForm.errors.address_line2 && <div className="text-red-500 text-sm">{billingForm.errors.address_line2}</div>}
+                    {errors.address_line2 && <div className="text-red-500 text-sm">{errors.address_line2}</div>}
                 </div>
                 <div>
                     <label className="block text-base font-public-sans text-text-title font-normal mb-2">
@@ -123,11 +103,11 @@ export default function BillingAddress({ addresses, userEmail, userPhone }: Bill
                     </label>
                     <Input
                         type="text"
-                        value={billingForm.data.state}
-                        onChange={(e) => billingForm.setData('state', e.target.value)}
+                        defaultValue={data.state}
+                        onChange={(e) => setData('state', e.target.value)}
                         className="w-full px-3 py-2 border border-text-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-text-buy-now"
                     />
-                    {billingForm.errors.state && <div className="text-red-500 text-sm">{billingForm.errors.state}</div>}
+                    {errors.state && <div className="text-red-500 text-sm">{errors.state}</div>}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -136,11 +116,11 @@ export default function BillingAddress({ addresses, userEmail, userPhone }: Bill
                         </label>
                         <Input
                             type="text"
-                            value={billingForm.data.city}
-                            onChange={(e) => billingForm.setData('city', e.target.value)}
+                            defaultValue={data.city}
+                            onChange={(e) => setData('city', e.target.value)}
                             className="w-full px-3 py-2 border border-text-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-text-buy-now"
                         />
-                        {billingForm.errors.city && <div className="text-red-500 text-sm">{billingForm.errors.city}</div>}
+                        {errors.city && <div className="text-red-500 text-sm">{errors.city}</div>}
                     </div>
                     <div>
                         <label className="block text-base font-public-sans text-text-title font-normal mb-2">
@@ -148,11 +128,11 @@ export default function BillingAddress({ addresses, userEmail, userPhone }: Bill
                         </label>
                         <Input
                             type="text"
-                            value={billingForm.data.postal_code}
-                            onChange={(e) => billingForm.setData('postal_code', e.target.value)}
+                            defaultValue={data.postal_code}
+                            onChange={(e) => setData('postal_code', e.target.value)}
                             className="w-full px-3 py-2 border border-text-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-text-buy-now"
                         />
-                        {billingForm.errors.postal_code && <div className="text-red-500 text-sm">{billingForm.errors.postal_code}</div>}
+                        {errors.postal_code && <div className="text-red-500 text-sm">{errors.postal_code}</div>}
                     </div>
                 </div>
                 <div>
@@ -161,11 +141,11 @@ export default function BillingAddress({ addresses, userEmail, userPhone }: Bill
                     </label>
                     <Input
                         type="text"
-                        value={billingForm.data.country}
-                        onChange={(e) => billingForm.setData('country', e.target.value)}
+                        defaultValue={data.country}
+                        onChange={(e) => setData('country', e.target.value)}
                         className="w-full px-3 py-2 border border-text-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-text-buy-now"
                     />
-                    {billingForm.errors.country && <div className="text-red-500 text-sm">{billingForm.errors.country}</div>}
+                    {errors.country && <div className="text-red-500 text-sm">{errors.country}</div>}
                 </div>
                 <div>
                     <label className="block text-base font-public-sans text-text-title font-normal mb-2">
@@ -173,11 +153,11 @@ export default function BillingAddress({ addresses, userEmail, userPhone }: Bill
                     </label>
                     <Input
                         type="email"
-                        value={billingForm.data.email}
-                        onChange={(e) => billingForm.setData('email', e.target.value)}
+                        defaultValue={data.email}
+                        onChange={(e) => setData('email', e.target.value)}
                         className="w-full px-3 py-2 border border-text-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-text-buy-now"
                     />
-                    {billingForm.errors.email && <div className="text-red-500 text-sm">{billingForm.errors.email}</div>}
+                    {errors.email && <div className="text-red-500 text-sm">{errors.email}</div>}
                 </div>
                 <div>
                     <label className="block text-base font-public-sans text-text-title font-normal mb-2">
@@ -185,19 +165,19 @@ export default function BillingAddress({ addresses, userEmail, userPhone }: Bill
                     </label>
                     <Input
                         type="tel"
-                        value={billingForm.data.phone}
-                        onChange={(e) => billingForm.setData('phone', e.target.value)}
+                        defaultValue={data.phone}
+                        onChange={(e) => setData('phone', e.target.value)}
                         className="w-full px-3 py-2 border border-text-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-text-buy-now"
                     />
-                    {billingForm.errors.phone && <div className="text-red-500 text-sm">{billingForm.errors.phone}</div>}
+                    {errors.phone && <div className="text-red-500 text-sm">{errors.phone}</div>}
                 </div>
                 <div className="mt-6">
                     <button 
                         type="submit" 
-                        disabled={billingForm.processing}
+                        disabled={processing}
                         className="w-full md:w-auto px-8 py-3 cursor-pointer bg-text-buy-now text-text-white font-semibold font-public-sans hover:bg-text-buy-now/90 transition-colors uppercase disabled:opacity-50"
                     >
-                        {billingForm.processing ? 'Saving...' : 'Save Changes'}
+                        {processing ? 'Saving...' : 'Save Changes'}
                     </button>
                 </div>
             </form>
