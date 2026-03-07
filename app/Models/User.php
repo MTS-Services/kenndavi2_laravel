@@ -18,6 +18,19 @@ class User extends Authenticatable
         'status',
         'password',
         'image',
+
+
+        'provider',
+        'provider_id',
+        'provider_avatar',
+        'provider_token',
+        'provider_refresh_token',
+
+        'created_at',
+        'updated_at',
+        'created_by',
+        'updated_by'
+
     ];
 
     protected $hidden = [
@@ -39,17 +52,24 @@ class User extends Authenticatable
         return false;
     }
 
-    protected $appends = ['image_url'];
+protected $appends = ['image_url'];
 
-    public function getImageUrlAttribute()
-    {
-        if (filter_var($this->image, FILTER_VALIDATE_URL)) {
-            return $this->image;
-        }
-        if (! $this->image) {
-            return asset('no-user-image-icon.png');
-        }
-
-        return asset('storage/user_images/'.$this->image);
+public function getImageUrlAttribute()
+{
+    // Google login এর জন্য
+    if ($this->provider_avatar) {
+        return $this->provider_avatar;
     }
+
+    // Regular login এর জন্য
+    if (filter_var($this->image, FILTER_VALIDATE_URL)) {
+        return $this->image;
+    }
+
+    if (!$this->image) {
+        return asset('no-user-image-icon.png');
+    }
+
+    return asset('storage/user_images/' . $this->image);
+}
 }

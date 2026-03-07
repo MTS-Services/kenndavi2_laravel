@@ -68,7 +68,7 @@ function FrontendHeader({ activePage, subPage, cartImage }: Props) {
                         <Link href={route('login')} className="text-text-white transition-colors hover:text-gray-300">
                             {/* Show user image if authenticated, otherwise show user icon */}
                             {user ? (
-                                <img src={user.image_url || '/assets/images/default-avatar.png'} alt="User" className="w-10 h-10 rounded-full border-2 border-text-buy-now" />
+                                <img src={user.image_url} alt="User" className="w-10 h-10 rounded-full border-2 border-text-buy-now" />
                             ) : (
                                 <User size={24} />
                             )}
