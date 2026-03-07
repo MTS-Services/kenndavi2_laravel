@@ -27,7 +27,12 @@ Route::prefix('user')->name('user.')->group(function () {
         Route::get('/orders', 'orders')->name('orders');
         Route::get('product-to-review', 'productToReview')->name('product-to-review');
         Route::get('review', 'review')->name('review');
-       Route::get('account-settings', 'accountSettings')->name('account-settings');
+        Route::get('account-settings', 'accountSettings')->name('account-settings');
+        Route::post('account-settings-update', 'accountSettingsUpdate')->name('account-settings.update');
+        Route::post('change-password', 'changePassword')->name('change-password');
+        Route::post('image-update', 'imageUpdate')->name('image-update');
+        Route::post('billing-address', 'billingAddress')->name('billing-address');
+        Route::post('shipping-address', 'shippingAddress')->name('shipping-address');
 
     });
 

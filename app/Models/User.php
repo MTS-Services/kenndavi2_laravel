@@ -54,7 +54,12 @@ class User extends Authenticatable
         return false;
     }
 
-protected $appends = ['image_url'];
+    public function addresses()
+    {
+        return $this->hasMany(UserAddresse::class);
+    }
+
+    protected $appends = ['image_url'];
 
 public function getImageUrlAttribute()
 {
