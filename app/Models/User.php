@@ -28,8 +28,10 @@ class User extends Authenticatable
 
         'created_at',
         'updated_at',
-        'created_by',
-        'updated_by'
+        'creater_id',
+        'creater_type',
+        'updater_id',
+        'updater_type',
 
     ];
 

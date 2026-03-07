@@ -57,6 +57,12 @@ class UserAuthController extends Controller
             'status' => ActiveInactive::ACTIVE->value,
             'password' => Hash::make($request['password']),
         ]);
+
+        // For self-registration, set creater_id to the user's own ID
+        $user->update([
+            'creater_id' => $user->id,
+            'creater_type' => User::class,
+        ]);
         Auth::login($user);
 
         return redirect()->route('user.dashboard');
