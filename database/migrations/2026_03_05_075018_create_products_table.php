@@ -16,12 +16,15 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->text('description');
-            $table->decimal('price', 10, 2);
-            $table->decimal('discount_price', 10, 2);
-            $table->text('ingredients');
-            $table->integer('quantity');
+            $table->longText('description');
+            $table->unsignedBigInteger('tag_id')->nullable();
+            $table->decimal('price', 15, 2);
+            $table->decimal('discount', 15, 2)->nullable();
+            $table->string('discount_type')->nullable();
+            $table->bigInteger('stock_level');
 
+
+            $table->foreign('tag_id')->references('id')->on('product_tags')->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
             $this->addAdminAuditColumns($table);
         });
