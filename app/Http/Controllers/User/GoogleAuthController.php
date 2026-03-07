@@ -18,11 +18,8 @@ class GoogleAuthController extends Controller
 
     public function callback()
     {
-        try {
-            $googleUser = Socialite::driver('google')->user();
-        } catch (\Exception $e) {
-            return redirect('/login')->with('error', 'Google login failed. Please try again.');
-        }
+
+        $googleUser = Socialite::driver('google')->stateless()->user();
 
         $email = $googleUser->getEmail();
         [$firstName, $lastName] = $this->extractName($googleUser->getName(), $email);
@@ -30,6 +27,7 @@ class GoogleAuthController extends Controller
             ['email' => $email],
             [
                 'name' => $googleUser->getName() ?? $firstName,
+                'password' => \Illuminate\Support\Str::random(24),
                 'provider' => 'google',
                 'provider_id' => $googleUser->getId(),
                 'provider_avatar' => $googleUser->getAvatar(),
