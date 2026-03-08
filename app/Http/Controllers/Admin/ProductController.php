@@ -28,7 +28,7 @@ class ProductController extends Controller
 
     public function create()
     {
-        $productTags = ProductTag::all();
+        $productTags = ProductTag::where('status', 'active')->get();
         
         return Inertia::render('admin/product-management/create', [
             'productTags' => $productTags
@@ -69,7 +69,7 @@ class ProductController extends Controller
     public function edit(int $id)
     {
         $product = $this->productService->getById($id);
-        $productTags = ProductTag::all();
+        $productTags = ProductTag::where('status', 'active')->get();
 
         
         return Inertia::render('admin/product-management/edit', [
