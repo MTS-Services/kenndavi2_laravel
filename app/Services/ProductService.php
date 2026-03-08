@@ -17,17 +17,17 @@ class ProductService
 
     public function getAll()
     {
-        return $this->model::with('images')->latest()->get();
+        return $this->model::with(['images', 'tag'])->latest()->get();
     }
 
     public function getById(int $id): Product
     {
-        return $this->model::with('images')->findOrFail($id);
+        return $this->model::with(['images', 'tag'])->findOrFail($id);
     }
 
     public function getPaginated(int $perPage = 10)
     {
-        return $this->model::with('images')->latest()->paginate($perPage);
+        return $this->model::with(['images', 'tag'])->latest()->paginate($perPage);
     }
 
     public function create(array $productData, array $images = []): Product
