@@ -1,3 +1,4 @@
+import TiptapEditor from '@/components/tiptap-editor';
 import AdminLayout from '@/layouts/admin-layout';
 import { useForm, usePage } from '@inertiajs/react';
 import { useRef, useState } from 'react';
@@ -120,7 +121,7 @@ export default function Create() {
                                                 flex: 1,
                                                 aspectRatio: '1',
                                                 borderRadius: '12px',
-                                               border: '2px dashed #d9d0cc',
+                                                border: '2px dashed #d9d0cc',
                                                 background: previewUrl
                                                     ? 'transparent'
                                                     : '#f5f1ef',
@@ -250,7 +251,7 @@ export default function Create() {
                             <label className="mb-2 block text-sm font-semibold text-gray-800">
                                 Description
                             </label>
-                            <textarea
+                            {/* <textarea
                                 value={data.description}
                                 onChange={(e) =>
                                     setData('description', e.target.value)
@@ -263,7 +264,11 @@ export default function Create() {
                                 <p className="mt-1 text-sm text-red-600">
                                     {errors.description}
                                 </p>
-                            )}
+                            )} */}
+                            <TiptapEditor 
+                                value={data.description}
+                                onChange={(value) => setData('description', value)}
+                            />
                         </div>
 
                         {/* Tag */}

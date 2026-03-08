@@ -60,9 +60,10 @@ export default function ProductCardAdmin({ product }: Props) {
                 </h3>
                 </Link>
                 <Link href={product.href} target="_blank" rel="noopener noreferrer">
-                <p className="mb-4 font-aktiv-grotesk text-base font-normal text-text-body line-clamp-2">
-                   {product.description}
-                </p>
+                <div
+                    className="prose prose-sm mb-4 max-h-14 overflow-hidden font-aktiv-grotesk text-base font-normal text-text-body"
+                    dangerouslySetInnerHTML={{ __html: product.description }}
+                />
                 </Link>
                 <div className="flex items-center justify-between">
                     <Link href={route('admin.pm.edit', product.id)}
