@@ -70,6 +70,7 @@ class ProductController extends Controller
     {
         $product = $this->productService->getById($id);
         $productTags = ProductTag::all();
+
         
         return Inertia::render('admin/product-management/edit', [
             'product' => $product,

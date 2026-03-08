@@ -29,7 +29,10 @@ export default function Create() {
         null,
         null,
     ]);
-    const [dragOver, setDragOver] = useState<number | null>(null);
+
+
+
+
 
     const { data, setData, post, processing, errors } =
         useForm<ProductFormData>({
@@ -52,15 +55,6 @@ export default function Create() {
         setPhotos(updated);
         const validPhotos = updated.filter((p): p is File => p !== null);
         setData('images', validPhotos);
-    };
-
-    const handleDrop = (e: React.DragEvent, index: number) => {
-        e.preventDefault();
-        setDragOver(null);
-        const file = e.dataTransfer.files[0];
-        if (file && file.type.startsWith('image/')) {
-            handleFileChange(index, file);
-        }
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -90,6 +84,7 @@ export default function Create() {
         const validPhotos = updated.filter((p): p is File => p !== null);
         setData('images', validPhotos);
     };
+
     return (
         <AdminLayout activeSlug="product-management">
             <div className="mx-auto max-w-4xl">
@@ -125,23 +120,12 @@ export default function Create() {
                                                     i
                                                 ]?.click()
                                             }
-                                            onDragOver={(e) => {
-                                                e.preventDefault();
-                                                setDragOver(i);
-                                            }}
-                                            onDragLeave={() =>
-                                                setDragOver(null)
-                                            }
-                                            onDrop={(e) => handleDrop(e, i)}
                                             className="relative"
                                             style={{
                                                 flex: 1,
                                                 aspectRatio: '1',
                                                 borderRadius: '12px',
-                                                border:
-                                                    dragOver === i
-                                                        ? '2px dashed #9b1c1c'
-                                                        : '2px dashed #d9d0cc',
+                                               border: '2px dashed #d9d0cc',
                                                 background: previewUrl
                                                     ? 'transparent'
                                                     : '#f5f1ef',

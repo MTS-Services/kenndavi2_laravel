@@ -25,7 +25,11 @@ interface Props {
 
 export default function ProductCardAdmin({ product }: Props) {
     const primaryImage = product.images?.find(img => img.is_primary);
-    const imageUrl = primaryImage?.image || product.image || '/assets/images/placeholder.jpg';
+    const imageUrl = primaryImage
+        ? `/storage/${primaryImage.image}`
+        : product.image
+        ? `/storage/${product.image}`
+        : '/assets/images/placeholder.jpg';
 
     return (
         <div className="rounded-md bg-bg-card shadow-md px-4 py-3">

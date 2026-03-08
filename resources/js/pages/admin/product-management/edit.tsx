@@ -18,7 +18,6 @@ interface ProductFormData {
     images: File[];
 }
 
-
 export default function Edit() {
     const { props } = usePage<{ product: any; productTags: ProductTag[] }>();
     const { product, productTags } = props;
@@ -30,10 +29,9 @@ export default function Edit() {
         null,
         null,
     ]);
-    const [dragOver, setDragOver] = useState<number | null>(null);
 
-    const { data, setData, put, processing, errors } = useForm<ProductFormData>(
-        {
+    const { data, setData, post, processing, errors } =
+        useForm<ProductFormData>({
             title: product?.title || '',
             description: product?.description || '',
             tag_id: product?.tag_id || productTags?.[0]?.id || 1,
@@ -42,8 +40,7 @@ export default function Edit() {
             discount_type: product?.discount_type || 'percentage',
             stock_level: product?.stock_level || 10,
             images: [],
-        },
-    );
+        });
 
     const fileInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -56,18 +53,10 @@ export default function Edit() {
         setData('images', validPhotos);
     };
 
-    const handleDrop = (e: React.DragEvent, index: number) => {
-        e.preventDefault();
-        setDragOver(null);
-        const file = e.dataTransfer.files[0];
-        if (file && file.type.startsWith('image/')) {
-            handleFileChange(index, file);
-        }
-    };
-
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        put(route('admin.pm.update', product.id), {
+        post(route('admin.pm.update', product.id), {
+            forceFormData: true,
             onSuccess: () => {
                 // Redirect happens automatically via Inertia
             },
@@ -100,33 +89,6 @@ export default function Edit() {
                         onSubmit={handleSubmit}
                         className="flex flex-col gap-6"
                     >
-                        {/* Existing Images Display */}
-                        {product?.images && product.images.length > 0 && (
-                            <div>
-                                <label className="mb-2 block text-sm font-semibold text-gray-800">
-                                    Current Images
-                                </label>
-                                <div className="flex gap-3">
-                                    {product.images.map(
-                                        (img: any, i: number) => (
-                                            <div key={i} className="relative">
-                                                <img
-                                                    src={img.image}
-                                                    alt={`Product image ${i + 1}`}
-                                                    className="h-20 w-20 rounded-lg border object-cover"
-                                                />
-                                                {img.is_primary && (
-                                                    <span className="absolute top-0 right-0 rounded-bl bg-green-500 px-1 text-xs text-white">
-                                                        Primary
-                                                    </span>
-                                                )}
-                                            </div>
-                                        ),
-                                    )}
-                                </div>
-                            </div>
-                        )}
-
                         {/* Photo Upload Row */}
                         <div>
                             <label className="mb-2 block text-sm font-semibold text-gray-800">
@@ -134,9 +96,13 @@ export default function Edit() {
                             </label>
                             <div className="flex gap-3">
                                 {photos.map((photo, i) => {
+                                    // Check if there's an existing image at this position
+                                    const existingImage = product?.images?.[i];
                                     const previewUrl = photo
                                         ? URL.createObjectURL(photo)
-                                        : null;
+                                        : existingImage
+                                          ? `/storage/${existingImage.image}`
+                                          : null;
                                     return (
                                         <div
                                             key={i}
@@ -145,23 +111,12 @@ export default function Edit() {
                                                     i
                                                 ]?.click()
                                             }
-                                            onDragOver={(e) => {
-                                                e.preventDefault();
-                                                setDragOver(i);
-                                            }}
-                                            onDragLeave={() =>
-                                                setDragOver(null)
-                                            }
-                                            onDrop={(e) => handleDrop(e, i)}
                                             className="relative"
                                             style={{
                                                 flex: 1,
                                                 aspectRatio: '1',
                                                 borderRadius: '12px',
-                                                border:
-                                                    dragOver === i
-                                                        ? '2px dashed #9b1c1c'
-                                                        : '2px dashed #d9d0cc',
+                                                border: '2px dashed #d9d0cc',
                                                 background: previewUrl
                                                     ? 'transparent'
                                                     : '#f5f1ef',
@@ -177,15 +132,11 @@ export default function Edit() {
                                         >
                                             {previewUrl ? (
                                                 <>
-                                                    <img
-                                                        src={previewUrl}
-                                                        alt={`Photo ${i + 1}`}
-                                                        style={{
-                                                            width: '100%',
-                                                            height: '100%',
-                                                            objectFit: 'cover',
-                                                        }}
-                                                    />
+                                                    <img src={previewUrl} alt={`Photo ${i + 1}`} style={{
+                                                        width: '100%',
+                                                        height: '100%',
+                                                        objectFit: 'cover',
+                                                    }} />
                                                     <button
                                                         type="button"
                                                         onClick={(e) => {
@@ -199,41 +150,11 @@ export default function Edit() {
                                                 </>
                                             ) : (
                                                 <>
-                                                    <svg
-                                                        width="22"
-                                                        height="22"
-                                                        viewBox="0 0 24 24"
-                                                        fill="none"
-                                                        style={{
-                                                            marginBottom: 5,
-                                                            opacity: 0.4,
-                                                        }}
-                                                    >
-                                                        <path
-                                                            d="M12 16V8M12 8L9 11M12 8L15 11"
-                                                            stroke="#6b7280"
-                                                            strokeWidth="1.5"
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                        />
-                                                        <rect
-                                                            x="3"
-                                                            y="3"
-                                                            width="18"
-                                                            height="18"
-                                                            rx="4"
-                                                            stroke="#6b7280"
-                                                            strokeWidth="1.5"
-                                                        />
+                                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ marginBottom: 5, opacity: 0.4 }}>
+                                                        <path d="M12 16V8M12 8L9 11M12 8L15 11" stroke="#6b7280" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                        <rect x="3" y="3" width="18" height="18" rx="4" stroke="#6b7280" strokeWidth="1.5" />
                                                     </svg>
-                                                    <span
-                                                        style={{
-                                                            fontSize: '0.68rem',
-                                                            color: '#9ca3af',
-                                                            fontFamily:
-                                                                'sans-serif',
-                                                        }}
-                                                    >
+                                                    <span style={{ fontSize: '0.68rem', color: '#9ca3af', fontFamily: 'sans-serif' }}>
                                                         Add Photo
                                                     </span>
                                                 </>
@@ -314,7 +235,9 @@ export default function Edit() {
                             </label>
                             <select
                                 value={data.tag_id}
-                                onChange={(e) => setData('tag_id', parseInt(e.target.value))}
+                                onChange={(e) =>
+                                    setData('tag_id', parseInt(e.target.value))
+                                }
                                 className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 focus:border-red-800 focus:ring-1 focus:ring-red-800 focus:outline-none"
                             >
                                 {productTags?.map((tag: ProductTag) => (
@@ -382,10 +305,14 @@ export default function Edit() {
                                 </label>
                                 <select
                                     value={data.discount_type}
-                                    onChange={(e) => setData('discount_type', e.target.value)}
+                                    onChange={(e) =>
+                                        setData('discount_type', e.target.value)
+                                    }
                                     className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 focus:border-red-800 focus:ring-1 focus:ring-red-800 focus:outline-none"
                                 >
-                                    <option value="percentage">Percentage</option>
+                                    <option value="percentage">
+                                        Percentage
+                                    </option>
                                     <option value="fixed">Fixed Amount</option>
                                 </select>
                                 {errors.discount_type && (
