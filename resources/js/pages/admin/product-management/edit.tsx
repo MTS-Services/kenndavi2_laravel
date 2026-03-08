@@ -1,6 +1,7 @@
 import AdminLayout from '@/layouts/admin-layout';
 import { useForm, usePage } from '@inertiajs/react';
 import { useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 interface ProductTag {
     id: number;
@@ -58,10 +59,15 @@ export default function Edit() {
         post(route('admin.pm.update', product.id), {
             forceFormData: true,
             onSuccess: () => {
-                // Redirect happens automatically via Inertia
+                toast.success('Product updated successfully.')
             },
+            onError: () => {
+                toast.error('Failed to update product.')
+            }
         });
     };
+
+    
 
     const removePhoto = (index: number) => {
         const updated = [...photos];
@@ -73,7 +79,7 @@ export default function Edit() {
 
     return (
         <AdminLayout activeSlug="product-management">
-            <div className="mx-auto max-w-4xl">
+            <div className="mx-auto w-full">
                 {/* Edit Form */}
                 <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
                     {/* Page Header */}
