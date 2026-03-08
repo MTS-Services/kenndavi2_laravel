@@ -96,6 +96,8 @@ class UserController extends Controller
             $this->userAccountService->updateBillingAddress($request->all());
 
             return redirect()->route('user.account-settings')->with('success', 'Billing address updated successfully.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors());
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Failed to update billing address.']);
         }
@@ -109,6 +111,8 @@ class UserController extends Controller
             return redirect()
                 ->back()
                 ->with('success', 'Shipping address updated successfully.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors());
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Failed to update shipping address.']);
         }

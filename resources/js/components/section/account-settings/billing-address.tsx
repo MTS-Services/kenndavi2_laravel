@@ -19,7 +19,7 @@ interface Address {
 }
 
 interface BillingAddressProps {
-    address: Address[] | null;
+    address: Address | null;
     userEmail: string;
     userPhone: string;
 }
@@ -28,17 +28,15 @@ export default function BillingAddress({ address, userEmail, userPhone }: Billin
 
 
     const {data, setData, post, processing, errors} = useForm({
-        full_name: address?.[0]?.full_name || '',
-        address_line1: address?.[0]?.address_line1 || '',
-        address_line2: address?.[0]?.address_line2 || '',
-        city: address?.[0]?.city || '',
-        state: address?.[0]?.state || '',
-        postal_code: address?.[0]?.postal_code || '',
-        country: address?.[0]?.country || '',
-        email: address?.[0]?.email || '',
-        phone: address?.[0]?.phone || '',
-        user_email: userEmail,
-        user_phone: userPhone,
+        full_name: address?.full_name || '',
+        address_line1: address?.address_line1 || '',
+        address_line2: address?.address_line2 || '',
+        city: address?.city || '',
+        state: address?.state || '',
+        postal_code: address?.postal_code || '',
+        country: address?.country || '',
+        email: address?.email || userEmail || '',
+        phone: address?.phone || userPhone || '',
     });
 
 

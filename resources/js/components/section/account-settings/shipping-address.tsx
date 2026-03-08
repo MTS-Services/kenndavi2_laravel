@@ -14,27 +14,27 @@ interface Address {
     postal_code: string;
     country: string;
     is_default: boolean;
+    email: string;
 }
 
 interface ShippingAddressProps {
-    addresses: Address[];
+    address: Address | null;
     userEmail: string;
     userPhone: string;
 }
 
-export default function ShippingAddress({ addresses, userEmail, userPhone }: ShippingAddressProps) {
+export default function ShippingAddress({ address, userEmail, userPhone }: ShippingAddressProps) {
     const {data, setData, post, processing, errors} = useForm({
-        full_name: '',
-        address_line1: '',
-        address_line2: '',
-        city: '',
-        state: '',
-        postal_code: '',
-        country: '',
-        email: userEmail || '',
-        phone: userPhone || '',
+        full_name: address?.full_name || '',
+        address_line1: address?.address_line1 || '',
+        address_line2: address?.address_line2 || '',
+        city: address?.city || '',
+        state: address?.state || '',
+        postal_code: address?.postal_code || '',
+        country: address?.country || '',
+        email: address?.email || userEmail || '',
+        phone: address?.phone || userPhone || '',
     });
-
 
    const handleShippingSubmit = (e: React.FormEvent) => {
            e.preventDefault();
