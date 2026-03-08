@@ -33,11 +33,15 @@ export default function SaucesCard({ product }: Props) {
                 </Link>
                <Link href={href}>
                 <p className="mb-4 font-aktiv-grotesk text-base font-normal text-text-body">
-                   {product?.description}
+                   <div className="mb-4 font-aktiv-grotesk text-base font-normal text-text-body line-clamp-3" dangerouslySetInnerHTML={{ __html: product.description }} />
                 </p>
+                {/* <div
+                    className="prose prose-sm mb-4 max-h-14 overflow-hidden font-aktiv-grotesk text-base font-normal text-text-body"
+                    dangerouslySetInnerHTML={{ __html: product.description }}
+                /> */}
                </Link>
                 <div className="flex items-center justify-between">
-                    <span className="font-aktiv-grotesk text-2xl font-normal text-text-title">
+                    <span className="font-aktiv-grotesk text-2xl font-normal text-text-title line-clamp-3">
                         Price {product?.price}
                     </span>
                     <Link 

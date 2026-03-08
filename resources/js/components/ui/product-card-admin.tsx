@@ -61,7 +61,7 @@ export default function ProductCardAdmin({ product }: Props) {
                 </Link>
                 <Link href={product.href} target="_blank" rel="noopener noreferrer">
                 <div
-                    className="prose prose-sm mb-4 max-h-14 overflow-hidden font-aktiv-grotesk text-base font-normal text-text-body"
+                    className="mb-4 font-aktiv-grotesk text-base font-normal text-text-body line-clamp-3"
                     dangerouslySetInnerHTML={{ __html: product.description }}
                 />
                 </Link>
