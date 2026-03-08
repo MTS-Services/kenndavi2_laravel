@@ -9,15 +9,16 @@ use Illuminate\Support\Facades\Storage;
 
 class RecipeService
 {
-    /**
-     * Create a new class instance.
-     */
-    public function __construct(protected Recipe $model) {}
+
+    public function __construct(
+        protected Recipe $model,
+        protected Product $product
+    ) {}
 
     /**
      * Get all recipes with pagination
      */
-    public function getAllRecipes($perPage = 10)
+    public function getAll($perPage = 10)
     {
         return $this->model->paginate($perPage);
     }
@@ -25,7 +26,7 @@ class RecipeService
     /**
      * Get recipe with related products for editing
      */
-    public function getRecipeForEdit($id)
+    public function getById($id)
     {
         return $this->model->with('relatedProducts')->findOrFail($id);
     }
@@ -33,7 +34,7 @@ class RecipeService
     /**
      * Create a new recipe
      */
-    public function createRecipe(Request $request)
+    public function create(Request $request)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -45,17 +46,15 @@ class RecipeService
             'related_products.*' => 'exists:products,id',
         ]);
 
-        // Handle image upload
+
         if ($request->hasFile('image')) {
             $validated['image'] = $this->handleImageUpload($request->file('image'));
         }
 
-        // Add audit fields
         $validated['created_by'] = auth('admin')->id();
 
         $recipe = $this->model->create($validated);
 
-        // Handle related products if provided
         if (!empty($validated['related_products'])) {
             $recipe->relatedProducts()->attach($validated['related_products']);
         }
@@ -66,11 +65,10 @@ class RecipeService
     /**
      * Update an existing recipe
      */
-    public function updateRecipe(Request $request, $id)
+    public function update(Request $request, $id)
     {
 
         $recipe = $this->model->findOrFail($id);
-        // dd($recipe);
 
         $validated = $request->validate([
             'title' => 'nullable|string|max:255',
@@ -82,17 +80,14 @@ class RecipeService
             'related_products.*' => 'exists:products,id',
         ]);
 
-        // Handle image upload
         if ($request->hasFile('image')) {
             $validated['image'] = $this->handleImageUpload($request->file('image'));
         }
 
-        // Add audit field
         $validated['updated_by'] = auth('admin')->id();
 
         $recipe->update($validated);
 
-        // Update related products
         if (isset($validated['related_products'])) {
             $recipe->relatedProducts()->sync($validated['related_products']);
         } else {
@@ -105,17 +100,11 @@ class RecipeService
     /**
      * Delete a recipe
      */
-    public function deleteRecipe($id)
+    public function delete(Recipe $recipe): bool
     {
-        $recipe = $this->model->findOrFail($id);
-
-        // Delete related products relationships
         $recipe->relatedProducts()->detach();
 
-        // Delete the recipe
-        $recipe->delete();
-
-        return $recipe;
+        return (bool) $recipe->delete();
     }
 
     /**
@@ -133,6 +122,6 @@ class RecipeService
      */
     public function getAllProducts()
     {
-        return Product::all();
+        return $this->product->latest()->get();
     }
 }

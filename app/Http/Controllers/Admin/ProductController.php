@@ -121,7 +121,7 @@ class ProductController extends Controller
             ->with('success', 'Image removed successfully!');
     }
 
-    public function destroy(int $id)
+    public function delete(int $id)
     {
         $product = $this->productService->getById($id);
         $this->productService->delete($product);

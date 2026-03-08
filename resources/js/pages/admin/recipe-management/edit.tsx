@@ -1,6 +1,7 @@
 import AdminLayout from '@/layouts/admin-layout';
 import { useForm, usePage } from '@inertiajs/react';
 import { useRef, useState, useEffect } from 'react';
+import { toast } from 'sonner';
 
 interface RecipeFormData {
     title: string;
@@ -65,8 +66,11 @@ export default function Edit() {
         post(route('admin.rm.update', recipe.id), {
             forceFormData: true,
             onSuccess: () => {
-                // Redirect happens automatically via Inertia
+                toast.success('Recipe updated successfully.')
             },
+            onError: () => {
+                toast.error('Failed to update recipe.')
+            }
         });
     };
 
@@ -79,7 +83,7 @@ export default function Edit() {
 
     return (
         <AdminLayout activeSlug="recipe-management">
-            <div className="mx-auto max-w-4xl">
+            <div className="mx-auto w-full">
                 <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
                     {/* Page Header */}
                     <div className="mb-6">

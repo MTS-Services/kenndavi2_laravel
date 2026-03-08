@@ -49,9 +49,9 @@ export default function DeleteModal({
                     <div className="w-[92%] max-w-sm scale-100 transform overflow-hidden rounded-3xl bg-white p-8 shadow-2xl transition-all">
                         {/* Top Icon / Header Section */}
                         <div className="mb-4 flex flex-col items-center text-center">
-                            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-100">
                                <svg 
-                                className="h-7 w-7 text-primary" 
+                                className="h-7 w-7 text-text-buy-now" 
                                 fill="none" 
                                 stroke="currentColor" 
                                 viewBox="0 0 24 24"
@@ -64,10 +64,10 @@ export default function DeleteModal({
                                 />
                                 </svg>
                             </div>
-                            <h2 className="text-2xl font-extrabold tracking-tight text-gray-900">
+                            <h2 className="text-2xl font-extrabold tracking-tight text-text-title">
                                 {title}
                             </h2>
-                            <p className="mt-2 text-sm leading-relaxed text-gray-500">
+                            <p className="mt-2 text-sm leading-relaxed text-text-body">
                                 {message}
                             </p>
                         </div>
@@ -76,13 +76,13 @@ export default function DeleteModal({
                         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
                             <button
                                 onClick={() => setOpen(false)}
-                                className="flex-1 cursor-pointer rounded-xl border border-gray-200 px-5 py-3 text-sm font-semibold text-gray-700 transition-all hover:bg-gray-50 active:scale-95"
+                                className="flex-1 cursor-pointer rounded-xl border border-text-gray-300 px-5 py-3 text-sm font-semibold text-text-black-100 transition-all hover:bg-gray-50 active:scale-95"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={handleDelete}
-                                className="flex-1 cursor-pointer rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/30 transition-all hover:bg-secondary active:scale-95"
+                                className="flex-1 cursor-pointer rounded-xl bg-text-buy-now px-5 py-3 text-sm font-semibold text-text-white shadow-lg shadow-red-900/30 transition-all hover:bg-red-700 active:scale-95"
                             >
                                 Delete
                             </button>

@@ -1,6 +1,7 @@
 import { Link } from "@inertiajs/react";
 import { EditIcon, Trash2 } from "lucide-react";
 import { productData } from "./product-card-admin";
+import DeleteModal from './delete-modal';
 
 export interface RecipeImage {
     id: string;
@@ -66,12 +67,15 @@ export default function RecipeCardAdmin({ recipe }: Props) {
                     >
                         <EditIcon /> Edit
                     </Link>
-                    <Link 
+                    <DeleteModal 
                         href={route('admin.rm.delete', recipe.id)}
-                        className="flex items-center gap-3.5 font-inter text-base font-medium text-text-buy-now border border-text-buy-now px-8 py-2.5 rounded-md bg-text-buy-now/5"
+                        title="Delete Recipe"
+                        message="Are you sure you want to delete this recipe? This action cannot be undone."
+                        confirmText="Delete"
+                        className="flex cursor-pointer items-center gap-3.5 font-inter text-base font-medium text-text-buy-now border border-text-buy-now px-8 py-2.5 rounded-md bg-text-buy-now/5"
                     >
-                      <Trash2 />  Delete
-                    </Link>
+                        <Trash2 /> Delete
+                    </DeleteModal>
                 </div>
             </div>
         </div>

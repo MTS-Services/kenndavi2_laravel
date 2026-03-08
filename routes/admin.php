@@ -52,6 +52,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('/store', [ProductController::class, 'store'])->name('store');
             Route::get('/edit/{id}', [ProductController::class, 'edit'])->name('edit');
             Route::post('/update/{id}', [ProductController::class, 'update'])->name('update');
+            Route::delete('/delete/{id}', [ProductController::class, 'delete'])->name('delete');
         });
         Route::group(['prefix' => 'order-management', 'as' => 'om.'], function () {
             Route::get('/index', [OrderController::class, 'index'])->name('index');
@@ -63,7 +64,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('/store', [RecipeController::class, 'store'])->name('store');
             Route::get('/edit/{id}', [RecipeController::class, 'edit'])->name('edit');
             Route::post('/update/{id}', [RecipeController::class, 'update'])->name('update');
-            Route::get('/delete/{id}', [RecipeController::class, 'delete'])->name('delete');
+            Route::delete('/delete/{id}', [RecipeController::class, 'delete'])->name('delete');
         });
         Route::group(['prefix' => 'terms-conditions', 'as' => 'tc.'], function () {
             Route::get('/index', [TermsConditionsController::class, 'index'])->name('index');

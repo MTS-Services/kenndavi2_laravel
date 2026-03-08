@@ -15,7 +15,7 @@ class RecipeController extends Controller
 
     public function index(): Response
     {
-        $recipes = $this->recipeService->getAllRecipes();
+        $recipes = $this->recipeService->getAll();
         
         return Inertia::render('admin/recipe-management/index', [
             'recipes' => $recipes
@@ -33,7 +33,7 @@ class RecipeController extends Controller
     
     public function store(Request $request)
     {
-        $recipe = $this->recipeService->createRecipe($request);
+        $recipe = $this->recipeService->create($request);
 
         return redirect()
             ->route('admin.rm.index')
@@ -42,7 +42,7 @@ class RecipeController extends Controller
     
     public function edit($id): Response
     {
-        $recipe = $this->recipeService->getRecipeForEdit($id);
+        $recipe = $this->recipeService->getById($id);
         $products = $this->recipeService->getAllProducts();
         
         return Inertia::render('admin/recipe-management/edit', [
@@ -53,7 +53,7 @@ class RecipeController extends Controller
     
     public function update(Request $request, $id)
     {
-        $recipe = $this->recipeService->updateRecipe($request, $id);
+        $recipe = $this->recipeService->update($request, $id);
 
         return redirect()
             ->route('admin.rm.index')
@@ -62,7 +62,8 @@ class RecipeController extends Controller
     
     public function delete($id)
     {
-        $recipe = $this->recipeService->deleteRecipe($id);
+        $recipe = $this->recipeService->getById($id);
+        $this->recipeService->delete($recipe);
         
         return redirect()
             ->route('admin.rm.index')

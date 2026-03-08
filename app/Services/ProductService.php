@@ -10,29 +10,31 @@ use Illuminate\Http\UploadedFile;
 
 class ProductService
 {
-
+    public function __construct(
+        protected Product $model,
+        protected ProductImage $productImage
+    ) {}
 
     public function getAll()
     {
-        return Product::with('images')->latest()->get();
+        return $this->model::with('images')->latest()->get();
     }
 
     public function getById(int $id): Product
     {
-        return Product::with('images')->findOrFail($id);
+        return $this->model::with('images')->findOrFail($id);
     }
 
     public function getPaginated(int $perPage = 10)
     {
-        return Product::with('images')->latest()->paginate($perPage);
+        return $this->model::with('images')->latest()->paginate($perPage);
     }
 
     public function create(array $productData, array $images = []): Product
     {
         $productData['created_by'] = Auth::id();
-        $productData['updated_by'] = Auth::id();
         
-        $product = Product::create($productData);
+        $product = $this->model::create($productData);
         
         if (!empty($images)) {
             $this->attachImages($product, $images);
@@ -47,7 +49,6 @@ class ProductService
         
         $product->update($productData);
         
-        // Handle images - update individual images by position
         if (!empty($images)) {
             $this->updateImages($product, $images);
         }
@@ -59,29 +60,25 @@ class ProductService
     {
         foreach ($images as $index => $image) {
             if ($image instanceof UploadedFile) {
-                // Find existing image at this position
                 $existingImage = $product->images()->skip($index)->first();
                 
                 if ($existingImage) {
-                    // Delete old image file
                     if ($existingImage->image && Storage::disk('public')->exists($existingImage->image)) {
                         Storage::disk('public')->delete($existingImage->image);
                     }
                     
-                    // Upload new image and update record
                     $path = $image->store('products', 'public');
                     $existingImage->update([
                         'image' => $path,
                         'updated_by' => Auth::id(),
                     ]);
                 } else {
-                    // No existing image at this position, create new one
                     $path = $image->store('products', 'public');
                     
-                    ProductImage::create([
+                    $this->productImage->create([
                         'product_id' => $product->id,
                         'image' => $path,
-                        'is_primary' => $index === 0 && $product->images()->count() === 0, // First image is primary only if no other images
+                        'is_primary' => $index === 0 && $product->images()->count() === 0,
                         'created_by' => Auth::id(),
                         'updated_by' => Auth::id(),
                     ]);
@@ -96,10 +93,10 @@ class ProductService
             if ($image instanceof UploadedFile) {
                 $path = $image->store('products', 'public');
                 
-                ProductImage::create([
+                $this->productImage->create([
                     'product_id' => $product->id,
                     'image' => $path,
-                    'is_primary' => $index === 0, // First image is primary
+                    'is_primary' => $index === 0,
                     'created_by' => Auth::id(),
                     'updated_by' => Auth::id(),
                 ]);
@@ -109,18 +106,15 @@ class ProductService
 
     public function setPrimaryImage(Product $product, int $imageId): void
     {
-        // Reset all images to non-primary
-        $product->images()->update(['is_primary' => false]);
-        
-        // Set the specified image as primary
-        $product->images()->where('id', $imageId)->update(['is_primary' => true]);
+        $this->productImage->where('product_id', $product->id)->update(['is_primary' => false]);
+        $this->productImage->where('id', $imageId)->update(['is_primary' => true]);
     }
 
     public function removeImage(Product $product, int $imageId): void
     {
-        $image = $product->images()->findOrFail($imageId);
+        $image = $this->productImage->where('product_id', $product->id)->findOrFail($imageId);
         
-        // Delete file from storage
+
         if ($image->image && Storage::disk('public')->exists($image->image)) {
             Storage::disk('public')->delete($image->image);
         }
@@ -130,8 +124,8 @@ class ProductService
 
     public function delete(Product $product): bool
     {
-        // Delete all associated images
-        foreach ($product->images as $image) {
+
+        foreach ($this->productImage->where('product_id', $product->id)->get() as $image) {
             if ($image->image && Storage::disk('public')->exists($image->image)) {
                 Storage::disk('public')->delete($image->image);
             }

@@ -1,6 +1,7 @@
 import AdminLayout from '@/layouts/admin-layout';
 import { useForm, usePage } from '@inertiajs/react';
 import { useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 interface ProductTag {
     id: number;
@@ -22,17 +23,7 @@ interface ProductFormData {
 export default function Create() {
     const { props } = usePage<{ productTags: ProductTag[] }>();
     const { productTags } = props;
-    const [photos, setPhotos] = useState<(File | null)[]>([
-        null,
-        null,
-        null,
-        null,
-        null,
-    ]);
-
-
-
-
+    const [photos, setPhotos] = useState<(File | null)[]>([null, null, null, null, null]);
 
     const { data, setData, post, processing, errors } =
         useForm<ProductFormData>({
@@ -73,6 +64,10 @@ export default function Create() {
                     stock_level: 10,
                     images: [],
                 });
+                toast.success('Product created successfully.');
+            },
+            onError: () => {
+                toast.error('Failed to create product.');
             },
         });
     };
@@ -87,7 +82,7 @@ export default function Create() {
 
     return (
         <AdminLayout activeSlug="product-management">
-            <div className="mx-auto max-w-4xl">
+            <div className="mx-auto w-full">
                 <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
                     {/* Page Header */}
                     <div className="mb-6">
