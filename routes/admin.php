@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\EditorUploadController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\RecipeController;
@@ -24,6 +25,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::middleware('admin')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+        // Route::post('/editor/upload', EditorUploadController::class)->name('editor.upload');
         Route::get('/all', [AdminController::class, 'index'])->name('index');
         Route::get('/view/detail/{id}', [AdminController::class, 'viewAdmin'])->name('view.detail');
         Route::get('/create', [AdminController::class, 'createAdmin'])->name('create');
