@@ -1,25 +1,27 @@
 import AdminLayout from '@/layouts/admin-layout';
-import { useForm } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import { useRef, useState } from 'react';
+
+interface ProductTag {
+    id: number;
+    name: string;
+}
 
 interface ProductFormData {
     title: string;
     description: string;
-    tag: string;
+    tag_id: number;
     price: string;
-    discount_price: string;
-    ingredients: string;
-    quantity: number;
+    discount: string;
+    discount_type: string;
+    stock_level: number;
     images: File[];
 }
 
-const TAGS = [
-    { value: 'sweet', label: 'Sweet' },
-    { value: 'honey', label: 'Honey' },
-    { value: 'spicy', label: 'Spicy' },
-];
 
 export default function Create() {
+    const { props } = usePage<{ productTags: ProductTag[] }>();
+    const { productTags } = props;
     const [photos, setPhotos] = useState<(File | null)[]>([
         null,
         null,
@@ -27,17 +29,20 @@ export default function Create() {
         null,
         null,
     ]);
-    const [dragOver, setDragOver] = useState<number | null>(null);
+
+
+
+
 
     const { data, setData, post, processing, errors } =
         useForm<ProductFormData>({
             title: '',
             description: '',
-            tag: 'sweet',
+            tag_id: productTags?.[0]?.id || 1,
             price: '',
-            discount_price: '',
-            ingredients: '',
-            quantity: 10,
+            discount: '',
+            discount_type: 'percentage',
+            stock_level: 10,
             images: [],
         });
 
@@ -52,15 +57,6 @@ export default function Create() {
         setData('images', validPhotos);
     };
 
-    const handleDrop = (e: React.DragEvent, index: number) => {
-        e.preventDefault();
-        setDragOver(null);
-        const file = e.dataTransfer.files[0];
-        if (file && file.type.startsWith('image/')) {
-            handleFileChange(index, file);
-        }
-    };
-
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         post(route('admin.pm.store'), {
@@ -70,11 +66,11 @@ export default function Create() {
                 setData({
                     title: '',
                     description: '',
-                    tag: 'sweet',
+                    tag_id: productTags?.[0]?.id || 1,
                     price: '',
-                    discount_price: '',
-                    ingredients: '',
-                    quantity: 10,
+                    discount: '',
+                    discount_type: 'percentage',
+                    stock_level: 10,
                     images: [],
                 });
             },
@@ -88,6 +84,7 @@ export default function Create() {
         const validPhotos = updated.filter((p): p is File => p !== null);
         setData('images', validPhotos);
     };
+
     return (
         <AdminLayout activeSlug="product-management">
             <div className="mx-auto max-w-4xl">
@@ -123,23 +120,12 @@ export default function Create() {
                                                     i
                                                 ]?.click()
                                             }
-                                            onDragOver={(e) => {
-                                                e.preventDefault();
-                                                setDragOver(i);
-                                            }}
-                                            onDragLeave={() =>
-                                                setDragOver(null)
-                                            }
-                                            onDrop={(e) => handleDrop(e, i)}
                                             className="relative"
                                             style={{
                                                 flex: 1,
                                                 aspectRatio: '1',
                                                 borderRadius: '12px',
-                                                border:
-                                                    dragOver === i
-                                                        ? '2px dashed #9b1c1c'
-                                                        : '2px dashed #d9d0cc',
+                                               border: '2px dashed #d9d0cc',
                                                 background: previewUrl
                                                     ? 'transparent'
                                                     : '#f5f1ef',
@@ -291,114 +277,110 @@ export default function Create() {
                                 Tag
                             </label>
                             <select
-                                value={data.tag}
-                                onChange={(e) => setData('tag', e.target.value)}
+                                value={data.tag_id}
+                                onChange={(e) => setData('tag_id', parseInt(e.target.value))}
                                 className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 focus:border-red-800 focus:ring-1 focus:ring-red-800 focus:outline-none"
                             >
-                                {TAGS.map((tag) => (
-                                    <option key={tag.value} value={tag.value}>
-                                        {tag.label}
+                                {productTags?.map((tag: ProductTag) => (
+                                    <option key={tag.id} value={tag.id}>
+                                        {tag.name}
                                     </option>
                                 ))}
                             </select>
-                            {errors.tag && (
+                            {errors.tag_id && (
                                 <p className="mt-1 text-sm text-red-600">
-                                    {errors.tag}
+                                    {errors.tag_id}
                                 </p>
                             )}
                         </div>
 
-                        {/* Price and Discount Price */}
+                        {/* Price */}
+                        <div>
+                            <label className="mb-2 block text-sm font-semibold text-gray-800">
+                                Price
+                            </label>
+                            <input
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                value={data.price}
+                                onChange={(e) =>
+                                    setData('price', e.target.value)
+                                }
+                                className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 focus:border-red-800 focus:ring-1 focus:ring-red-800 focus:outline-none"
+                                placeholder="0.00"
+                            />
+                            {errors.price && (
+                                <p className="mt-1 text-sm text-red-600">
+                                    {errors.price}
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Discount and Discount Type */}
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label className="mb-2 block text-sm font-semibold text-gray-800">
-                                    Price
+                                    Discount
                                 </label>
                                 <input
                                     type="number"
                                     step="0.01"
                                     min="0"
-                                    value={data.price}
+                                    value={data.discount}
                                     onChange={(e) =>
-                                        setData('price', e.target.value)
+                                        setData('discount', e.target.value)
                                     }
                                     className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 focus:border-red-800 focus:ring-1 focus:ring-red-800 focus:outline-none"
                                     placeholder="0.00"
                                 />
-                                {errors.price && (
+                                {errors.discount && (
                                     <p className="mt-1 text-sm text-red-600">
-                                        {errors.price}
+                                        {errors.discount}
                                     </p>
                                 )}
                             </div>
                             <div>
                                 <label className="mb-2 block text-sm font-semibold text-gray-800">
-                                    Discount Price
+                                    Discount Type
                                 </label>
-                                <input
-                                    type="number"
-                                    step="0.01"
-                                    min="0"
-                                    value={data.discount_price}
-                                    onChange={(e) =>
-                                        setData(
-                                            'discount_price',
-                                            e.target.value,
-                                        )
-                                    }
+                                <select
+                                    value={data.discount_type}
+                                    onChange={(e) => setData('discount_type', e.target.value)}
                                     className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 focus:border-red-800 focus:ring-1 focus:ring-red-800 focus:outline-none"
-                                    placeholder="0.00"
-                                />
-                                {errors.discount_price && (
+                                >
+                                    <option value="percentage">Percentage</option>
+                                    <option value="fixed">Fixed Amount</option>
+                                </select>
+                                {errors.discount_type && (
                                     <p className="mt-1 text-sm text-red-600">
-                                        {errors.discount_price}
+                                        {errors.discount_type}
                                     </p>
                                 )}
                             </div>
                         </div>
 
-                        {/* Ingredients */}
+                        {/* Stock Level */}
                         <div>
                             <label className="mb-2 block text-sm font-semibold text-gray-800">
-                                Ingredients
-                            </label>
-                            <textarea
-                                value={data.ingredients}
-                                onChange={(e) =>
-                                    setData('ingredients', e.target.value)
-                                }
-                                rows={3}
-                                className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 focus:border-red-800 focus:ring-1 focus:ring-red-800 focus:outline-none"
-                                placeholder="Enter ingredients"
-                            />
-                            {errors.ingredients && (
-                                <p className="mt-1 text-sm text-red-600">
-                                    {errors.ingredients}
-                                </p>
-                            )}
-                        </div>
-
-                        {/* Quantity */}
-                        <div>
-                            <label className="mb-2 block text-sm font-semibold text-gray-800">
-                                Quantity
+                                Stock Level
                             </label>
                             <input
                                 type="number"
                                 min="0"
-                                value={data.quantity}
+                                value={data.stock_level}
                                 onChange={(e) =>
                                     setData(
-                                        'quantity',
+                                        'stock_level',
                                         parseInt(e.target.value) || 0,
                                     )
                                 }
                                 className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 focus:border-red-800 focus:ring-1 focus:ring-red-800 focus:outline-none"
                                 placeholder="0"
                             />
-                            {errors.quantity && (
+                            {errors.stock_level && (
                                 <p className="mt-1 text-sm text-red-600">
-                                    {errors.quantity}
+                                    {errors.stock_level}
                                 </p>
                             )}
                         </div>

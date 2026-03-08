@@ -21,4 +21,9 @@ class ProductTag extends Model
     protected $casts = [
         'status' => ProductTagStatus::class,
     ];
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 }

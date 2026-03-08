@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\ProductTag;
+use App\Enums\ProductDiscountType;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
@@ -10,11 +10,11 @@ class Product extends Model
     protected $fillable = [
         'title',
         'description',
-        'tag',
+        'tag_id',
         'price',
-        'discount_price',
-        'ingredients',
-        'quantity',
+        'discount',
+        'discount_type',
+        'stock_level',
 
         'created_at',
         'updated_at',
@@ -26,12 +26,24 @@ class Product extends Model
     {
         return [
 
-            'tag' => ProductTag::class
+            'discount_type' => ProductDiscountType::class,
+            'price' => 'decimal:2',
+            'discount' => 'decimal:2',
+            'stock_level' => 'integer',
         ];
     }
     
     public function images()
     {
         return $this->hasMany(ProductImage::class);
+    }
+    
+    public function tag()
+    {
+        return $this->belongsTo(ProductTag::class);
+    }
+    public function relatedProducts()
+    {
+        return $this->belongsToMany(Recipe::class, 'recipe_related_products', 'product_id', 'recipe_id');
     }
 }

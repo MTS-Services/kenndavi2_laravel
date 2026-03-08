@@ -13,7 +13,6 @@ class UserAddresse extends Model
         'user_id',
         'type',
         'full_name',
-        'company_name',
         'phone',
         'address_line1',
         'address_line2',
@@ -21,7 +20,6 @@ class UserAddresse extends Model
         'state',
         'postal_code',
         'country',
-        'email',
         'is_default',
 
 

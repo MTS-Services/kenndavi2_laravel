@@ -1,9 +1,9 @@
 <?php
 
-use App\Traits\AuditColumnsTrait;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Traits\AuditColumnsTrait;
 
 return new class extends Migration
 {
@@ -13,17 +13,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('products', function (Blueprint $table) {
+        Schema::create('recipe_related_products', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->text('description');
-            $table->decimal('price', 10, 2);
-            $table->decimal('discount_price', 10, 2);
-            $table->text('ingredients');
-            $table->integer('quantity');
+            $table->unsignedBigInteger('product_id');
+            $table->unsignedBigInteger('recipe_id');
 
+
+            $table->foreign('product_id')->references('id')->on('products')->cascadeOnDelete();
+            $table->foreign('recipe_id')->references('id')->on('recipes')->cascadeOnDelete();
             $table->timestamps();
             $this->addAdminAuditColumns($table);
+
         });
     }
 
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('products');
+        Schema::dropIfExists('recipe_related_products');
     }
 };

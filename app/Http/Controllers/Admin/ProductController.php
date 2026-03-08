@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ProductTag;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -27,7 +28,11 @@ class ProductController extends Controller
 
     public function create()
     {
-        return Inertia::render('admin/product-management/create');
+        $productTags = ProductTag::all();
+        
+        return Inertia::render('admin/product-management/create', [
+            'productTags' => $productTags
+        ]);
     }
 
     public function store(Request $request)
@@ -35,11 +40,11 @@ class ProductController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'tag' => 'required|in:sweet,honey,spicy',
+            'tag_id' => 'required|exists:product_tags,id',
             'price' => 'required|numeric|min:0',
-            'discount_price' => 'nullable|numeric|min:0',
-            'ingredients' => 'required|string',
-            'quantity' => 'required|integer|min:0',
+            'discount' => 'nullable|numeric|min:0',
+            'discount_type' => 'nullable|in:percentage,fixed',
+            'stock_level' => 'required|integer|min:0',
             'images' => 'nullable|array|max:5',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
@@ -64,9 +69,12 @@ class ProductController extends Controller
     public function edit(int $id)
     {
         $product = $this->productService->getById($id);
+        $productTags = ProductTag::all();
+
         
         return Inertia::render('admin/product-management/edit', [
-            'product' => $product
+            'product' => $product,
+            'productTags' => $productTags
         ]);
     }
 
@@ -75,11 +83,11 @@ class ProductController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'tag' => 'required|in:sweet,honey,spicy',
+            'tag_id' => 'required|exists:product_tags,id',
             'price' => 'required|numeric|min:0',
-            'discount_price' => 'nullable|numeric|min:0',
-            'ingredients' => 'required|string',
-            'quantity' => 'required|integer|min:0',
+            'discount' => 'nullable|numeric|min:0',
+            'discount_type' => 'nullable|in:percentage,fixed',
+            'stock_level' => 'required|integer|min:0',
             'images' => 'nullable|array|max:5',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);

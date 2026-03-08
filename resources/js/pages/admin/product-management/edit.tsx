@@ -2,26 +2,25 @@ import AdminLayout from '@/layouts/admin-layout';
 import { useForm, usePage } from '@inertiajs/react';
 import { useRef, useState } from 'react';
 
+interface ProductTag {
+    id: number;
+    name: string;
+}
+
 interface ProductFormData {
     title: string;
     description: string;
-    tag: string;
+    tag_id: number;
     price: string;
-    discount_price: string;
-    ingredients: string;
-    quantity: number;
+    discount: string;
+    discount_type: string;
+    stock_level: number;
     images: File[];
 }
 
-const TAGS = [
-    { value: 'sweet', label: 'Sweet' },
-    { value: 'honey', label: 'Honey' },
-    { value: 'spicy', label: 'Spicy' },
-];
-
 export default function Edit() {
-    const { props } = usePage();
-    const product = props.product as any;
+    const { props } = usePage<{ product: any; productTags: ProductTag[] }>();
+    const { product, productTags } = props;
 
     const [photos, setPhotos] = useState<(File | null)[]>([
         null,
@@ -30,20 +29,18 @@ export default function Edit() {
         null,
         null,
     ]);
-    const [dragOver, setDragOver] = useState<number | null>(null);
 
-    const { data, setData, put, processing, errors } = useForm<ProductFormData>(
-        {
+    const { data, setData, post, processing, errors } =
+        useForm<ProductFormData>({
             title: product?.title || '',
             description: product?.description || '',
-            tag: product?.tag || 'sweet',
+            tag_id: product?.tag_id || productTags?.[0]?.id || 1,
             price: product?.price || '',
-            discount_price: product?.discount_price || '',
-            ingredients: product?.ingredients || '',
-            quantity: product?.quantity || 10,
+            discount: product?.discount || '',
+            discount_type: product?.discount_type || 'percentage',
+            stock_level: product?.stock_level || 10,
             images: [],
-        },
-    );
+        });
 
     const fileInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -56,18 +53,10 @@ export default function Edit() {
         setData('images', validPhotos);
     };
 
-    const handleDrop = (e: React.DragEvent, index: number) => {
-        e.preventDefault();
-        setDragOver(null);
-        const file = e.dataTransfer.files[0];
-        if (file && file.type.startsWith('image/')) {
-            handleFileChange(index, file);
-        }
-    };
-
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        put(route('admin.pm.update', product.id), {
+        post(route('admin.pm.update', product.id), {
+            forceFormData: true,
             onSuccess: () => {
                 // Redirect happens automatically via Inertia
             },
@@ -100,33 +89,6 @@ export default function Edit() {
                         onSubmit={handleSubmit}
                         className="flex flex-col gap-6"
                     >
-                        {/* Existing Images Display */}
-                        {product?.images && product.images.length > 0 && (
-                            <div>
-                                <label className="mb-2 block text-sm font-semibold text-gray-800">
-                                    Current Images
-                                </label>
-                                <div className="flex gap-3">
-                                    {product.images.map(
-                                        (img: any, i: number) => (
-                                            <div key={i} className="relative">
-                                                <img
-                                                    src={img.image}
-                                                    alt={`Product image ${i + 1}`}
-                                                    className="h-20 w-20 rounded-lg border object-cover"
-                                                />
-                                                {img.is_primary && (
-                                                    <span className="absolute top-0 right-0 rounded-bl bg-green-500 px-1 text-xs text-white">
-                                                        Primary
-                                                    </span>
-                                                )}
-                                            </div>
-                                        ),
-                                    )}
-                                </div>
-                            </div>
-                        )}
-
                         {/* Photo Upload Row */}
                         <div>
                             <label className="mb-2 block text-sm font-semibold text-gray-800">
@@ -134,9 +96,13 @@ export default function Edit() {
                             </label>
                             <div className="flex gap-3">
                                 {photos.map((photo, i) => {
+                                    // Check if there's an existing image at this position
+                                    const existingImage = product?.images?.[i];
                                     const previewUrl = photo
                                         ? URL.createObjectURL(photo)
-                                        : null;
+                                        : existingImage
+                                          ? `/storage/${existingImage.image}`
+                                          : null;
                                     return (
                                         <div
                                             key={i}
@@ -145,23 +111,12 @@ export default function Edit() {
                                                     i
                                                 ]?.click()
                                             }
-                                            onDragOver={(e) => {
-                                                e.preventDefault();
-                                                setDragOver(i);
-                                            }}
-                                            onDragLeave={() =>
-                                                setDragOver(null)
-                                            }
-                                            onDrop={(e) => handleDrop(e, i)}
                                             className="relative"
                                             style={{
                                                 flex: 1,
                                                 aspectRatio: '1',
                                                 borderRadius: '12px',
-                                                border:
-                                                    dragOver === i
-                                                        ? '2px dashed #9b1c1c'
-                                                        : '2px dashed #d9d0cc',
+                                                border: '2px dashed #d9d0cc',
                                                 background: previewUrl
                                                     ? 'transparent'
                                                     : '#f5f1ef',
@@ -177,15 +132,11 @@ export default function Edit() {
                                         >
                                             {previewUrl ? (
                                                 <>
-                                                    <img
-                                                        src={previewUrl}
-                                                        alt={`Photo ${i + 1}`}
-                                                        style={{
-                                                            width: '100%',
-                                                            height: '100%',
-                                                            objectFit: 'cover',
-                                                        }}
-                                                    />
+                                                    <img src={previewUrl} alt={`Photo ${i + 1}`} style={{
+                                                        width: '100%',
+                                                        height: '100%',
+                                                        objectFit: 'cover',
+                                                    }} />
                                                     <button
                                                         type="button"
                                                         onClick={(e) => {
@@ -199,41 +150,11 @@ export default function Edit() {
                                                 </>
                                             ) : (
                                                 <>
-                                                    <svg
-                                                        width="22"
-                                                        height="22"
-                                                        viewBox="0 0 24 24"
-                                                        fill="none"
-                                                        style={{
-                                                            marginBottom: 5,
-                                                            opacity: 0.4,
-                                                        }}
-                                                    >
-                                                        <path
-                                                            d="M12 16V8M12 8L9 11M12 8L15 11"
-                                                            stroke="#6b7280"
-                                                            strokeWidth="1.5"
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                        />
-                                                        <rect
-                                                            x="3"
-                                                            y="3"
-                                                            width="18"
-                                                            height="18"
-                                                            rx="4"
-                                                            stroke="#6b7280"
-                                                            strokeWidth="1.5"
-                                                        />
+                                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ marginBottom: 5, opacity: 0.4 }}>
+                                                        <path d="M12 16V8M12 8L9 11M12 8L15 11" stroke="#6b7280" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                        <rect x="3" y="3" width="18" height="18" rx="4" stroke="#6b7280" strokeWidth="1.5" />
                                                     </svg>
-                                                    <span
-                                                        style={{
-                                                            fontSize: '0.68rem',
-                                                            color: '#9ca3af',
-                                                            fontFamily:
-                                                                'sans-serif',
-                                                        }}
-                                                    >
+                                                    <span style={{ fontSize: '0.68rem', color: '#9ca3af', fontFamily: 'sans-serif' }}>
                                                         Add Photo
                                                     </span>
                                                 </>
@@ -313,114 +234,116 @@ export default function Edit() {
                                 Tag
                             </label>
                             <select
-                                value={data.tag}
-                                onChange={(e) => setData('tag', e.target.value)}
+                                value={data.tag_id}
+                                onChange={(e) =>
+                                    setData('tag_id', parseInt(e.target.value))
+                                }
                                 className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 focus:border-red-800 focus:ring-1 focus:ring-red-800 focus:outline-none"
                             >
-                                {TAGS.map((tag) => (
-                                    <option key={tag.value} value={tag.value}>
-                                        {tag.label}
+                                {productTags?.map((tag: ProductTag) => (
+                                    <option key={tag.id} value={tag.id}>
+                                        {tag.name}
                                     </option>
                                 ))}
                             </select>
-                            {errors.tag && (
+                            {errors.tag_id && (
                                 <p className="mt-1 text-sm text-red-600">
-                                    {errors.tag}
+                                    {errors.tag_id}
                                 </p>
                             )}
                         </div>
 
-                        {/* Price and Discount Price */}
+                        {/* Price */}
+                        <div>
+                            <label className="mb-2 block text-sm font-semibold text-gray-800">
+                                Price
+                            </label>
+                            <input
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                value={data.price}
+                                onChange={(e) =>
+                                    setData('price', e.target.value)
+                                }
+                                className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 focus:border-red-800 focus:ring-1 focus:ring-red-800 focus:outline-none"
+                                placeholder="0.00"
+                            />
+                            {errors.price && (
+                                <p className="mt-1 text-sm text-red-600">
+                                    {errors.price}
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Discount and Discount Type */}
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label className="mb-2 block text-sm font-semibold text-gray-800">
-                                    Price
+                                    Discount
                                 </label>
                                 <input
                                     type="number"
                                     step="0.01"
                                     min="0"
-                                    value={data.price}
+                                    value={data.discount}
                                     onChange={(e) =>
-                                        setData('price', e.target.value)
+                                        setData('discount', e.target.value)
                                     }
                                     className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 focus:border-red-800 focus:ring-1 focus:ring-red-800 focus:outline-none"
                                     placeholder="0.00"
                                 />
-                                {errors.price && (
+                                {errors.discount && (
                                     <p className="mt-1 text-sm text-red-600">
-                                        {errors.price}
+                                        {errors.discount}
                                     </p>
                                 )}
                             </div>
                             <div>
                                 <label className="mb-2 block text-sm font-semibold text-gray-800">
-                                    Discount Price
+                                    Discount Type
                                 </label>
-                                <input
-                                    type="number"
-                                    step="0.01"
-                                    min="0"
-                                    value={data.discount_price}
+                                <select
+                                    value={data.discount_type}
                                     onChange={(e) =>
-                                        setData(
-                                            'discount_price',
-                                            e.target.value,
-                                        )
+                                        setData('discount_type', e.target.value)
                                     }
                                     className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 focus:border-red-800 focus:ring-1 focus:ring-red-800 focus:outline-none"
-                                    placeholder="0.00"
-                                />
-                                {errors.discount_price && (
+                                >
+                                    <option value="percentage">
+                                        Percentage
+                                    </option>
+                                    <option value="fixed">Fixed Amount</option>
+                                </select>
+                                {errors.discount_type && (
                                     <p className="mt-1 text-sm text-red-600">
-                                        {errors.discount_price}
+                                        {errors.discount_type}
                                     </p>
                                 )}
                             </div>
                         </div>
 
-                        {/* Ingredients */}
+                        {/* Stock Level */}
                         <div>
                             <label className="mb-2 block text-sm font-semibold text-gray-800">
-                                Ingredients
-                            </label>
-                            <textarea
-                                value={data.ingredients}
-                                onChange={(e) =>
-                                    setData('ingredients', e.target.value)
-                                }
-                                rows={3}
-                                className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 focus:border-red-800 focus:ring-1 focus:ring-red-800 focus:outline-none"
-                                placeholder="Enter ingredients"
-                            />
-                            {errors.ingredients && (
-                                <p className="mt-1 text-sm text-red-600">
-                                    {errors.ingredients}
-                                </p>
-                            )}
-                        </div>
-
-                        {/* Quantity */}
-                        <div>
-                            <label className="mb-2 block text-sm font-semibold text-gray-800">
-                                Quantity
+                                Stock Level
                             </label>
                             <input
                                 type="number"
                                 min="0"
-                                value={data.quantity}
+                                value={data.stock_level}
                                 onChange={(e) =>
                                     setData(
-                                        'quantity',
+                                        'stock_level',
                                         parseInt(e.target.value) || 0,
                                     )
                                 }
                                 className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 focus:border-red-800 focus:ring-1 focus:ring-red-800 focus:outline-none"
                                 placeholder="0"
                             />
-                            {errors.quantity && (
+                            {errors.stock_level && (
                                 <p className="mt-1 text-sm text-red-600">
-                                    {errors.quantity}
+                                    {errors.stock_level}
                                 </p>
                             )}
                         </div>

@@ -51,7 +51,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/create', [ProductController::class, 'create'])->name('create');
             Route::post('/store', [ProductController::class, 'store'])->name('store');
             Route::get('/edit/{id}', [ProductController::class, 'edit'])->name('edit');
-            Route::put('/update/{id}', [ProductController::class, 'update'])->name('update');
+            Route::post('/update/{id}', [ProductController::class, 'update'])->name('update');
         });
         Route::group(['prefix' => 'order-management', 'as' => 'om.'], function () {
             Route::get('/index', [OrderController::class, 'index'])->name('index');
@@ -60,6 +60,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::group(['prefix' => 'recipe-management', 'as' => 'rm.'], function () {
             Route::get('/index', [RecipeController::class, 'index'])->name('index');
             Route::get('/create', [RecipeController::class, 'create'])->name('create');
+            Route::post('/store', [RecipeController::class, 'store'])->name('store');
+            Route::get('/edit/{id}', [RecipeController::class, 'edit'])->name('edit');
+            Route::post('/update/{id}', [RecipeController::class, 'update'])->name('update');
+            Route::get('/delete/{id}', [RecipeController::class, 'delete'])->name('delete');
         });
         Route::group(['prefix' => 'terms-conditions', 'as' => 'tc.'], function () {
             Route::get('/index', [TermsConditionsController::class, 'index'])->name('index');

@@ -47,11 +47,47 @@ class ProductService
         
         $product->update($productData);
         
+        // Handle images - update individual images by position
         if (!empty($images)) {
-            $this->attachImages($product, $images);
+            $this->updateImages($product, $images);
         }
         
         return $product;
+    }
+
+    public function updateImages(Product $product, array $images): void
+    {
+        foreach ($images as $index => $image) {
+            if ($image instanceof UploadedFile) {
+                // Find existing image at this position
+                $existingImage = $product->images()->skip($index)->first();
+                
+                if ($existingImage) {
+                    // Delete old image file
+                    if ($existingImage->image && Storage::disk('public')->exists($existingImage->image)) {
+                        Storage::disk('public')->delete($existingImage->image);
+                    }
+                    
+                    // Upload new image and update record
+                    $path = $image->store('products', 'public');
+                    $existingImage->update([
+                        'image' => $path,
+                        'updated_by' => Auth::id(),
+                    ]);
+                } else {
+                    // No existing image at this position, create new one
+                    $path = $image->store('products', 'public');
+                    
+                    ProductImage::create([
+                        'product_id' => $product->id,
+                        'image' => $path,
+                        'is_primary' => $index === 0 && $product->images()->count() === 0, // First image is primary only if no other images
+                        'created_by' => Auth::id(),
+                        'updated_by' => Auth::id(),
+                    ]);
+                }
+            }
+        }
     }
 
     public function attachImages(Product $product, array $images): void
