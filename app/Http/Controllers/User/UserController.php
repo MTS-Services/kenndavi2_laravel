@@ -19,7 +19,10 @@ class UserController extends Controller
 
     public function index(): Response
     {
-        return Inertia::render('user/dashboard');
+        $user = auth()->user();
+        return Inertia::render('user/dashboard', [
+            'user' => $user
+        ]);
     }
 
     public function orders(): Response

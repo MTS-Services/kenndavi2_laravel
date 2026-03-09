@@ -171,7 +171,7 @@ export default function ShippingInformationPage() {
                                 </div>
 
                                 {/* Ship to different address */}
-                                <div className="flex items-center gap-2">
+                                {/* <div className="flex items-center gap-2">
                                     <input
                                         type="checkbox"
                                         id="shipDifferent"
@@ -185,7 +185,7 @@ export default function ShippingInformationPage() {
                                     >
                                         Ship into different address
                                     </label>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
 
@@ -263,12 +263,12 @@ export default function ShippingInformationPage() {
                                 </Link>
 
                                 {/* Back Button */}
-                                <Link
+                                {/* <Link
                                     href={route('frontend.product-card')}
                                     className="mt-3 flex w-full items-center justify-center border border-text-buy-now px-6 py-4  font-bebas-neue text-xl font-normal uppercase text-text-buy-now tracking-widest"
                                 >
                                     Back
-                                </Link>
+                                </Link> */}
                             </div>
                         </div>
 
