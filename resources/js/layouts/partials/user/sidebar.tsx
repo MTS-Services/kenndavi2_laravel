@@ -1,3 +1,4 @@
+import Logout from '@/components/logout';
 import { cn } from '@/lib/utils';
 import { SharedData } from '@/types';
 import { Link, router, usePage } from '@inertiajs/react';
@@ -119,40 +120,7 @@ export default function Sidebar() {
 
             {/* Logout Modal */}
             {showLogoutModal && (
-                <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity">
-                    <div className="w-[92%] max-w-sm scale-100 transform overflow-hidden rounded-3xl bg-white p-8 shadow-2xl transition-all">
-                        {/* Top Icon / Header Section */}
-                        <div className="mb-4 flex flex-col items-center text-center">
-                            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-100">
-                                <LogOut className="h-7 w-7 text-red-600" />
-                            </div>
-                            <h2 className="text-2xl font-extrabold tracking-tight text-gray-900">
-                                Confirm Logout
-                            </h2>
-                            <p className="mt-2 text-sm leading-relaxed text-gray-500">
-                                Are you sure you want to sign out of your
-                                account? You'll need to login again to access
-                                your data.
-                            </p>
-                        </div>
-
-                        {/* Buttons Section */}
-                        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-                            <button
-                                onClick={() => setShowLogoutModal(false)}
-                                className="flex-1 cursor-pointer rounded-xl border border-gray-200 px-5 py-3 text-sm font-semibold text-gray-700 transition-all hover:bg-gray-50 active:scale-95"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={confirmLogout}
-                                className="flex-1 cursor-pointer rounded-xl bg-red-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-red-600/30 transition-all hover:bg-red-700 active:scale-95"
-                            >
-                                Log Out
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <Logout show={showLogoutModal} onClose={() => setShowLogoutModal(false)} onConfirm={confirmLogout} />  
             )}
         </div>
     );

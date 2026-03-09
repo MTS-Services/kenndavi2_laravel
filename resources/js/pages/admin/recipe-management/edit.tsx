@@ -1,3 +1,4 @@
+import TiptapEditor from '@/components/tiptap-editor';
 import AdminLayout from '@/layouts/admin-layout';
 import { useForm, usePage } from '@inertiajs/react';
 import { useRef, useState, useEffect } from 'react';
@@ -255,7 +256,7 @@ export default function Edit() {
                             <label className="mb-2 block text-sm font-semibold text-gray-800">
                                 Description
                             </label>
-                            <textarea
+                            {/* <textarea
                                 value={data.description}
                                 onChange={(e) => setData('description', e.target.value)}
                                 rows={4}
@@ -266,7 +267,11 @@ export default function Edit() {
                                 <p className="mt-1 text-sm text-red-600">
                                     {errors.description}
                                 </p>
-                            )}
+                            )} */}
+                            <TiptapEditor 
+                                value={data.description}
+                                onChange={(value) => setData('description', value)}
+                            />
                         </div>
 
                         {/* Prep Time and Cook Time */}

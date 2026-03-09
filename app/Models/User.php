@@ -58,25 +58,30 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserAddresse::class);
     }
+    
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 
     protected $appends = ['image_url'];
 
-public function getImageUrlAttribute()
-{
-    // Google login এর জন্য
-    if ($this->provider_avatar) {
-        return $this->provider_avatar;
-    }
+    public function getImageUrlAttribute()
+    {
+        // Google login
+        if ($this->provider_avatar) {
+            return $this->provider_avatar;
+        }
 
-    // Regular login এর জন্য
-    if (filter_var($this->image, FILTER_VALIDATE_URL)) {
-        return $this->image;
-    }
+        // Regular login
+        if (filter_var($this->image, FILTER_VALIDATE_URL)) {
+            return $this->image;
+        }
 
-    if (!$this->image) {
-        return asset('no-user-image-icon.png');
-    }
+        if (!$this->image) {
+            return asset('no-user-image-icon.png');
+        }
 
-    return asset('storage/user_images/' . $this->image);
-}
+        return asset('storage/user_images/' . $this->image);
+    }
 }

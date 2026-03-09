@@ -19,22 +19,25 @@ class UserController extends Controller
 
     public function index(): Response
     {
-        return Inertia::render('user/dashboard');
+        $user = auth()->user();
+        return Inertia::render('user/dashboard', [
+            'user' => $user
+        ]);
     }
 
     public function orders(): Response
     {
-        return Inertia::render('user/orders');
+        return Inertia::render('user/order/orders');
     }
 
     public function productToReview(): Response
     {
-        return Inertia::render('user/product-to-review');
+        return Inertia::render('user/product-to-review/product-to-review');
     }
 
     public function review(): Response
     {
-        return Inertia::render('user/review');
+        return Inertia::render('user/product-to-review/review');
     }
 
     public function accountSettings(): Response
