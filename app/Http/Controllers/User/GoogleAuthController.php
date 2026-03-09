@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Mail\UserWelcomeMail;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Http\Request;
 
 class GoogleAuthController extends Controller
 {
@@ -16,7 +19,7 @@ class GoogleAuthController extends Controller
 
     }
 
-    public function callback()
+    public function callback(Request $request)
     {
 
         $googleUser = Socialite::driver('google')->stateless()->user();
@@ -27,7 +30,6 @@ class GoogleAuthController extends Controller
             ['email' => $email],
             [
                 'name' => $googleUser->getName() ?? $firstName,
-                'password' => \Illuminate\Support\Str::random(24),
                 'provider' => 'google',
                 'provider_id' => $googleUser->getId(),
                 'provider_avatar' => $googleUser->getAvatar(),
@@ -38,7 +40,19 @@ class GoogleAuthController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('user.dashboard');
+         $isFirstLogin = is_null($user->last_login_at);
+        $user->update(['last_login_at' => now()]);
+
+        $request->session()->regenerate();
+
+        if ($isFirstLogin) {
+            Mail::to($user->email)->send(new UserWelcomeMail([
+                'name'  => $user->name,
+                'email' => $user->email,
+            ]));
+        }
+
+        return redirect()->intended(route('user.dashboard'));
     }
 
     private function extractName(?string $fullName, ?string $email): array

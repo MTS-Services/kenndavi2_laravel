@@ -3,27 +3,25 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\UserEmailVerificationOtpMail;
+use App\Mail\UserWelcomeMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class LoginController extends Controller
 {
-    // public function showLogin(Request $request)
-    // {
-       
-    //         return Inertia::render('auth/login');
-    // }
 
     public function showLogin(Request $request)
-{
-    if (Auth::check()) {
-        return redirect()->route('user.dashboard');
-    }
+    {
+        if (Auth::check()) {
+            return redirect()->route('user.dashboard');
+        }
 
-    return Inertia::render('auth/login');
-}
+        return Inertia::render('auth/login');
+    }
 
     public function store(Request $request)
     {
@@ -43,7 +41,40 @@ class LoginController extends Controller
 
         $user = Auth::user();
 
+        if (is_null($user->email_verified_at)) {
+            Auth::logout();
+
+            if (is_null($user->otp)) {
+                $otp = str_pad(random_int(100000, 999999), 6, '0', STR_PAD_LEFT);
+                $user->update(['otp' => $otp]);
+            }
+
+            $request->session()->put('email_verification', [
+                'email' => $user->email,
+                'otp' => $user->otp,
+                'expires_at' => now()->addMinutes(10)->timestamp,
+            ]);
+
+            // Send verification email
+            Mail::to($user->email)->send(new UserEmailVerificationOtpMail([
+                'email' => $user->email,
+                'otp' => $user->otp,
+            ]));
+
+            return redirect()->route('email-verification');
+        }
+
+        $isFirstLogin = is_null($user->last_login_at);
+        $user->update(['last_login_at' => now()]);
+
         $request->session()->regenerate();
+
+        if ($isFirstLogin) {
+            Mail::to($user->email)->send(new UserWelcomeMail([
+                'name'  => $user->name,
+                'email' => $user->email,
+            ]));
+        }
 
         return redirect()->intended(route('user.dashboard'));
     }

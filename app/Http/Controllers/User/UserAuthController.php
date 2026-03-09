@@ -5,7 +5,9 @@ namespace App\Http\Controllers\User;
 use App\Concerns\PasswordValidationRules;
 use App\Enums\ActiveInactive;
 use App\Http\Controllers\Controller;
+use App\Mail\UserEmailVerificationOtpMail;
 use App\Mail\UserPasswordResetOtpMail;
+use App\Mail\UserWelcomeMail;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,8 +22,6 @@ class UserAuthController extends Controller
 {
     use PasswordValidationRules;
 
-
-
     public function register(): Response
     {
         return Inertia::render('auth/register');
@@ -30,10 +30,10 @@ class UserAuthController extends Controller
     public function registerStore(Request $request)
     {
         Validator::make($request->all(), [
-            'name' => ['required', 'string', 'max:255'],
-            'phone' => ['nullable', 'string', 'max:20'],
-            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:2048'],
-            'email' => [
+            'name'     => ['required', 'string', 'max:255'],
+            'phone'    => ['nullable', 'string', 'max:20'],
+            'image'    => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:2048'],
+            'email'    => [
                 'required',
                 'string',
                 'email',
@@ -45,25 +45,103 @@ class UserAuthController extends Controller
 
         // File upload logic
         if ($request->hasFile('image')) {
-            $file = $request->file('image');
+            $file      = $request->file('image');
             $imageName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
             $file->storeAs('user_images', $imageName);
         }
+
+        // Generate verification OTP
+        $otp = str_pad(random_int(100000, 999999), 6, '0', STR_PAD_LEFT);
+
         $user = User::create([
-            'name' => $request['name'],
-            'email' => $request['email'],
-            'phone' => $request['phone'],
-            'image' => isset($imageName) ? $imageName : null,
-            'status' => ActiveInactive::ACTIVE->value,
+            'name'     => $request['name'],
+            'email'    => $request['email'],
+            'phone'    => $request['phone'],
+            'image'    => isset($imageName) ? $imageName : null,
+            'status'   => ActiveInactive::ACTIVE->value,
             'password' => Hash::make($request['password']),
+            'otp'      => $otp,
         ]);
 
         // For self-registration, set creater_id to the user's own ID
         $user->update([
-            'creater_id' => $user->id,
+            'creater_id'   => $user->id,
             'creater_type' => User::class,
         ]);
+
+        // Store email in session for verification page
+        $request->session()->put('email_verification', [
+            'email'      => $request->email,
+            'otp'        => $otp,
+            'expires_at' => now()->addMinutes(10)->timestamp,
+        ]);
+
+
+        Mail::to($request->email)->send(new UserEmailVerificationOtpMail([
+            'email' => $request->email,
+            'otp'   => $otp,
+        ]));
+
+        return redirect()->route('email-verification');
+    }
+
+    public function emailVerification()
+    {
+        if (!session()->has('email_verification')) {
+            return redirect()->route('user.register');
+        }
+        return Inertia::render('auth/email-verification');
+    }
+
+    public function emailVerificationStore(Request $request)
+    {
+        $request->validate([
+            'otp' => ['required', 'numeric', 'digits:6'],
+        ]);
+
+        $verificationData = session()->get('email_verification');
+
+        if (!$verificationData) {
+            return redirect()->route('user.register')
+                ->withErrors(['otp' => 'Session expired. Please register again.']);
+        }
+
+        // Check if OTP is expired
+        if ($verificationData['expires_at'] < now()->timestamp) {
+            session()->forget('email_verification');
+            return redirect()->route('user.register')
+                ->withErrors(['otp' => 'OTP expired. Please register again.']);
+        }
+
+        // Verify OTP
+        if ($verificationData['otp'] != $request->otp) {
+            return redirect()->route('email-verification')
+                ->withErrors(['otp' => 'Invalid OTP. Please try again.']);
+        }
+
+        // Find user and verify email
+        $user = User::where('email', $verificationData['email'])->first();
+        if (!$user) {
+            return redirect()->route('user.register')
+                ->withErrors(['email' => 'User not found. Please register again.']);
+        }
+
+        $user->update([
+            'email_verified_at' => now(),
+            'otp'               => $request->otp,
+        ]);
+
+        // Clean up session
+        session()->forget('email_verification');
+
+        // Log in the user
         Auth::login($user);
+        $user->update(['last_login_at' => now()]);
+
+        Mail::to($user->email)->send(new UserWelcomeMail([
+            'name'  => $user->name,
+            'email' => $user->email,
+        ]));
 
         return redirect()->route('user.dashboard');
     }
@@ -106,7 +184,7 @@ class UserAuthController extends Controller
     }
     public function otpVerification()
     {
-        if (! session()->has('password_reset')) {
+        if (!session()->has('password_reset')) {
             return redirect()->route('forgot-password');
         }
         return Inertia::render('auth/otp-verification');
@@ -117,28 +195,23 @@ class UserAuthController extends Controller
             'otp' => ['required', 'numeric', 'digits:6'],
         ]);
 
-
         $resetData = session()->get('password_reset');
 
-        // Session missing
         if (!$resetData) {
             return redirect()->route('forgot-password')
                 ->withErrors(['email' => 'Session expired. Please start over.']);
         }
 
-        // OTP mismatch
         if ($resetData['otp'] != $request->otp) {
             return redirect()->route('otp-verification')
                 ->withErrors(['otp' => 'Invalid OTP. Please try again.']);
         }
 
-        // Session expired
         if ($resetData['expires_at'] < now()->timestamp) {
             return redirect()->route('otp-verification')
                 ->withErrors(['otp' => 'Session expired. Please start over.']);
         }
 
-        // OTP verified
         $resetData['verified'] = true;
         session()->put('password_reset', $resetData);
 
@@ -146,7 +219,7 @@ class UserAuthController extends Controller
     }
     public function resetPassword()
     {
-        if (! session()->has('password_reset')) {
+        if (!session()->has('password_reset')) {
             return redirect()->route('forgot-password');
         }
         return Inertia::render('auth/reset-password');
@@ -160,22 +233,20 @@ class UserAuthController extends Controller
 
         $resetData = $request->session()->get('password_reset');
 
-        // Guard: OTP must be verified
-        if (! $resetData || ! $resetData['verified']) {
+        if (!$resetData || !$resetData['verified']) {
             return redirect()->route('forgot-password')
                 ->withErrors(['email' => 'Session expired. Please start over.']);
         }
 
         $user = User::where('email', $resetData['email'])->first();
 
-        if (! $user) {
+        if (!$user) {
             return redirect()->route('forgot-password')
                 ->withErrors(['email' => 'User not found.']);
         }
 
         $user->update(['password' => Hash::make($request->password)]);
 
-        // Clean up session
         $request->session()->forget('password_reset');
 
         return redirect()->route('login')
