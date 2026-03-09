@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Services\ProductService;
+use App\Services\RecipeService;
 use App\Services\UserAccountSettinsService;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -13,20 +14,24 @@ class FrontendController extends Controller
 
     protected ProductService $productService;
     protected UserAccountSettinsService $userAccountService;
+    protected RecipeService $recipeService;
 
-    public function __construct(ProductService $productService, UserAccountSettinsService $userAccountService)
+    public function __construct(ProductService $productService, UserAccountSettinsService $userAccountService, RecipeService $recipeService)
     {
         $this->productService = $productService;
         $this->userAccountService = $userAccountService;
+        $this->recipeService = $recipeService;
     }
 
 
     public function index(): Response
     {
         $products = $this->productService->getPaginated(10);
+        $recipes = $this->recipeService->getAll(9);
 
         return Inertia::render('frontend/index', [
-            'products' => $products
+            'products' => $products,
+            'recipes' => $recipes
         ]);
     }
 
@@ -44,7 +49,7 @@ class FrontendController extends Controller
     {
         $data = $this->userAccountService->getShippingInfo();
 
-        if($data['user']) {
+        if ($data['user']) {
             $data['user']->load('addresses');
         }
         return Inertia::render('frontend/shopping-info', $data);
@@ -58,9 +63,12 @@ class FrontendController extends Controller
     {
         return Inertia::render('frontend/sauce-recipes');
     }
-    public function recipeDetails(): Response
+    public function recipeDetails($id): Response
     {
-        return Inertia::render('frontend/recipe-details');
+        $recipe = $this->recipeService->getById($id);
+        return Inertia::render('frontend/recipe-details', [
+            'recipe' => $recipe
+        ]);
     }
     public function productCard(): Response
     {

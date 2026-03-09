@@ -14,6 +14,6 @@ Route::name('frontend.')->controller(FrontendController::class)->group(function 
     Route::get('/details', 'details')->name('details');
     Route::get('/order-confirmed!', 'orderConfirmed')->name('order-confirmed');
     Route::get('/sauce-recipes', 'sauceRecipes')->name('sauce-recipes');
-    Route::get('/recipe-details', 'recipeDetails')->name('recipe-details');
+    Route::get('/recipe-details/{id}', 'recipeDetails')->name('recipe-details');
     Route::get('/terms-conditions', 'termsConditions')->name('terms-conditions');
 });

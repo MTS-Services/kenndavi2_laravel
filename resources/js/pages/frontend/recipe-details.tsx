@@ -1,83 +1,72 @@
 
 import OurSauces from '@/components/section/recipes/our-sauces';
 import FrontendLayout from '@/layouts/frontend-layout';
+import { usePage } from '@inertiajs/react';
+
+interface Product {
+    id: number
+    title: string
+    price?: string
+    image?: string
+}
 
 
-const ingredients = [
-    '1 kg chicken wings.',
-    '½ cup Sweet BBQ Sauce',
-    '1 tsp salt',
-    '½ tsp black pepper',
-    '1 tsp garlic powder',
-];
-const steps = [
-    'Preheat grill to medium heat.',
-    'Season chicken wings with salt, pepper, and garlic powder.',
-    'Place wings on grill, cook 20–25 min, turning occasionally.',
-    'Brush Sweet BBQ Sauce generously on wings, cook 5 more min.',
-    'Serve hot with extra sauce on the side.',
-];
+interface Recipe {
+    id: number;
+    title: string;
+    image?: string | null;
+    prep_time?: string | null;
+    cook_time?: string | null;
+    description?: string | null;
+    related_products?: Product[];
+}
 
 export default function RecipeDetails() {
+    type PageProps = {
+        recipe: Recipe;
+    };
+
+    const { recipe } = usePage<PageProps>().props;
+    console.log(recipe);
+
     return (
         <FrontendLayout>
             <div className="mb-12 sm:mb-28">
                 <div className="">
                     <img
-                        src="/assets/images/product/Rectangle 3292 (2).png"
-                        alt="Hero Banner"
+                        src={recipe.image || '/assets/images/product/Rectangle 3292 (2).png'}
+                        alt={recipe.title}
                         className="h-[430px] w-full object-cover sm:h-full"
                     />
                 </div>
                 <div className="container mx-auto px-4 py-10 lg:py-16">
                     <div>
                         <h2 className="mb-4 font-bebas-neue text-4xl font-normal text-text-title sm:text-[56px]">
-                            Grilled BBQ Chicken Wings
+                            {recipe.title}
                         </h2>
-                        <h4 className="font-bebas-neue text-lg font-normal text-text-title">
-                            <span className="font-bebas-neue text-lg font-normal text-text-body">
-                                Sauce Used:{' '}
-                            </span>{' '}
-                            Sweet BBQ Sauce
-                        </h4>
+                        {(recipe.prep_time || recipe.cook_time) && (
+                            <div className="flex flex-wrap items-center gap-2 font-aktiv-grotesk text-base font-normal text-text-body">
+                                {recipe.prep_time && <span>Prep: {recipe.prep_time}</span>}
+                                {recipe.prep_time && recipe.cook_time && (
+                                    <span className="border border-text-black-50 w-0.5 h-4 bg-text-black-50" />
+                                )}
+                                {recipe.cook_time && <span>Cook: {recipe.cook_time}</span>}
+                            </div>
+                        )}
                     </div>
-                    <div>
-                        <h2 className="font-aktiv-grotesk  text-2xl font-normal text-text-title mt-4">
-                           Ingredients:
-                        </h2>
-                        <div className="mt-3 space-y-2 font-aktiv-grotesk text-base font-normal text-text-body">
-                            {ingredients.map((item) => (
-                                <div
-                                    key={item}
-                                    className="flex items-center gap-2"
-                                >
-                                    <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-current" />
-                                    <p>{item}</p>
-                                </div>
-                            ))}
+
+                    {recipe.description && (
+                        <div className="mt-6 font-aktiv-grotesk text-base font-normal text-text-body">
+                            <div
+                                className="prose max-w-none"
+                                dangerouslySetInnerHTML={{ __html: recipe.description }}
+                            />
                         </div>
-                    </div>
-                    <div>
-                        <h2 className="font-aktiv-grotesk  text-2xl font-normal text-text-title mt-4">
-                           Steps:
-                        </h2>
-                        <div className="mt-3 space-y-2 font-aktiv-grotesk text-base font-normal text-text-body">
-                            {steps.map((item, index) => (
-                                <div
-                                    key={item}
-                                    className="flex items-center gap-2"
-                                >
-                                    <span className="">
-                                        {index + 1}.
-                                    </span>
-                                    <p>{item}</p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                    <OurSauces />
+                    )}
+                    <OurSauces products={{ data: recipe.related_products || [] }} />
                 </div>
             </div>
         </FrontendLayout>
     );
 }
+
