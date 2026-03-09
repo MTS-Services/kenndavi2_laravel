@@ -1,24 +1,73 @@
 import { ArrowRight } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
+import { Input } from '@/components/ui/input';
 import FrontendLayout from '@/layouts/frontend-layout';
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
+
+interface User {
+    id: number;
+    email: string;
+}
+
+interface Address {
+    id: number;
+    full_name: string;
+    user_id: number;
+    type: 'shipping' | 'billing';
+    first_name: string;
+    last_name: string;
+    address_line1: string;
+    address_line2?: string;
+    city: string;
+    state: string;
+    postal_code: string;
+    country: string;
+    phone?: string;
+}
+
+interface PageProps extends Record<string, any> {
+    user?: User;
+    addresses?: Address[];
+}
 
 export default function ShippingInformationPage() {
-    const [shipDifferent, setShipDifferent] = useState<boolean>(false);
+    const { user, addresses } = usePage<PageProps>().props;
+
+    const shippingAddress = addresses?.find((addr) => addr.type === 'shipping');
+    console.log(shippingAddress);
 
     const [form, setForm] = useState({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        region: '',
-        city: '',
-        zipCode: '',
-        address: '',
+        name: shippingAddress?.full_name || '',
+        email: user?.email || '',
+        phone: shippingAddress?.phone || '',
+        State: shippingAddress?.state || '',
+        city: shippingAddress?.city || '',
+        postalCode: shippingAddress?.postal_code || '',
+        address_line1: shippingAddress?.address_line1 || '',
+        address_line2: shippingAddress?.address_line2 || '',
+        country: shippingAddress?.country || '',
     });
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    useEffect(() => {
+        if (shippingAddress) {
+            setForm({
+                name: shippingAddress?.full_name || '',
+                email: user?.email || '',
+                phone: shippingAddress?.phone || '',
+                State: shippingAddress.state,
+                city: shippingAddress.city,
+                postalCode: shippingAddress.postal_code,
+                address_line1: shippingAddress.address_line1,
+                address_line2: shippingAddress.address_line2 || '',
+                country: shippingAddress.country,
+            });
+        }
+    }, [shippingAddress, user]);
+
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    ) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
@@ -38,40 +87,54 @@ export default function ShippingInformationPage() {
             <div className="mb-12 sm:mb-28">
                 <div className="container mx-auto px-4 py-10 lg:py-16">
                     <div className="grid gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.7fr)] xl:gap-16">
-
                         {/* Left: Shipping Form */}
                         <div>
-                            <h2 className="font-bebas-neue text-3xl uppercase text-text-title font-normal mb-8">
+                            <h2 className="mb-8 font-bebas-neue text-3xl font-normal text-text-title uppercase">
                                 Shipping Information
                             </h2>
 
                             <div className="space-y-5">
                                 {/* First Name & Last Name */}
-                                <div className="grid grid-cols-2 gap-5">
+                                <div className="">
                                     <div>
-                                        <label className="block font-aktiv-grotesk text-sm font-normal text-text-title mb-1.5">
-                                            First name
+                                        <label className="mb-1.5 block font-aktiv-grotesk text-sm font-normal text-text-title">
+                                            Name
                                         </label>
-                                        <input
+                                        <Input
                                             type="text"
-                                            name="firstName"
-                                            value={form.firstName}
+                                            name="name"
+                                            value={form.name}
                                             onChange={handleChange}
-                                            placeholder="First name"
-                                            className="w-full border border-text-gray-300 px-4 py-3 font-public-sans text-sm text-text-body placeholder-text-text-body outline-none focus:border-text-buy-now transition-colors"
+                                            placeholder="Name"
+                                            className="placeholder-text-text-body w-full border border-text-gray-300 px-4 py-3 font-public-sans text-sm text-text-body transition-colors outline-none focus:border-text-buy-now"
                                         />
                                     </div>
-                                    <div> 
-                                        <label className="block font-aktiv-grotesk text-sm font-normal text-text-title mb-1.5">
-                                            Last name
+                                </div>
+                                <div className="grid grid-cols-2 gap-5">
+                                    <div>
+                                        <label className="mb-1.5 block font-aktiv-grotesk text-sm font-normal text-text-title">
+                                            Address
                                         </label>
-                                        <input
+                                        <Input
                                             type="text"
-                                            name="lastName"
-                                            value={form.lastName}
+                                            name="address_line1"
+                                            value={form.address_line1}
                                             onChange={handleChange}
-                                            placeholder="First name"
-                                            className="w-full border border-text-gray-300 px-4 py-3 font-public-sans text-sm text-text-body placeholder-text-text-body outline-none focus:border-text-buy-now transition-colors"
+                                            placeholder="Address"
+                                            className="placeholder-text-text-body w-full border border-text-gray-300 px-4 py-3 font-public-sans text-sm text-text-body transition-colors outline-none focus:border-text-buy-now"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="mb-1.5 block font-aktiv-grotesk text-sm font-normal text-text-title">
+                                            Address Line 2 (Optional)
+                                        </label>
+                                        <Input
+                                            type="text"
+                                            name="address_line2"
+                                            value={form.address_line2}
+                                            onChange={handleChange}
+                                            placeholder="Address Line 2 (Optional)"
+                                            className="placeholder-text-text-body w-full border border-text-gray-300 px-4 py-3 font-public-sans text-sm text-text-body transition-colors outline-none focus:border-text-buy-now"
                                         />
                                     </div>
                                 </div>
@@ -79,29 +142,30 @@ export default function ShippingInformationPage() {
                                 {/* Email & Phone */}
                                 <div className="grid grid-cols-2 gap-5">
                                     <div>
-                                        <label className="block font-aktiv-grotesk text-sm font-normal text-text-title mb-1.5">
+                                        <label className="mb-1.5 block font-aktiv-grotesk text-sm font-normal text-text-title">
                                             Email
                                         </label>
-                                        <input
+                                        <Input
                                             type="email"
                                             name="email"
                                             value={form.email}
                                             onChange={handleChange}
-                                            placeholder=""
-                                            className="w-full border border-text-gray-300 px-4 py-3 font-public-sans text-sm text-text-body placeholder-text-text-body outline-none focus:border-text-buy-now transition-colors"
+                                            placeholder="Enter email"
+                                            readOnly
+                                            className="placeholder-text-text-body w-full border border-text-gray-300 px-4 py-3 font-public-sans text-sm text-text-body transition-colors outline-none focus:border-text-buy-now"
                                         />
                                     </div>
                                     <div>
-                                        <label className="block font-aktiv-grotesk text-sm font-normal text-text-title mb-1.5">
+                                        <label className="mb-1.5 block font-aktiv-grotesk text-sm font-normal text-text-title">
                                             Phone Number
                                         </label>
-                                        <input
+                                        <Input
                                             type="tel"
                                             name="phone"
                                             value={form.phone}
                                             onChange={handleChange}
-                                            placeholder=""
-                                            className="w-full border border-text-gray-300 px-4 py-3 font-public-sans text-sm text-text-body placeholder-text-text-body outline-none focus:border-text-buy-now transition-colors"
+                                            placeholder="Enter phone"
+                                            className="placeholder-text-text-body w-full border border-text-gray-300 px-4 py-3 font-public-sans text-sm text-text-body transition-colors outline-none focus:border-text-buy-now"
                                         />
                                     </div>
                                 </div>
@@ -109,95 +173,72 @@ export default function ShippingInformationPage() {
                                 {/* Region / City / Zip */}
                                 <div className="grid grid-cols-3 gap-5">
                                     <div>
-                                        <label className="block font-aktiv-grotesk text-sm font-normal text-text-title mb-1.5">
+                                        <label className="mb-1.5 block font-aktiv-grotesk text-sm font-normal text-text-title">
                                             Region/State
                                         </label>
-                                        <select
-                                            name="region"
-                                            value={form.region}
+                                        <Input
+                                            type="text"
+                                            name="State"
+                                            value={form.State}
                                             onChange={handleChange}
-                                            className="w-full border border-gray-200 px-4 py-3 font-public-sans text-sm text-gray-400 outline-none focus:border-text-buy-now transition-colors bg-white appearance-none"
-                                        >
-                                            <option value="" disabled>Select...</option>
-                                            <option value="ca">California</option>
-                                            <option value="ny">New York</option>
-                                            <option value="tx">Texas</option>
-                                        </select>
+                                            placeholder="State"
+                                            className="placeholder-text-text-body w-full border border-text-gray-300 px-4 py-3 font-public-sans text-sm text-text-body transition-colors outline-none focus:border-text-buy-now"
+                                        />
                                     </div>
                                     <div>
-                                        <label className="block font-aktiv-grotesk text-sm font-normal text-text-title mb-1.5">
+                                        <label className="mb-1.5 block font-aktiv-grotesk text-sm font-normal text-text-title">
                                             City
                                         </label>
-                                        <select
+                                        <Input
+                                            type="text"
                                             name="city"
                                             value={form.city}
                                             onChange={handleChange}
-                                            className="w-full border border-gray-200 px-4 py-3 font-public-sans text-sm text-gray-400 outline-none focus:border-text-buy-now transition-colors bg-white appearance-none"
-                                        >
-                                            <option value="" disabled>Select...</option>
-                                            <option value="la">Los Angeles</option>
-                                            <option value="nyc">New York City</option>
-                                            <option value="houston">Houston</option>
-                                        </select>
+                                            placeholder="City"
+                                            className="placeholder-text-text-body w-full border border-text-gray-300 px-4 py-3 font-public-sans text-sm text-text-body transition-colors outline-none focus:border-text-buy-now"
+                                        />
                                     </div>
                                     <div>
-                                        <label className="block font-aktiv-grotesk text-sm font-normal text-text-title mb-1.5">
+                                        <label className="mb-1.5 block font-aktiv-grotesk text-sm font-normal text-text-title">
                                             Zip Code
                                         </label>
-                                        <input
+                                        <Input
                                             type="text"
-                                            name="zipCode"
-                                            value={form.zipCode}
+                                            name="postalCode"
+                                            value={form.postalCode}
                                             onChange={handleChange}
-                                            placeholder=""
-                                            className="w-full border border-text-gray-300 px-4 py-3 font-public-sans text-sm text-text-body placeholder-text-text-body outline-none focus:border-text-buy-now transition-colors"
+                                            placeholder="Zip Code"
+                                            className="placeholder-text-text-body w-full border border-text-gray-300 px-4 py-3 font-public-sans text-sm text-text-body transition-colors outline-none focus:border-text-buy-now"
                                         />
                                     </div>
                                 </div>
 
                                 {/* Address */}
                                 <div>
-                                    <label className="block font-aktiv-grotesk text-sm font-normal text-text-title mb-1.5">
-                                        Address
+                                    <label className="mb-1.5 block font-aktiv-grotesk text-sm font-normal text-text-title">
+                                        Country
                                     </label>
-                                    <input
+                                    <Input
                                         type="text"
-                                        name="address"
-                                        value={form.address}
+                                        name="country"
+                                        value={form.country}
                                         onChange={handleChange}
-                                        placeholder=""
-                                        className="w-full border border-text-gray-300 px-4 py-3 font-public-sans text-sm text-text-body placeholder-text-text-body outline-none focus:border-text-buy-now transition-colors"
+                                        placeholder="Country"
+                                        className="placeholder-text-text-body w-full border border-text-gray-300 px-4 py-3 font-public-sans text-sm text-text-body transition-colors outline-none focus:border-text-buy-now"
                                     />
                                 </div>
-
-                                {/* Ship to different address */}
-                                {/* <div className="flex items-center gap-2">
-                                    <input
-                                        type="checkbox"
-                                        id="shipDifferent"
-                                        checked={shipDifferent}
-                                        onChange={(e) => setShipDifferent(e.target.checked)}
-                                        className="h-4 w-4 border border-text-gray-300 accent-text-buy-now cursor-pointer"
-                                    />
-                                    <label
-                                        htmlFor="shipDifferent"
-                                        className="font-public-sans text-sm font-normal text-text-title cursor-pointer"
-                                    >
-                                        Ship into different address
-                                    </label>
-                                </div> */}
                             </div>
                         </div>
 
                         {/* Right: Order Summary */}
                         <div>
                             <div className="border border-text-gray-300 p-6">
-                                <h2 className="font-public-sans text-base font-medium text-text-title mb-5">
+                                <h2 className="mb-5 font-public-sans text-base font-medium text-text-title">
                                     Order Summery
                                 </h2>
 
                                 {/* Product Row */}
-                                <div className="flex items-center gap-3 mb-6">
+                                <div className="mb-6 flex items-center gap-3">
                                     <div className="h-14 w-14 flex-shrink-0 overflow-hidden rounded-sm border border-text-gray-300">
                                         <img
                                             src={orderItem.image}
@@ -209,7 +250,7 @@ export default function ShippingInformationPage() {
                                         <p className="font-aktiv-grotesk text-base font-normal text-text-title">
                                             {orderItem.name}
                                         </p>
-                                        <p className="font-public-sans text-sm font-normal text-text-body mt-0.5">
+                                        <p className="mt-0.5 font-public-sans text-sm font-normal text-text-body">
                                             {orderItem.quantity} ×{' '}
                                             <span className="font-semibold text-text-green">
                                                 ${orderItem.price}
@@ -218,9 +259,8 @@ export default function ShippingInformationPage() {
                                     </div>
                                 </div>
 
-
                                 {/* Price Rows */}
-                                <div className="space-y-3 mb-4">
+                                <div className="mb-4 space-y-3">
                                     <div className="flex items-center justify-between">
                                         <span className="font-aktiv-grotesk text-sm font-normal text-text-body">
                                             Sub-total
@@ -240,10 +280,10 @@ export default function ShippingInformationPage() {
                                 </div>
 
                                 {/* Divider */}
-                                <div className="w-full border-b border-text-gray-300 mb-4"></div>
+                                <div className="mb-4 w-full border-b border-text-gray-300"></div>
 
                                 {/* Total */}
-                                <div className="flex items-center justify-between mb-6">
+                                <div className="mb-6 flex items-center justify-between">
                                     <span className="font-aktiv-grotesk text-base font-semibold text-text-title">
                                         Total
                                     </span>
@@ -253,25 +293,16 @@ export default function ShippingInformationPage() {
                                 </div>
 
                                 {/* Place Order Button */}
-                                <Link 
+                                <Link
                                     href={route('frontend.order-confirmed')}
                                     type="button"
-                                    className="flex w-full items-center justify-center gap-2 bg-text-buy-now px-6 py-4 font-bebas-neue text-xl font-normal uppercase text-text-white"
+                                    className="flex w-full items-center justify-center gap-2 bg-text-buy-now px-6 py-4 font-bebas-neue text-xl font-normal text-text-white uppercase"
                                 >
                                     Place order
                                     <ArrowRight className="h-4 w-4" />
                                 </Link>
-
-                                {/* Back Button */}
-                                {/* <Link
-                                    href={route('frontend.product-card')}
-                                    className="mt-3 flex w-full items-center justify-center border border-text-buy-now px-6 py-4  font-bebas-neue text-xl font-normal uppercase text-text-buy-now tracking-widest"
-                                >
-                                    Back
-                                </Link> */}
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>

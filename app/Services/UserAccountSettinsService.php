@@ -20,6 +20,21 @@ class UserAccountSettinsService
             'addresses' => $addresses,
         ];
     }
+    public function getShippingInfo(): array
+    {
+        $user = Auth::user();
+        $addresses = UserAddresse::where('user_id', $user->id)
+        ->where('type', AddressType::SHIPPING->value)
+        ->get();
+
+        return [
+            'user' => $user,
+            'addresses' => $addresses,
+        ];
+    }
+
+
+
 
     public function updateAccountSettings(array $data): User
     {
