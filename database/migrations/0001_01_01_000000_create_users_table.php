@@ -23,7 +23,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('otp')->nullable();
             $table->string('status')->default(ActiveInactive::ACTIVE->value);   
-            $table->string('password');
+            $table->string('password')->nullable();
 
 
             $table->string('provider')->nullable();
@@ -31,6 +31,8 @@ return new class extends Migration
             $table->string('provider_avatar')->nullable();
             $table->text('provider_token')->nullable();
             $table->text('provider_refresh_token')->nullable();
+
+            $table->timestamp('last_login_at')->nullable();
 
 
 

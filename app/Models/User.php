@@ -25,6 +25,9 @@ class User extends Authenticatable
         'provider_avatar',
         'provider_token',
         'provider_refresh_token',
+        'otp',
+        'email_verified_at',
+        'last_login_at',
 
         'created_at',
         'updated_at',
@@ -46,6 +49,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'status' => ActiveInactive::class,
+            'last_login_at' => 'datetime',
         ];
     }
 

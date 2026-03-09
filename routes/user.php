@@ -10,6 +10,8 @@ Route::get('/login', [LoginController::class, 'showLogin'])->name('login');
 Route::post('/login', [LoginController::class, 'store'])->name('login.post');
 Route::get('/register', [UserAuthController::class, 'register'])->name('register');
 Route::post('/register', [UserAuthController::class, 'registerStore'])->name('register.post');
+Route::get('/email-verification', [UserAuthController::class, 'emailVerification'])->name('email-verification');
+Route::post('/email-verification', [UserAuthController::class, 'emailVerificationStore'])->name('email-verification.post');
 Route::get('forgot-password', [UserAuthController::class, 'forgotPassword'])->name('forgot-password');
 Route::post('forgot-password', [UserAuthController::class, 'forgotPasswordStore'])->name('forgot-password.post');
 Route::get('/otp-verification', [UserAuthController::class, 'otpVerification'])->name('otp-verification');
