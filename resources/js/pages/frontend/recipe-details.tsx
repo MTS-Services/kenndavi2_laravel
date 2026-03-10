@@ -44,15 +44,6 @@ export default function RecipeDetails() {
                         <h2 className="mb-4 font-bebas-neue text-4xl font-normal text-text-title sm:text-[56px]">
                             {recipe.title}
                         </h2>
-                        {(recipe.prep_time || recipe.cook_time) && (
-                            <div className="flex flex-wrap items-center gap-2 font-aktiv-grotesk text-base font-normal text-text-body">
-                                {recipe.prep_time && <span>Prep: {recipe.prep_time}</span>}
-                                {recipe.prep_time && recipe.cook_time && (
-                                    <span className="border border-text-black-50 w-0.5 h-4 bg-text-black-50" />
-                                )}
-                                {recipe.cook_time && <span>Cook: {recipe.cook_time}</span>}
-                            </div>
-                        )}
                     </div>
 
                     {recipe.description && (
