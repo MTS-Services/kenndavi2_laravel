@@ -7,14 +7,14 @@ import FrontendLayout from '@/layouts/frontend-layout'
 import { usePage } from '@inertiajs/react'
 
 export default function Home() {
-  const { props } = usePage<{ products?: any }>()
+  const { props } = usePage<{ products?: any; recipes?: any }>()
 
   return (
     <FrontendLayout activePage="home">
       <Hero />
       <OurSauces products={props.products} />
       <OurStory />
-      <BbqSauceRecipes />
+      <BbqSauceRecipes recipes={props.recipes} />
       <Testimonial />
     </FrontendLayout>
   )
