@@ -8,13 +8,14 @@ type Product = {
     id: number;
     title: string;
     description?: string;
-    image?: string;
-    images?: string[];
-    price?: string;
-    old_price?: string;
-    discount?: string;
-    availability?: string;
-    ingredients?: string[];
+    images?: {
+        id: number;
+        image: string;
+        is_primary: boolean;
+    }[];
+    price?: number;
+    discount?: number;
+    stock_level?: number;
     rating?: number;
     reviews_count?: number;
 };
@@ -38,7 +39,7 @@ const TOTAL_PAGES = 10;
 
 export default function ProductDetailsPage() {
     const { product } = usePage<PageProps>().props;
-    const productImages = product.images || (product.image ? [product.image] : []);
+    const productImages = product.images?.map(img => `/storage/${img.image}`) || [];
     const [selectedImage, setSelectedImage] = useState<string>(productImages[0] || '/assets/images/product/Rectangle 20.png');
     const [quantity, setQuantity] = useState<number>(1);
     const [currentPage, setCurrentPage] = useState<number>(1);
