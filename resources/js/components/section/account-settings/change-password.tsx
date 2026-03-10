@@ -1,6 +1,8 @@
 import React from 'react';
 import { useForm } from '@inertiajs/react';
 import { PasswordInput } from '@/components/ui/password-input';
+import { toast } from 'sonner';
+import { Label } from '@/components/ui/label';
 
 export default function ChangePassword() {
     const passwordForm = useForm({
@@ -12,7 +14,14 @@ export default function ChangePassword() {
     const handlePasswordSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         passwordForm.post(route('user.change-password'), {
-            onSuccess: () => passwordForm.reset(),
+            onSuccess: () => {
+                passwordForm.reset();
+                toast.success('Password changed successfully');
+            },
+            onError: (errors) => {
+                console.log(errors);
+                toast.error('Failed to change password');
+            },
         });
     };
 
@@ -26,9 +35,9 @@ export default function ChangePassword() {
                 <form onSubmit={handlePasswordSubmit} className="space-y-4 p-4">
                     {/* Current Password */}
                     <div>
-                        <label className="block text-base font-public-sans text-text-title font-normal mb-2">
+                        <Label className="block text-base font-public-sans text-text-title font-normal mb-2">
                             Current Password
-                        </label>
+                        </Label>
                         <div className="relative">
                             <PasswordInput
                                 value={passwordForm.data.oldPassword}
@@ -36,14 +45,17 @@ export default function ChangePassword() {
                                 className="w-full px-3 py-2 border border-text-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-text-buy-now pr-10"
                                 placeholder="Enter current password"
                             />
+                            {passwordForm.errors.oldPassword && (
+                                <p className="text-red-500 text-sm mt-1">{passwordForm.errors.oldPassword}</p>
+                            )}
                         </div>
                     </div>
 
                     {/* New Password */}
                     <div>
-                        <label className="block text-base font-public-sans text-text-title font-normal mb-2">
+                        <Label className="block text-base font-public-sans text-text-title font-normal mb-2">
                             New Password
-                        </label>
+                        </Label>
                         <div className="relative">
                             <PasswordInput
                                 value={passwordForm.data.password}
@@ -51,14 +63,17 @@ export default function ChangePassword() {
                                 className="w-full px-3 py-2 border border-text-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-text-buy-now pr-10"
                                 placeholder="Enter new password"
                             />
+                            {passwordForm.errors.password && (
+                                <p className="text-red-500 text-sm mt-1">{passwordForm.errors.password}</p>
+                            )}
                         </div>
                     </div>
 
                     {/* Confirm Password */}
                     <div>
-                        <label className="block text-base font-public-sans text-text-title font-normal mb-2">
+                        <Label className="block text-base font-public-sans text-text-title font-normal mb-2">
                             Confirm Password
-                        </label>
+                        </Label>
                         <div className="relative">
                             <PasswordInput
                                 value={passwordForm.data.password_confirmation}
@@ -66,6 +81,9 @@ export default function ChangePassword() {
                                 className="w-full px-3 py-2 border border-text-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-text-buy-now pr-10"
                                 placeholder="Confirm new password"
                             />
+                            {passwordForm.errors.password_confirmation && (
+                                <p className="text-red-500 text-sm mt-1">{passwordForm.errors.password_confirmation}</p>
+                            )}
                         </div>
                     </div>
 

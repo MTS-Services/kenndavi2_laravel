@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\TermsAndCondition;
 use App\Services\ProductService;
 use App\Services\RecipeService;
 use App\Services\UserAccountSettinsService;
@@ -66,7 +67,10 @@ class FrontendController extends Controller
     }
     public function sauceRecipes(): Response
     {
-        return Inertia::render('frontend/sauce-recipes');
+        $recipes = $this->recipeService->getAllDatats();
+        return Inertia::render('frontend/sauce-recipes', [
+            'recipes' => $recipes
+        ]);
     }
     public function recipeDetails($id): Response
     {
@@ -81,6 +85,9 @@ class FrontendController extends Controller
     }
     public function termsConditions(): Response
     {
-        return Inertia::render('frontend/terms-conditions');
+        $termsAndCondition = TermsAndCondition::first();
+        return Inertia::render('frontend/terms-conditions', [
+            'termsAndCondition' => $termsAndCondition
+        ]);
     }
 }

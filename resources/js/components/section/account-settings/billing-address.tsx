@@ -1,6 +1,8 @@
 import React, { use } from 'react';
 import { useForm } from '@inertiajs/react';
 import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
+import { Label } from '@/components/ui/label';
 
 
 interface Address {
@@ -46,7 +48,15 @@ export default function BillingAddress({ address, userEmail, userPhone }: Billin
 
         console.log(data);
 
-        post(route('user.billing-address'));
+        post(route('user.billing-address'), {
+            onSuccess: () => {
+                toast.success('Billing address updated successfully');
+            },
+            onError: (errors) => {
+                console.log(errors);
+                toast.error('Failed to update billing address');
+            }
+        });
     };
 
     
@@ -59,9 +69,9 @@ export default function BillingAddress({ address, userEmail, userPhone }: Billin
             <form onSubmit={handleBillingSubmit} className="space-y-4 p-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-base font-public-sans text-text-title font-normal mb-2">
+                        <Label className="block text-base font-public-sans text-text-title font-normal mb-2">
                             Name
-                        </label>
+                        </Label>
                         <Input
                             type="text"
                             defaultValue={data.full_name}
@@ -72,9 +82,9 @@ export default function BillingAddress({ address, userEmail, userPhone }: Billin
                     </div>
                 </div>
                 <div>
-                    <label className="block text-base font-public-sans text-text-title font-normal mb-2">
+                    <Label className="block text-base font-public-sans text-text-title font-normal mb-2">
                         Address
-                    </label>
+                    </Label>
                     <Input
                         type="text"
                         defaultValue={data.address_line1}
@@ -84,9 +94,9 @@ export default function BillingAddress({ address, userEmail, userPhone }: Billin
                     {errors.address_line1 && <div className="text-red-500 text-sm">{errors.address_line1}</div>}
                 </div>
                 <div>
-                    <label className="block text-base font-public-sans text-text-title font-normal mb-2">
+                    <Label className="block text-base font-public-sans text-text-title font-normal mb-2">
                         Address Line 2 (Optional)
-                    </label>
+                    </Label>
                     <Input
                         type="text"
                         defaultValue={data.address_line2}
@@ -96,9 +106,9 @@ export default function BillingAddress({ address, userEmail, userPhone }: Billin
                     {errors.address_line2 && <div className="text-red-500 text-sm">{errors.address_line2}</div>}
                 </div>
                 <div>
-                    <label className="block text-base font-public-sans text-text-title font-normal mb-2">
+                    <Label className="block text-base font-public-sans text-text-title font-normal mb-2">
                         Region/State
-                    </label>
+                    </Label>
                     <Input
                         type="text"
                         defaultValue={data.state}
@@ -109,9 +119,9 @@ export default function BillingAddress({ address, userEmail, userPhone }: Billin
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-base font-public-sans text-text-title font-normal mb-2">
+                        <Label className="block text-base font-public-sans text-text-title font-normal mb-2">
                             City
-                        </label>
+                        </Label>
                         <Input
                             type="text"
                             defaultValue={data.city}
@@ -121,11 +131,11 @@ export default function BillingAddress({ address, userEmail, userPhone }: Billin
                         {errors.city && <div className="text-red-500 text-sm">{errors.city}</div>}
                     </div>
                     <div>
-                        <label className="block text-base font-public-sans text-text-title font-normal mb-2">
+                        <Label className="block text-base font-public-sans text-text-title font-normal mb-2">
                             Zip Code
-                        </label>
+                        </Label>
                         <Input
-                            type="text"
+                            type="number"
                             defaultValue={data.postal_code}
                             onChange={(e) => setData('postal_code', e.target.value)}
                             className="w-full px-3 py-2 border border-text-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-text-buy-now"
@@ -134,9 +144,9 @@ export default function BillingAddress({ address, userEmail, userPhone }: Billin
                     </div>
                 </div>
                 <div>
-                    <label className="block text-base font-public-sans text-text-title font-normal mb-2">
+                    <Label className="block text-base font-public-sans text-text-title font-normal mb-2">
                         Country
-                    </label>
+                    </Label>
                     <Input
                         type="text"
                         defaultValue={data.country}
@@ -146,9 +156,9 @@ export default function BillingAddress({ address, userEmail, userPhone }: Billin
                     {errors.country && <div className="text-red-500 text-sm">{errors.country}</div>}
                 </div>
                 <div>
-                    <label className="block text-base font-public-sans text-text-title font-normal mb-2">
+                    <Label className="block text-base font-public-sans text-text-title font-normal mb-2">
                         Email
-                    </label>
+                    </Label>
                     <Input
                         type="email"
                         defaultValue={data.email}
@@ -158,9 +168,9 @@ export default function BillingAddress({ address, userEmail, userPhone }: Billin
                     {errors.email && <div className="text-red-500 text-sm">{errors.email}</div>}
                 </div>
                 <div>
-                    <label className="block text-base font-public-sans text-text-title font-normal mb-2">
+                    <Label className="block text-base font-public-sans text-text-title font-normal mb-2">
                         Phone Number
-                    </label>
+                    </Label>
                     <Input
                         type="tel"
                         defaultValue={data.phone}

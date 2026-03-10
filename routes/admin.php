@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\RecipeController;
 use App\Http\Controllers\Admin\TagController;
+use App\Http\Controllers\Admin\TermsAndConditionController;
 use App\Http\Controllers\Admin\TermsConditionsController;
 use App\Http\Controllers\Admin\UserManagement\UserController;
 use Illuminate\Support\Facades\Route;
@@ -80,6 +81,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/edit/{id}', [TagController::class, 'edit'])->name('edit');
             Route::put('/update/{id}', [TagController::class, 'update'])->name('update');
             Route::get('/delete/{id}', [TagController::class, 'delete'])->name('delete');
+        });
+
+        Route::group(['prefix' => 'terms-and-conditions', 'as' => 'tac.'], function () {
+            Route::get('/index', [TermsAndConditionController::class, 'index'])->name('index');
+            Route::post('/store', [TermsAndConditionController::class, 'store'])->name('store');
+            Route::put('/update/{termsAndCondition}', [TermsAndConditionController::class, 'update'])->name('update');
         });
 
     });

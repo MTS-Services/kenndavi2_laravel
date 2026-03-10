@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\UserAddresse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserAccountSettinsService
 {
@@ -24,8 +25,8 @@ class UserAccountSettinsService
     {
         $user = Auth::user();
         $addresses = UserAddresse::where('user_id', $user->id)
-        ->where('type', AddressType::SHIPPING->value)
-        ->get();
+            ->where('type', AddressType::SHIPPING->value)
+            ->get();
 
         return [
             'user' => $user,
@@ -33,24 +34,36 @@ class UserAccountSettinsService
         ];
     }
 
-
-
-
-    public function updateAccountSettings(array $data): User
+    public function updateAccountInfo(array $data, $request): User
     {
         $user = Auth::user();
 
         $validated = validator($data, [
-            'name'   => ['required', 'string', 'max:100'],
-            'email'        => ['required', 'email', 'max:150'],
-            'phone'        => ['required', 'string', 'max:20'],
+            'name'  => ['required', 'string', 'max:100'],
+            'email' => ['required', 'email', 'max:150', 'unique:users,email,' . $user->id],
+            'phone' => ['required', 'string', 'max:20'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:2048'],
         ])->validate();
 
-        $user->update([
-            'name' => $validated['name'],
+        $updateData = [
+            'name'  => $validated['name'],
             'email' => $validated['email'],
             'phone' => $validated['phone'],
-        ]);
+        ];
+        if ($request->hasFile('image')) {
+
+            // Delete old image
+            if ($user->image && Storage::disk('public')->exists('user_images/' . $user->image)) {
+                Storage::disk('public')->delete('user_images/' . $user->image);
+            }
+
+            $file = $request->file('image');
+            $imageName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('user_images', $imageName, 'public');
+            $updateData['image'] = $imageName;
+        }
+
+        $user->update($updateData);
 
         return $user;
     }
@@ -64,7 +77,6 @@ class UserAccountSettinsService
 
         $user = Auth::user();
 
-        // Check if old password matches current password
         if (!Hash::check($validated['oldPassword'], $user->password)) {
             throw new \Illuminate\Validation\ValidationException(
                 validator([], ['oldPassword' => 'The old password is incorrect.'])
@@ -79,23 +91,6 @@ class UserAccountSettinsService
         return true;
     }
 
-    public function updateProfileImage($image): string
-    {
-        $user = Auth::user();
-
-        if ($image) {
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $imagePath = $image->storeAs('user-images', $imageName, 'public');
-
-            $user->update([
-                'image_url' => '/storage/' . $imagePath,
-            ]);
-
-            return $user->image_url;
-        }
-
-        throw new \Exception('No image file provided');
-    }
 
     public function updateBillingAddress(array $data): UserAddresse
     {

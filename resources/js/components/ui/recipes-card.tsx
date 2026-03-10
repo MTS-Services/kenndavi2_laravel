@@ -1,7 +1,7 @@
 import { Link } from "@inertiajs/react";
 
-interface RecipeData {
-    id: string;
+interface Recipe {
+    id: number;
     title: string;
     cook_time: string;
     prep_time: string;
@@ -9,7 +9,7 @@ interface RecipeData {
 }
 
 interface Props {
-    recipe: RecipeData;
+    recipe: Recipe;
 }
 
 
