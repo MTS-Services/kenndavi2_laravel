@@ -68,7 +68,7 @@ const gradientPlugin = {
     gradient.addColorStop(0, 'rgba(249, 115, 22, 0.5)');  
     gradient.addColorStop(1, 'rgba(249, 115, 22, 0.0)'); 
     chart.data.datasets[0].backgroundColor = gradient;
-    chart.update('none');
+    // Remove chart.update('none') to prevent infinite loop
   },
 };
 
