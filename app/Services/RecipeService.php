@@ -65,37 +65,41 @@ class RecipeService
     /**
      * Update an existing recipe
      */
-    public function update(Request $request, $id)
-    {
+public function update(Request $request, $id)
+{
+    $recipe = $this->model->findOrFail($id);
 
-        $recipe = $this->model->findOrFail($id);
+    $validated = $request->validate([
+        'title' => 'nullable|string|max:255',
+        'description' => 'nullable|string',
+        'prep_time' => 'nullable|string|max:50',
+        'cook_time' => 'nullable|string|max:50',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        'related_products' => 'nullable|array',
+        'related_products.*' => 'exists:products,id',
+    ]);
 
-        $validated = $request->validate([
-            'title' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
-            'prep_time' => 'nullable|string|max:50',
-            'cook_time' => 'nullable|string|max:50',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'related_products' => 'nullable|array',
-            'related_products.*' => 'exists:products,id',
-        ]);
-
-        if ($request->hasFile('image')) {
-            $validated['image'] = $this->handleImageUpload($request->file('image'));
+    if ($request->hasFile('image')) {
+        if ($recipe->image && Storage::exists($recipe->image)) {
+            Storage::delete($recipe->image);
         }
-
-        $validated['updated_by'] = auth('admin')->id();
-
-        $recipe->update($validated);
-
-        if (isset($validated['related_products'])) {
-            $recipe->relatedProducts()->sync($validated['related_products']);
-        } else {
-            $recipe->relatedProducts()->detach();
-        }
-
-        return $recipe;
+        $validated['image'] = $this->handleImageUpload($request->file('image'));
+    } else {
+        unset($validated['image']);
     }
+
+    $validated['updated_by'] = auth('admin')->id();
+
+    $recipe->update($validated);
+
+    if (isset($validated['related_products'])) {
+        $recipe->relatedProducts()->sync($validated['related_products']);
+    } else {
+        $recipe->relatedProducts()->detach();
+    }
+
+    return $recipe;
+}
 
     /**
      * Delete a recipe

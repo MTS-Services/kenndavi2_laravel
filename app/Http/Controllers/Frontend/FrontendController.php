@@ -40,9 +40,14 @@ class FrontendController extends Controller
         return Inertia::render('frontend/privacy-policy');
     }
 
-    public function details(): Response
+    public function productDetails($id): Response
     {
-        return Inertia::render('frontend/product-details');
+
+        $product = $this->productService->getById($id);
+
+        return Inertia::render('frontend/product-details', [
+            'product' => $product
+        ]);
     }
 
     public function shoppingInfo(): Response
