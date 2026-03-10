@@ -33,26 +33,26 @@ class ProductService
     public function create(array $productData, array $images = []): Product
     {
         $productData['created_by'] = Auth::id();
-        
+
         $product = $this->model::create($productData);
-        
+
         if (!empty($images)) {
             $this->attachImages($product, $images);
         }
-        
+
         return $product;
     }
 
     public function update(Product $product, array $productData, array $images = []): Product
     {
-        $productData['updated_by'] = Auth::id();
-        
+        $productData['updated_by'] = auth('admin')->id();
+
         $product->update($productData);
-        
+
         if (!empty($images)) {
             $this->updateImages($product, $images);
         }
-        
+
         return $product;
     }
 
@@ -61,26 +61,26 @@ class ProductService
         foreach ($images as $index => $image) {
             if ($image instanceof UploadedFile) {
                 $existingImage = $product->images()->skip($index)->first();
-                
+
                 if ($existingImage) {
                     if ($existingImage->image && Storage::disk('public')->exists($existingImage->image)) {
                         Storage::disk('public')->delete($existingImage->image);
                     }
-                    
+
                     $path = $image->store('products', 'public');
                     $existingImage->update([
                         'image' => $path,
-                        'updated_by' => Auth::id(),
+                        'updated_by' => auth('admin')->id(),
                     ]);
                 } else {
                     $path = $image->store('products', 'public');
-                    
+
                     $this->productImage->create([
                         'product_id' => $product->id,
                         'image' => $path,
                         'is_primary' => $index === 0 && $product->images()->count() === 0,
-                        'created_by' => Auth::id(),
-                        'updated_by' => Auth::id(),
+                        'created_by' => auth('admin')->id(),
+                        'updated_by' => auth('admin')->id(),
                     ]);
                 }
             }
@@ -92,13 +92,13 @@ class ProductService
         foreach ($images as $index => $image) {
             if ($image instanceof UploadedFile) {
                 $path = $image->store('products', 'public');
-                
+
                 $this->productImage->create([
                     'product_id' => $product->id,
                     'image' => $path,
                     'is_primary' => $index === 0,
-                    'created_by' => Auth::id(),
-                    'updated_by' => Auth::id(),
+                    'created_by' => auth('admin')->id(),
+                    'updated_by' => auth('admin')->id(),
                 ]);
             }
         }
@@ -113,12 +113,12 @@ class ProductService
     public function removeImage(Product $product, int $imageId): void
     {
         $image = $this->productImage->where('product_id', $product->id)->findOrFail($imageId);
-        
+
 
         if ($image->image && Storage::disk('public')->exists($image->image)) {
             Storage::disk('public')->delete($image->image);
         }
-        
+
         $image->delete();
     }
 
@@ -131,19 +131,19 @@ class ProductService
             }
             $image->delete();
         }
-        
+
         return $product->delete();
     }
 
-    
+
 
     public function updateQuantity(Product $product, int $quantity): Product
     {
         $product->update([
             'quantity' => $quantity,
-            'updated_by' => Auth::id(),
+            'updated_by' => auth('admin')->id(),
         ]);
-        
+
         return $product;
     }
 

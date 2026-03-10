@@ -1,4 +1,5 @@
 import { Link } from "@inertiajs/react";
+import { id } from "date-fns/locale";
 
 interface Props {
     product: any;
@@ -9,7 +10,7 @@ export default function SaucesCard({ product }: Props) {
     const imagePath = primaryImage?.image || product?.image;
     const imageUrl = imagePath ? `/storage/${imagePath}` : '/assets/images/placeholder.jpg';
 
-    const href = route('frontend.details');
+    const href = route('frontend.product-details', product.id);
 
     return (
         <div className="rounded-md bg-bg-card shadow-md px-4 py-3">

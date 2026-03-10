@@ -11,7 +11,7 @@ Route::name('frontend.')->controller(FrontendController::class)->group(function 
         Route::get('/product-card', 'productCard')->name('product-card');
     });
     Route::get('/', 'index')->name('home');
-    Route::get('/details', 'details')->name('details');
+    Route::get('/product-details/{id}', 'productDetails')->name('product-details');
     Route::get('/order-confirmed!', 'orderConfirmed')->name('order-confirmed');
     Route::get('/sauce-recipes', 'sauceRecipes')->name('sauce-recipes');
     Route::get('/recipe-details/{id}', 'recipeDetails')->name('recipe-details');
