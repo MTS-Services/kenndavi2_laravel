@@ -229,18 +229,6 @@ export default function Create() {
                             <label className="mb-2 block text-sm font-semibold text-gray-800">
                                 Description
                             </label>
-                            {/* <textarea
-                                value={data.description}
-                                onChange={(e) => setData('description', e.target.value)}
-                                rows={4}
-                                className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 focus:border-red-800 focus:ring-1 focus:ring-red-800 focus:outline-none"
-                                placeholder="Enter recipe description"
-                            />
-                            {errors.description && (
-                                <p className="mt-1 text-sm text-red-600">
-                                    {errors.description}
-                                </p>
-                            )} */}
                             <TiptapEditor 
                                 value={data.description}
                                 onChange={(value) => setData('description', value)}

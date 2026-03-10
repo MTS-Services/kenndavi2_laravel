@@ -44,10 +44,10 @@ class UserController extends Controller
     {
         $data = $this->userAccountService->getUserWithAddresses();
 
-        if($data['user']) {
+        if ($data['user']) {
             $data['user']->load('addresses');
         }
-        
+
 
         return Inertia::render('user/account-settings/account-settings', $data);
     }
@@ -55,13 +55,15 @@ class UserController extends Controller
     public function accountSettingsUpdate(Request $request)
     {
         try {
-            $this->userAccountService->updateAccountSettings($request->all());
-            
+            $this->userAccountService->updateAccountInfo($request->all(), $request);
+
             return redirect()
                 ->back()
                 ->with('success', 'Account settings updated successfully.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Failed to update account settings.']);
+            return back()->with('error', $e->getMessage());
         }
     }
 
@@ -69,29 +71,17 @@ class UserController extends Controller
     {
         try {
             $this->userAccountService->changePassword($request->all());
-            
+
             return redirect()
                 ->back()
                 ->with('success', 'Password changed successfully.');
         } catch (\Illuminate\Validation\ValidationException $e) {
             return back()->withErrors($e->errors());
         } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Failed to change password.']);
+            return back();
         }
     }
 
-    public function imageUpdate(Request $request)
-    {
-        try {
-            $this->userAccountService->updateProfileImage($request->file('image'));
-            
-            return redirect()
-                ->back()
-                ->with('success', 'Profile image updated successfully.');
-        } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Failed to update profile image.']);
-        }
-    }
 
     public function billingAddress(Request $request)
     {
@@ -102,7 +92,7 @@ class UserController extends Controller
         } catch (\Illuminate\Validation\ValidationException $e) {
             return back()->withErrors($e->errors());
         } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Failed to update billing address.']);
+            return back();
         }
     }
 
@@ -110,14 +100,14 @@ class UserController extends Controller
     {
         try {
             $this->userAccountService->updateShippingAddress($request->all());
-            
+
             return redirect()
                 ->back()
                 ->with('success', 'Shipping address updated successfully.');
         } catch (\Illuminate\Validation\ValidationException $e) {
             return back()->withErrors($e->errors());
         } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Failed to update shipping address.']);
+            return back();
         }
     }
 }

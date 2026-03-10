@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm, usePage } from '@inertiajs/react';
 import { Camera } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
+import { Label } from '@/components/ui/label';
 
 interface User {
     id: number;
@@ -20,37 +22,41 @@ export default function AccountSetting({ user }: AccountSettingProps) {
         name: user?.name || '',
         email: user?.email || '',
         phone: user?.phone || '',
-    });
-
-    const imageForm = useForm({
         image: null as File | null,
     });
 
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
+
     const handleAccountSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        
         accountForm.post(route('user.account-settings.update'), {
             onSuccess: () => {
-                // Form will reset automatically on success
+                toast.success('Account settings updated successfully');
+                // Reset image field after successful submission
+                accountForm.setData('image', null);
+                setImagePreview(null);
+                // Reload page to show updated image
+                window.location.reload();
+            },
+            onError: (errors) => {
+                console.log('Form submission errors:', errors);
+                toast.error('Failed to update account settings');
             },
         });
     };
 
-    const handleImageSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (imageForm.data.image) {
-            imageForm.post(route('user.image-update'), {
-                onSuccess: () => {
-                    imageForm.reset();
-                    // Page will refresh with new image
-                },
-            });
-        }
-    };
-
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
-            imageForm.setData('image', e.target.files[0]);
-            handleImageSubmit(e as any);
+            const file = e.target.files[0];
+            accountForm.setData('image', file);
+            
+            // Create preview URL
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
         }
     };
 
@@ -65,24 +71,27 @@ export default function AccountSetting({ user }: AccountSettingProps) {
                 <div className="flex flex-col items-center">
                     <div className="relative w-40 h-40 rounded-full bg-bg-white flex items-center justify-center overflow-hidden border-2 border-text-gray-300">
                         <img
-                            src={user?.image_url || "/assets/images/user-dashboard/line-md_account.png"}
+                            src={imagePreview || user?.image_url || "/assets/images/user-dashboard/line-md_account.png"}
                             alt="Profile"
                             className="w-full h-full object-cover"
                         />
                         <div className="absolute bottom-2 right-2 bg-bg-white rounded-full p-2 shadow-md cursor-pointer">
-                            <label htmlFor="image-upload" className="cursor-pointer">
+                            <Label htmlFor="image" className="cursor-pointer">
                                 <Camera className="w-5 h-5 text-text-body" />
                                 <input
-                                    id="image-upload"
+                                    id="image"
                                     type="file"
                                     accept="image/*"
                                     onChange={handleImageChange}
                                     className="hidden"
                                 />
-                            </label>
+                            </Label>
                         </div>
                     </div>
                     <span className="mt-4 text-lg font-semibold text-text-title">{user?.name || 'User'}</span>
+                    {accountForm.data.image && (
+                        <p className="mt-2 text-sm text-green-600">New image selected: {accountForm.data.image.name}</p>
+                    )}
                 </div>
 
                 {/* Account Details Form */}
@@ -90,21 +99,25 @@ export default function AccountSetting({ user }: AccountSettingProps) {
                     <form onSubmit={handleAccountSubmit}>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-base font-public-sans text-text-title font-normal mb-2">
+                                <Label className="block text-base font-public-sans text-text-title font-normal mb-2">
                                     Name
-                                </label>
+                                </Label>
                                 <Input
                                     type="text"
                                     value={accountForm.data.name}
                                     onChange={(e) => accountForm.setData('name', e.target.value)}
-                                    className="w-full px-3 py-2 border border-text-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-text-buy-now"
+                                    className="block w-full appearance-none rounded-md border border-text-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm"
+                                    placeholder="Your name"
                                 />
-                                {accountForm.errors.name && <div className="text-red-500 text-sm">{accountForm.errors.name}</div>}
+                                {accountForm.errors.name && (
+                                    <p className="mt-1 text-sm text-red-600">{accountForm.errors.name}</p>
+                                )}
                             </div>
+                            
                             <div>
-                                <label className="block text-base font-public-sans text-text-title font-normal mb-2">
+                                <Label className="block text-base font-public-sans text-text-title font-normal mb-2">
                                     Email
-                                </label>
+                                </Label>
                                 <Input
                                     type="email"
                                     value={accountForm.data.email}
@@ -115,9 +128,9 @@ export default function AccountSetting({ user }: AccountSettingProps) {
                                 {accountForm.errors.email && <div className="text-red-500 text-sm">{accountForm.errors.email}</div>}
                             </div>
                             <div>
-                                <label className="block text-base font-public-sans text-text-title font-normal mb-2">
+                                <Label className="block text-base font-public-sans text-text-title font-normal mb-2">
                                     Phone Number
-                                </label>
+                                </Label>
                                 <Input
                                     type="tel"
                                     value={accountForm.data.phone}

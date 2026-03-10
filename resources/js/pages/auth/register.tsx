@@ -59,26 +59,6 @@ export default function Register() {
 
                             <div>
                                 <Label
-                                    htmlFor="username"
-                                    className="mb-2 font-aktiv-grotesk text-sm font-normal text-text-title focus:border-text-gray-300!"
-                                >
-                                    Username
-                                </Label>
-                                <Input
-                                    id="username"
-                                    type="text"
-                                    name="username"
-                                    required
-                                    placeholder="Username"
-                                    className="block w-full appearance-none rounded-md border border-text-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm"
-                                    value={data.username}
-                                    onChange={(e) => setData('username', e.target.value)}
-                                />
-                                <InputError message={errors.username} />
-                            </div>
-
-                            <div>
-                                <Label
                                     htmlFor="email"
                                     className="mb-2 font-aktiv-grotesk text-sm font-normal text-text-title focus:border-text-gray-300!"
                                 >

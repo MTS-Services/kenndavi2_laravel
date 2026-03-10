@@ -18,6 +18,9 @@ class RecipeService
     /**
      * Get all recipes with pagination
      */
+    public function getAllDatats(){
+        return $this->model->with('relatedProducts')->get();
+    }
     public function getAll($perPage = 9)
     {
         return $this->model->with('relatedProducts')->paginate($perPage);
