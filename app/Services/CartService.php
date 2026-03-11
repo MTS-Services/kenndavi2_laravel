@@ -102,4 +102,42 @@ class CartService
         $cartItem->delete();
         return true;
     }
+
+public function authCheck()
+{
+    if (Auth::guard('web')->check()) {
+
+        $user = Auth::guard('web')->user();
+
+        $guestCart = $this->model::with('items')
+            ->where('session_id', session()->getId())
+            ->first();
+
+        if ($guestCart) {
+
+            $userCart = $this->model::firstOrCreate([
+                'user_id' => $user->id
+            ]);
+
+            foreach ($guestCart->items as $guestItem) {
+
+                $existingItem = $this->cartItem::where('cart_id', $userCart->id)
+                    ->where('product_id', $guestItem->product_id)
+                    ->first();
+
+                if ($existingItem) {
+                    $existingItem->increment('quantity', $guestItem->quantity);
+                } else {
+                    $guestItem->update(['cart_id' => $userCart->id]);
+                }
+            }
+
+            $guestCart->delete();
+
+            return true;
+        }
+    }
+
+    return false;
+}
 }

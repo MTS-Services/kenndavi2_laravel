@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Mail\UserEmailVerificationOtpMail;
 use App\Mail\UserWelcomeMail;
+use App\Services\CartService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -13,6 +14,12 @@ use Inertia\Inertia;
 
 class LoginController extends Controller
 {
+    protected CartService $cartService;
+
+    public function __construct(CartService $cartService)
+    {
+        $this->cartService = $cartService;
+    }
 
     public function showLogin(Request $request)
     {
@@ -68,6 +75,11 @@ class LoginController extends Controller
         $user->update(['last_login_at' => now()]);
 
         $request->session()->regenerate();
+
+
+
+        dd($this->cartService->authCheck());
+
 
         if ($isFirstLogin) {
             Mail::to($user->email)->send(new UserWelcomeMail([

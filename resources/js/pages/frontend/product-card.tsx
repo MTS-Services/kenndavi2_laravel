@@ -153,7 +153,7 @@ export default function ProductCard() {
                                                     }
                                                     className="flex h-9 w-9 items-center justify-center font-aktiv-grotesk text-base font-medium text-text-body"
                                                 >
-                                                    <Minus className="h-5 w-5 text-text-title" />
+                                                    <Minus className="h-5 w-5 text-text-title cursor-pointer" />
                                                 </button>
                                                 <span className="flex h-9 w-9 items-center justify-center font-aktiv-grotesk text-base font-medium text-text-title">
                                                     {product.quantity
@@ -169,7 +169,7 @@ export default function ProductCard() {
                                                     }
                                                     className="flex h-9 w-9 items-center justify-center font-aktiv-grotesk text-base font-medium text-text-body"
                                                 >
-                                                    <Plus className="h-5 w-5 text-text-title" />
+                                                    <Plus className="h-5 w-5 text-text-title cursor-pointer" />
                                                 </button>
                                             </div>
                                         </div>
@@ -180,7 +180,7 @@ export default function ProductCard() {
                                                 }
                                                 className="hover:text-buy-now text-text-title transition-colors"
                                             >
-                                                <Trash2 className="h-5 w-5" />
+                                                <Trash2 className="h-5 w-5 cursor-pointer" />
                                             </button>
                                         </div>
                                     </div>

@@ -22,6 +22,20 @@ class CartController extends Controller
         $data = $this->cartService->getAllDatas();
         return Inertia::render('frontend/product-card', $data);
     }
+    public function add(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'quantity'   => 'integer|min:1',
+        ]);
+
+        try {
+            $this->cartService->addToCart($request->all());
+            return redirect()->back()->with('success', 'Product added to cart successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to add product to cart. Please try again.');
+        }
+    }
     public function update(Request $request)
     {
         $request->validate([
@@ -44,20 +58,6 @@ class CartController extends Controller
             return redirect()->back()->with('success', 'Item removed from cart successfully!');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to remove item from cart. Please try again.');
-        }
-    }
-    public function add(Request $request)
-    {
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'quantity'   => 'integer|min:1',
-        ]);
-
-        try {
-            $this->cartService->addToCart($request->all());
-            return redirect()->back()->with('success', 'Product added to cart successfully!');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to add product to cart. Please try again.');
         }
     }
 }
