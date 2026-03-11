@@ -1,74 +1,91 @@
 import FrontendLayout from '@/layouts/frontend-layout';
-import { Link } from '@inertiajs/react';
+import { Link, usePage, router } from '@inertiajs/react';
 import { ArrowRight, CheckCircle, Minus, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
-const initialProducts = [
-    {
-        id: 1,
-        name: 'Sweet BBQ Sauces',
-        price: 70,
-        quantity: 1,
-        image: '/assets/images/home/04.png',
-        checked: true,
-    },
-    {
-        id: 2,
-        name: 'Teriyaki BBQ Sauces',
-        price: 250,
-        quantity: 3,
-        image: '/assets/images/home/fb87184304aaa733c0da92fab04e9ebd14294505.jpg',
-        checked: true,
-    },
-    {
-        id: 3,
-        name: 'Honey BBQ Sauces',
-        price: 180,
-        quantity: 2,
-        image: '/assets/images/home/513f91e933b9cf0b47a9e4627c132b20f4bf15b6.jpg',
-        checked: true,
-    },
-];
+interface CartItem {
+    id: number;
+    product_id: number;
+    product_name: string;
+    quantity: number;
+    checked?: boolean;
+    product?: {
+        id: number;
+        title: string;
+        price: number;
+        image?: string;
+    };
+}
+
+interface CartData {
+    cart: {
+        id: number;
+        items: CartItem[];
+    } | null;
+    cartItems: CartItem[];
+}
 
 export default function ProductCard() {
-    const [products, setProducts] = useState(initialProducts);
+    const { props } = usePage();
+    const cartData = props as any;
+    const { cart, cartItems } = cartData;
+    
+    // Add checked property to cart items
+    const initialProducts = (cartItems || []).map((item: any) => {
+        const imagePath = item.product?.images?.[0]?.image;
+        const fullImagePath = imagePath ? `/storage/${imagePath}` : '/assets/images/product/placeholder.png';
+        
+        return {
+            ...item,
+            checked: true,
+            name: item.product_name,
+            price: parseFloat(item.product?.price || 0),
+            image: fullImagePath
+        };
+    });
+    
+    const [products] = useState(initialProducts);
 
     const updateQuantity = (id: number, change: number) => {
-        setProducts(
-            products.map((product) =>
-                product.id === id
-                    ? {
-                          ...product,
-                          quantity: Math.max(1, product.quantity + change),
-                      }
-                    : product,
-            ),
-        );
-    };
-
-    const toggleCheckbox = (id: number) => {
-        setProducts(
-            products.map((product) =>
-                product.id === id
-                    ? { ...product, checked: !product.checked }
-                    : product,
-            ),
-        );
+        const newQuantity = Math.max(1, products.find((p: any) => p.id === id)?.quantity + change || 1);
+        
+        router.post('/cart/update', {
+            cart_item_id: id,
+            quantity: newQuantity
+        }, {
+            preserveScroll: true,
+            onSuccess: () => {
+                window.location.reload();
+            },
+            onError: (errors) => {
+                console.error('Failed to update cart:', errors);
+            }
+        });
     };
 
     const removeProduct = (id: number) => {
-        setProducts(products.filter((product) => product.id !== id));
+        router.delete(`/cart/remove/${id}`, {
+            preserveScroll: true,
+            onSuccess: () => {
+                window.location.reload();
+            },
+            onError: (errors) => {
+                console.error('Failed to remove item:', errors);
+            }
+        });
     };
 
-    const orderItem = {
-        name: 'Sweet BBQ Sauces',
-        quantity: 1,
-        price: 70,
-        image: '/assets/images/product/Rectangle 20.png',
-    };
-
-    const subTotal = orderItem.price * orderItem.quantity;
-    const shipping = 20;
+    // Calculate totals dynamically
+    const subTotal = products.reduce((total: number, product: any) => {
+        if (product.checked) {
+            const price = parseFloat(product.price) || 0;
+            const quantity = parseInt(product.quantity) || 0;
+            return total + (price * quantity);
+        }
+        return total;
+    }, 0);
+    
+    const shipping = subTotal > 0 ? 20 : 0; // Free shipping if no items
     const total = subTotal + shipping;
     return (
         <FrontendLayout>
@@ -77,7 +94,7 @@ export default function ProductCard() {
                     <div className="grid gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.7fr)] xl:gap-16">
                         {/* Left Column - Shipping Table */}
                         <div className="rounded-sm border border-text-gray-300 p-6">
-                            <h2 className="mb-8 font-bebas-neue text-3xl font-normal text-text-title uppercase">
+                            <h2 className="mb-8 font-bebas-neue text-4xl font-normal text-text-title uppercase">
                                 Shopping Cart
                             </h2>
                             {/* Header - Hidden on mobile */}
@@ -95,7 +112,7 @@ export default function ProductCard() {
                             </div>
 
                             {/* Product Rows */}
-                            {products.map((product, index) => (
+                            {products.map((product: any, index: number) => (
                                 <div
                                     key={product.id}
                                     className={`my-2 px-0 py-0 sm:px-6 sm:py-4 ${
@@ -108,10 +125,10 @@ export default function ProductCard() {
                                     <div className="hidden grid-cols-12 items-center md:grid">
                                         <div className="col-span-6 flex items-center gap-4">
                                             <CheckCircle
-                                                className="h-6 w-6 text-text-title"
+                                                className="h-5 w-5 text-text-title"
                                                 strokeWidth={2}
                                             />
-                                            <div className="h-20 w-20 shrink-0 overflow-hidden rounded-md border border-text-gray-300">
+                                            <div className="h-16 w-16 shrink-0 overflow-hidden rounded-sm border border-text-gray-300">
                                                 <img
                                                     src={product.image}
                                                     alt={product.name}
@@ -122,8 +139,8 @@ export default function ProductCard() {
                                                 {product.name}
                                             </h3>
                                         </div>
-                                        <div className="col-span-2 font-aktiv-grotesk text-xl font-normal text-text-title">
-                                            ${product.price}
+                                        <div className="col-span-2 font-aktiv-grotesk text-lg font-normal text-text-title">
+                                            ${parseFloat(product.price || 0).toFixed(2)}
                                         </div>
                                         <div className="col-span-2">
                                             <div className="flex items-center border border-text-gray-300">
@@ -172,10 +189,10 @@ export default function ProductCard() {
                                     <div className="md:hidden">
                                         <div className="flex items-start gap-4">
                                             <CheckCircle
-                                                className="mt-1 h-6 w-6 flex-shrink-0 text-text-title"
+                                                className="mt-1 h-5 w-5 flex-shrink-0 text-text-title"
                                                 strokeWidth={2}
                                             />
-                                            <div className="h-16 w-16 shrink-0 overflow-hidden rounded-md border border-text-gray-300">
+                                            <div className="h-14 w-14 shrink-0 overflow-hidden rounded-sm border border-text-gray-300">
                                                 <img
                                                     src={product.image}
                                                     alt={product.name}
@@ -183,12 +200,12 @@ export default function ProductCard() {
                                                 />
                                             </div>
                                             <div className="flex-1">
-                                                <h3 className="mb-2 line-clamp-1 font-aktiv-grotesk text-lg font-normal text-text-title">
+                                                <h3 className="mb-2 line-clamp-1 font-aktiv-grotesk text-base font-normal text-text-title">
                                                     {product.name}
                                                 </h3>
                                                 <div className="flex items-center justify-between">
-                                                    <span className="font-aktiv-grotesk text-lg font-normal text-text-title">
-                                                        ${product.price}
+                                                    <span className="font-aktiv-grotesk text-base font-normal text-text-title">
+                                                        ${parseFloat(product.price || 0).toFixed(2)}
                                                     </span>
                                                     <button
                                                         onClick={() =>
@@ -245,31 +262,33 @@ export default function ProductCard() {
                         {/* Right Column - Order Summary */}
                         <div>
                             <div className="rounded-sm border border-text-gray-300 p-6">
-                                <h2 className="mb-5 font-public-sans text-base font-medium text-text-title">
+                                <h2 className="mb-5 font-public-sans text-lg font-medium text-text-title">
                                     Order Summery
                                 </h2>
 
-                                {/* Product Row */}
-                                <div className="mb-6 flex items-center gap-3">
-                                    <div className="h-14 w-14 flex-shrink-0 overflow-hidden rounded-sm border border-text-gray-300">
-                                        <img
-                                            src={orderItem.image}
-                                            alt={orderItem.name}
-                                            className="h-full w-full object-cover"
-                                        />
+                                {/* Product Rows */}
+                                {products.map((product: any) => (
+                                    <div key={product.id} className="mb-4 flex items-center gap-3">
+                                        <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-sm border border-text-gray-300">
+                                            <img
+                                                src={product.image || '/assets/images/product/placeholder.png'}
+                                                alt={product.name || 'Product'}
+                                                className="h-full w-full object-cover"
+                                            />
+                                        </div>
+                                        <div>
+                                            <p className="font-aktiv-grotesk text-sm font-normal text-text-title">
+                                                {product.name}
+                                            </p>
+                                            <p className="mt-0.5 font-public-sans text-xs font-normal text-text-body">
+                                                {product.quantity} ×{' '}
+                                                <span className="font-semibold text-text-green">
+                                                    ${parseFloat(product.price || 0).toFixed(2)}
+                                                </span>
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p className="font-aktiv-grotesk text-base font-normal text-text-title">
-                                            {orderItem.name}
-                                        </p>
-                                        <p className="mt-0.5 font-public-sans text-sm font-normal text-text-body">
-                                            {orderItem.quantity} ×{' '}
-                                            <span className="font-semibold text-text-green">
-                                                ${orderItem.price}
-                                            </span>
-                                        </p>
-                                    </div>
-                                </div>
+                                ))}
 
                                 {/* Price Rows */}
                                 <div className="mb-4 space-y-3">
