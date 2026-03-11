@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Cart;
 use App\Models\TermsAndCondition;
 use App\Services\ProductService;
 use App\Services\RecipeService;
@@ -25,7 +26,7 @@ class FrontendController extends Controller
     }
 
 
-    public function index(): Response
+    public function index(): Response 
     {
         $products = $this->productService->getPaginated(10);
         $recipes = $this->recipeService->getAll(9);

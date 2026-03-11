@@ -1,5 +1,7 @@
 import { Link } from '@inertiajs/react';
 import { MinusIcon, PlusIcon, ShoppingCartIcon, Star } from 'lucide-react';
+import { router } from '@inertiajs/react';
+import { toast } from 'sonner';
 
 type StarRatingProps = { rating: number; size?: 'sm' | 'md' };
 
@@ -50,12 +52,35 @@ export default function ProductDetail({
     onQuantityDecrease,
     onQuantityIncrease,
 }: Props) {
-    const productImages = product.images?.map(img => `/storage/${img.image}`) || [];
+    const productImages =
+        product.images?.map((img) => `/storage/${img.image}`) || [];
     const rating = product.rating || 5;
     const reviewsCount = product.reviews_count || 3197;
-    const price = product.price ? `$${Number(product.price).toFixed(2)}` : '$16.99';
-    const discount = product.discount ? `${Number(product.discount)}% OFF` : '21% OFF';
-    const availability = product.stock_level && product.stock_level > 0 ? 'In Stock' : 'Out of Stock';
+    const price = product.price
+        ? `$${Number(product.price).toFixed(2)}`
+        : '$16.99';
+    const discount = product.discount
+        ? `${Number(product.discount)}% OFF`
+        : '21% OFF';
+    const availability =
+        product.stock_level && product.stock_level > 0
+            ? 'In Stock'
+            : 'Out of Stock';
+
+    const handleAddToCart = () => {
+
+        router.post(
+            route('frontend.cart.add'),
+            {
+                product_id: product.id,
+                quantity: quantity,
+            },
+            {
+                onSuccess: () => toast.success('Added to cart!'),
+                onError: (errors) => toast.error('Failed to add to cart'),
+            },
+        );
+    };
 
     return (
         <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] xl:gap-16">
@@ -143,7 +168,7 @@ export default function ProductDetail({
                                 onClick={onQuantityDecrease}
                                 className="text-text-body"
                             >
-                                <MinusIcon className="h-4 w-4" />
+                                <MinusIcon className="h-4 w-4 cursor-pointer" />
                             </button>
                             <span className="mx-4 w-6 text-center font-public-sans text-base font-normal text-text-body">
                                 {quantity.toString().padStart(2, '0')}
@@ -153,21 +178,22 @@ export default function ProductDetail({
                                 onClick={onQuantityIncrease}
                                 className="text-text-body"
                             >
-                                <PlusIcon className="h-4 w-4" />
+                                <PlusIcon className="h-4 w-4 cursor-pointer" />
                             </button>
                         </div>
 
                         <div className="flex items-center justify-center gap-3">
-                            <Link
-                                href={route('frontend.product-card')}
-                                className="flex items-center gap-2 bg-text-buy-now px-6 py-5 font-public-sans text-xs font-bold text-text-white uppercase"
+                            <button
+                                type="button"
+                                onClick={handleAddToCart}
+                                className="flex cursor-pointer items-center gap-2 bg-text-buy-now px-6 py-5 font-public-sans text-xs font-bold text-text-white uppercase"
                             >
                                 <span>Add to cart</span>
                                 <ShoppingCartIcon className="h-4 w-4" />
-                            </Link>
+                            </button>
                             <Link
                                 href={route('frontend.shopping-info')}
-                                className="flex border border-text-buy-now px-6 py-5 font-public-sans text-xs font-bold text-text-buy-now uppercase"
+                                className="flex cursor-pointer border border-text-buy-now px-6 py-5 font-public-sans text-xs font-bold text-text-buy-now uppercase"
                             >
                                 Buy Now
                             </Link>

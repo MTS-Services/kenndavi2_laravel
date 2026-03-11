@@ -26,7 +26,7 @@ class ProductTagSeeder extends Seeder
             ],
             [
                 'id' => 2,
-                'name' => 'Spicy',
+                'name' => 'Honey',
                 'status' => ProductTagStatus::ACTIVE->value,
                 'created_by' => 1,
                 'updated_by' => 1,
@@ -35,7 +35,7 @@ class ProductTagSeeder extends Seeder
             ],
             [
                 'id' => 3,
-                'name' => 'Spicy',
+                'name' => 'Teriyanaki',
                 'status' => ProductTagStatus::ACTIVE->value,
                 'created_by' => 1,
                 'updated_by' => 1,
