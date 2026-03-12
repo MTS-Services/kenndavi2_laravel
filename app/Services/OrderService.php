@@ -9,6 +9,7 @@ use App\Models\Order;
 use App\Models\OrderAddresse;
 use App\Models\OrderItem;
 use App\Models\User;
+use App\Services\ProductService;
 use Illuminate\Support\Facades\Auth;
 
 class OrderService
@@ -21,13 +22,14 @@ class OrderService
         protected Cart $card,
         protected OrderAddresse $orderAddresse,
         protected OrderItem $orderItem,
+        protected ProductService $productService,
     ) {}
 
     public function create(array $data = [])
     {
         $user = Auth::guard('web')->user();
 
-        $cart = $this->card::with('items')
+        $cart = $this->card::with(['items.product'])
             ->where('user_id', auth('web')->id())
             ->first();
 
@@ -38,7 +40,6 @@ class OrderService
             'user_id' => $user->id,
             'order_number' => '#' . time(),
             'subtotal' => $data['subTotal'] ?? 0,
-            'discount' => 0,
             'shipping_cost' => $data['shipping'] ?? 0,
             'tax' => 0,
             'total' => $data['total'] ?? 0,
@@ -68,21 +69,33 @@ class OrderService
         }
 
         $items = [];
+        $totalDiscount = 0;
         foreach ($cart->items as $item) {
-            $items[] = [
-                'order_id' => $order->id,
-                'product_id' => $item->product_id,
-                'product_name' => $item->product->title,
-                'product_sku' => $item->product->sku,
-                'price' => $item->product->price,
-                'discount' => 0,
-                'quantity' => $item->quantity,
-                'total' => $data['total'] ?? 0,
-                'created_at' => now(),
-                'creater_id' => $user->id,
-                'creater_type' => User::class,
-            ];
+            if ($item->product) {
+                $calculatedData = $this->productService->getProductCalculatedData($item->product, $item->quantity);
+                $itemDiscount = $calculatedData['discount_amount'] * $item->quantity;
+
+                $totalDiscount += $itemDiscount;
+
+                $items[] = [
+                    'order_id' => $order->id,
+                    'product_id' => $item->product_id,
+                    'product_name' => $item->product->title,
+                    'product_sku' => $item->product->sku,
+                    'price' => $calculatedData['discounted_price'],
+                    'discount' => $itemDiscount,
+                    'quantity' => $item->quantity,
+                    'total' => $calculatedData['total_price'],
+                    'created_at' => now(),
+                    'creater_id' => $user->id,
+                    'creater_type' => User::class,
+                ];
+            }
         }
+        $this->order::where('id', $order->id)->update([
+            'discount' => $totalDiscount,
+        ]);
+
 
         $this->orderItem::insert($items);
 
