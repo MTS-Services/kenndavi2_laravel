@@ -11,7 +11,7 @@ interface Props {
 
 function FrontendHeader({ activePage, subPage, cartImage }: Props) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const { auth } = usePage().props as any;
+    const { auth, cart_count } = usePage().props as any;
     const user = auth?.user;
 
     return (
@@ -61,8 +61,13 @@ function FrontendHeader({ activePage, subPage, cartImage }: Props) {
 
                     {/* Right Icons */}
                     <div className="flex items-center space-x-4">
-                        <Link href={route('frontend.product-card')} className="text-text-white transition-colors hover:text-gray-300">
-                                <ShoppingCart size={24} />
+                        <Link href={route('frontend.cart.index')} className="relative text-text-white transition-colors hover:text-gray-300">
+                            <ShoppingCart size={24} />
+                            {cart_count > 0 && (
+                                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                                    {cart_count > 99 ? '99+' : cart_count}
+                                </span>
+                            )}
                         </Link>
                         
                         <Link href={route('login')} className="text-text-white transition-colors hover:text-gray-300">
@@ -130,6 +135,7 @@ function FrontendHeader({ activePage, subPage, cartImage }: Props) {
                             <div className="flex items-center space-x-4 pt-4">
                                 <Link className="text-text-white transition-colors hover:text-gray-300">
                                     <ShoppingCart size={24} />
+                                   
                                 </Link>
                                 <Link href={route('login')} className="text-text-white transition-colors hover:text-gray-300">
                                     <User size={24} />
