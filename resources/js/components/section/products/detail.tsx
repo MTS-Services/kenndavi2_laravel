@@ -37,6 +37,22 @@ interface Product {
 
 interface Props {
     product: Product;
+    calculated: {
+        original_price: number;
+        discount_value: number;
+        discount_type: string;
+        discount_amount: number;
+        discounted_price: number;
+        total_price: number;
+        formatted_original_price: string;
+        formatted_discounted_price: string;
+        formatted_discount: string;
+        has_discount: boolean;
+        stock_status: string;
+        stock_status_text: string;
+        can_add_to_cart: boolean;
+        stock_level: number;
+    };
     selectedImage: string;
     quantity: number;
     onImageSelect: (image: string) => void;
@@ -46,6 +62,7 @@ interface Props {
 
 export default function ProductDetail({
     product,
+    calculated,
     selectedImage,
     quantity,
     onImageSelect,
@@ -56,16 +73,6 @@ export default function ProductDetail({
         product.images?.map((img) => `/storage/${img.image}`) || [];
     const rating = product.rating || 5;
     const reviewsCount = product.reviews_count || 3197;
-    const price = product.price
-        ? `$${Number(product.price).toFixed(2)}`
-        : '$16.99';
-    const discount = product.discount
-        ? `${Number(product.discount)}% OFF`
-        : '21% OFF';
-    const availability =
-        product.stock_level && product.stock_level > 0
-            ? 'In Stock'
-            : 'Out of Stock';
 
     const handleAddToCart = () => {
 
@@ -143,17 +150,17 @@ export default function ProductDetail({
                                 Availability:{' '}
                                 <span className="font-semibold text-text-green">
                                     {' '}
-                                    {availability}
+                                    {calculated.stock_status_text}
                                 </span>
                             </p>
                         </div>
                         <div className="flex flex-wrap items-end gap-3">
                             <h3 className="font-public-sans text-2xl font-semibold text-text-green">
-                                {price}
+                                {calculated.formatted_discounted_price}
                             </h3>
-                            {discount && product.discount && (
+                            {calculated.has_discount && (
                                 <span className="bg-bg-our-story px-2.5 py-1.5 font-public-sans text-sm font-semibold text-text-green uppercase">
-                                    {discount}
+                                    {calculated.formatted_discount} OFF
                                 </span>
                             )}
                         </div>

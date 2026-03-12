@@ -22,6 +22,22 @@ type Product = {
 
 type PageProps = {
     product: Product;
+    calculated: {
+        original_price: number;
+        discount_value: number;
+        discount_type: string;
+        discount_amount: number;
+        discounted_price: number;
+        total_price: number;
+        formatted_original_price: string;
+        formatted_discounted_price: string;
+        formatted_discount: string;
+        has_discount: boolean;
+        stock_status: string;
+        stock_status_text: string;
+        can_add_to_cart: boolean;
+        stock_level: number;
+    };
 };
 
 const allFeedbacks = [
@@ -38,7 +54,7 @@ const allFeedbacks = [
 const TOTAL_PAGES = 10;
 
 export default function ProductDetailsPage() {
-    const { product } = usePage<PageProps>().props;
+    const { product, calculated } = usePage<PageProps>().props;
     const productImages = product.images?.map(img => `/storage/${img.image}`) || [];
     const [selectedImage, setSelectedImage] = useState<string>(productImages[0] || '/assets/images/product/Rectangle 20.png');
     const [quantity, setQuantity] = useState<number>(1);
@@ -63,6 +79,7 @@ export default function ProductDetailsPage() {
                 <div className="container mx-auto px-4 py-10 lg:py-16">
                     <ProductDetail
                         product={product}
+                        calculated={calculated}
                         selectedImage={selectedImage}
                         quantity={quantity}
                         onImageSelect={handleImageSelect}

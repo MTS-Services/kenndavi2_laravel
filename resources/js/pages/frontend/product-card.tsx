@@ -30,16 +30,20 @@ export default function ProductCard() {
     const cartData = props as any;
     const { cart, cartItems } = cartData;
     
-    // Add checked property to cart items
+    // Add checked property to cart items and use calculated data
     const initialProducts = (cartItems || []).map((item: any) => {
         const imagePath = item.product?.images?.[0]?.image;
-        const fullImagePath = imagePath ? `/storage/${imagePath}` : '/assets/images/product/placeholder.png';
+        
+        const fullImagePath = imagePath ? `/storage/${imagePath}` : '/assets/images/product/Rectangle 20.png';
         
         return {
             ...item,
             checked: true,
             name: item.product_name,
-            price: parseFloat(item.product?.price || 0),
+            price: item.calculated?.discounted_price || parseFloat(item.product?.price || 0),
+            original_price: item.calculated?.original_price || parseFloat(item.product?.price || 0),
+            has_discount: item.calculated?.has_discount || false,
+            formatted_price: item.calculated?.formatted_discounted_price || `$${parseFloat(item.product?.price || 0).toFixed(2)}`,
             image: fullImagePath
         };
     });
@@ -75,12 +79,10 @@ export default function ProductCard() {
         });
     };
 
-    // Calculate totals dynamically
+    // Calculate totals dynamically using backend calculated data
     const subTotal = products.reduce((total: number, product: any) => {
         if (product.checked) {
-            const price = parseFloat(product.price) || 0;
-            const quantity = parseInt(product.quantity) || 0;
-            return total + (price * quantity);
+            return total + (product.price * product.quantity);
         }
         return total;
     }, 0);
@@ -139,8 +141,17 @@ export default function ProductCard() {
                                                 {product.name}
                                             </h3>
                                         </div>
-                                        <div className="col-span-2 font-aktiv-grotesk text-lg font-normal text-text-title">
-                                            ${parseFloat(product.price || 0).toFixed(2)}
+                                        <div className="col-span-2">
+                                            <div className="space-y-1">
+                                                {/* {product.has_discount && (
+                                                    <span className="text-sm text-gray-500 line-through">
+                                                        ${product.original_price.toFixed(2)}
+                                                    </span>
+                                                )} */}
+                                                <div className="font-aktiv-grotesk text-lg font-normal text-text-title">
+                                                    {product.formatted_price}
+                                                </div>
+                                            </div>
                                         </div>
                                         <div className="col-span-2">
                                             <div className="flex items-center border border-text-gray-300">
@@ -204,9 +215,16 @@ export default function ProductCard() {
                                                     {product.name}
                                                 </h3>
                                                 <div className="flex items-center justify-between">
-                                                    <span className="font-aktiv-grotesk text-base font-normal text-text-title">
-                                                        ${parseFloat(product.price || 0).toFixed(2)}
-                                                    </span>
+                                                    <div className="space-y-1">
+                                                        {product.has_discount && (
+                                                            <span className="text-sm text-gray-500 line-through">
+                                                                ${product.original_price.toFixed(2)}
+                                                            </span>
+                                                        )}
+                                                        <span className="font-aktiv-grotesk text-base font-normal text-text-title">
+                                                            {product.formatted_price}
+                                                        </span>
+                                                    </div>
                                                     <button
                                                         onClick={() =>
                                                             removeProduct(

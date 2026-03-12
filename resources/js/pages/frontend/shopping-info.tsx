@@ -1,9 +1,9 @@
 import { ArrowRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { Link, usePage, router } from '@inertiajs/react';
 
 import { Input } from '@/components/ui/input';
 import FrontendLayout from '@/layouts/frontend-layout';
-import { Link, usePage } from '@inertiajs/react';
 
 interface User {
     id: number;
@@ -34,13 +34,13 @@ interface PageProps extends Record<string, any> {
         items: any[];
     } | null;
     cartItems?: any[];
+    errors?: Record<string, string>;
 }
 
 export default function ShippingInformationPage() {
-    const { user, addresses, cart, cartItems } = usePage<PageProps>().props;
+    const { user, addresses, cart, cartItems, errors } = usePage<PageProps>().props;
 
     const shippingAddress = addresses?.find((addr) => addr.type === 'shipping');
-    console.log(shippingAddress);
 
     const [form, setForm] = useState({
         name: shippingAddress?.full_name || '',
@@ -76,15 +76,34 @@ export default function ShippingInformationPage() {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
-    // Transform cart items for display
+const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    router.post(route('frontend.orders.store'), {
+        ...form,
+        subTotal: subTotal,
+        shipping: shipping,
+        total: total,
+    }, {
+        onError: ( errors) => {
+            console.log(errors);
+        }
+    });
+};
+
+    // Transform cart items with calculated data for display
     const cartProducts = (cartItems || []).map((item: any) => {
         const imagePath = item.product?.images?.[0]?.image;
-        const fullImagePath = imagePath ? `/storage/${imagePath}` : '/assets/images/product/placeholder.png';
+        const fullImagePath = imagePath ? `/storage/${imagePath}` : '/assets/images/product/Rectangle 20.png';
         
         return {
             ...item,
             name: item.product_name,
-            price: parseFloat(item.product?.price || 0),
+            price: item.calculated?.discounted_price || parseFloat(item.product?.price || 0),
+            original_price: item.calculated?.original_price || parseFloat(item.product?.price || 0),
+            has_discount: item.calculated?.has_discount || false,
+            formatted_price: item.calculated?.formatted_discounted_price || `$${parseFloat(item.product?.price || 0).toFixed(2)}`,
+            formatted_original_price: item.calculated?.formatted_original_price || `$${parseFloat(item.product?.price || 0).toFixed(2)}`,
             image: fullImagePath
         };
     });
@@ -101,14 +120,15 @@ export default function ShippingInformationPage() {
         <FrontendLayout>
             <div className="mb-12 sm:mb-28">
                 <div className="container mx-auto px-4 py-10 lg:py-16">
-                    <div className="grid gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.7fr)] xl:gap-16">
-                        {/* Left: Shipping Form */}
-                        <div>
-                            <h2 className="mb-8 font-bebas-neue text-3xl font-normal text-text-title uppercase">
-                                Shipping Information
-                            </h2>
+                    <form onSubmit={handleSubmit}>
+                        <div className="grid gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.7fr)] xl:gap-16">
+                            {/* Left: Shipping Form */}
+                            <div>
+                                <h2 className="mb-8 font-bebas-neue text-3xl font-normal text-text-title uppercase">
+                                    Shipping Information
+                                </h2>
 
-                            <div className="space-y-5">
+                                <div className="space-y-5">
                                 {/* First Name & Last Name */}
                                 <div className="">
                                     <div>
@@ -123,6 +143,7 @@ export default function ShippingInformationPage() {
                                             placeholder="Name"
                                             className="placeholder-text-text-body w-full border border-text-gray-300 px-4 py-3 font-public-sans text-sm text-text-body transition-colors outline-none focus:border-text-buy-now"
                                         />
+                                        {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-5">
@@ -138,6 +159,7 @@ export default function ShippingInformationPage() {
                                             placeholder="Address"
                                             className="placeholder-text-text-body w-full border border-text-gray-300 px-4 py-3 font-public-sans text-sm text-text-body transition-colors outline-none focus:border-text-buy-now"
                                         />
+                                        {errors.address_line1 && <p className="mt-1 text-sm text-red-600">{errors.address_line1}</p>}
                                     </div>
                                     <div>
                                         <label className="mb-1.5 block font-aktiv-grotesk text-sm font-normal text-text-title">
@@ -151,6 +173,7 @@ export default function ShippingInformationPage() {
                                             placeholder="Address Line 2 (Optional)"
                                             className="placeholder-text-text-body w-full border border-text-gray-300 px-4 py-3 font-public-sans text-sm text-text-body transition-colors outline-none focus:border-text-buy-now"
                                         />
+                                        {errors.address_line2 && <p className="mt-1 text-sm text-red-600">{errors.address_line2}</p>}
                                     </div>
                                 </div>
 
@@ -169,6 +192,7 @@ export default function ShippingInformationPage() {
                                             readOnly
                                             className="placeholder-text-text-body w-full border border-text-gray-300 px-4 py-3 font-public-sans text-sm text-text-body transition-colors outline-none focus:border-text-buy-now"
                                         />
+                                        {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
                                     </div>
                                     <div>
                                         <label className="mb-1.5 block font-aktiv-grotesk text-sm font-normal text-text-title">
@@ -199,6 +223,7 @@ export default function ShippingInformationPage() {
                                             placeholder="State"
                                             className="placeholder-text-text-body w-full border border-text-gray-300 px-4 py-3 font-public-sans text-sm text-text-body transition-colors outline-none focus:border-text-buy-now"
                                         />
+                                        {errors.State && <p className="mt-1 text-sm text-red-600">{errors.State}</p>}
                                     </div>
                                     <div>
                                         <label className="mb-1.5 block font-aktiv-grotesk text-sm font-normal text-text-title">
@@ -212,6 +237,7 @@ export default function ShippingInformationPage() {
                                             placeholder="City"
                                             className="placeholder-text-text-body w-full border border-text-gray-300 px-4 py-3 font-public-sans text-sm text-text-body transition-colors outline-none focus:border-text-buy-now"
                                         />
+                                        {errors.city && <p className="mt-1 text-sm text-red-600">{errors.city}</p>}
                                     </div>
                                     <div>
                                         <label className="mb-1.5 block font-aktiv-grotesk text-sm font-normal text-text-title">
@@ -225,6 +251,7 @@ export default function ShippingInformationPage() {
                                             placeholder="Zip Code"
                                             className="placeholder-text-text-body w-full border border-text-gray-300 px-4 py-3 font-public-sans text-sm text-text-body transition-colors outline-none focus:border-text-buy-now"
                                         />
+                                        {errors.postalCode && <p className="mt-1 text-sm text-red-600">{errors.postalCode}</p>}
                                     </div>
                                 </div>
 
@@ -241,6 +268,7 @@ export default function ShippingInformationPage() {
                                         placeholder="Country"
                                         className="placeholder-text-text-body w-full border border-text-gray-300 px-4 py-3 font-public-sans text-sm text-text-body transition-colors outline-none focus:border-text-buy-now"
                                     />
+                                    {errors.country && <p className="mt-1 text-sm text-red-600">{errors.country}</p>}
                                 </div>
                             </div>
                         </div>
@@ -268,8 +296,9 @@ export default function ShippingInformationPage() {
                                             </p>
                                             <p className="mt-0.5 font-public-sans text-sm font-normal text-text-body">
                                                 {product.quantity} ×{' '}
+                                                {/* <Input type="hidden" name="formatted_price" value={product.formatted_price} /> */}
                                                 <span className="font-semibold text-text-green">
-                                                    ${parseFloat(product.price || 0).toFixed(2)}
+                                                    {product.formatted_price}
                                                 </span>
                                             </p>
                                         </div>
@@ -282,6 +311,7 @@ export default function ShippingInformationPage() {
                                         <span className="font-aktiv-grotesk text-sm font-normal text-text-body">
                                             Sub-total
                                         </span>
+                                        <Input type="hidden" name="subTotal" value={subTotal.toFixed(2)} />
                                         <span className="font-aktiv-grotesk text-sm font-normal text-text-title">
                                             ${subTotal.toFixed(2)}
                                         </span>
@@ -290,6 +320,7 @@ export default function ShippingInformationPage() {
                                         <span className="font-aktiv-grotesk text-sm font-normal text-text-body">
                                             Shipping
                                         </span>
+                                        <Input type="hidden" name="shipping" value={shipping.toFixed(2)} />
                                         <span className="font-aktiv-grotesk text-sm font-normal text-text-title">
                                             ${shipping.toFixed(2)}
                                         </span>
@@ -304,24 +335,26 @@ export default function ShippingInformationPage() {
                                     <span className="font-aktiv-grotesk text-base font-semibold text-text-title">
                                         Total
                                     </span>
+                                    <Input type="hidden" name="total" value={total.toFixed(2)} />
                                     <span className="font-aktiv-grotesk text-base font-semibold text-text-title">
                                         ${total.toFixed(2)} USD
                                     </span>
                                 </div>
 
                                 {/* Place Order Button */}
-                                <Link
-                                    href={route('frontend.order-confirmed')}
-                                    type="button"
-                                    className="flex w-full items-center justify-center gap-2 bg-text-buy-now px-6 py-4 font-bebas-neue text-xl font-normal text-text-white uppercase"
+                                <button
+                                    type="submit"
+                                    className="flex w-full items-center justify-center gap-2 bg-text-buy-now px-6 py-4 font-bebas-neue text-xl font-normal text-text-white uppercase cursor-pointer"
                                 >
                                     Place order
                                     <ArrowRight className="h-4 w-4" />
-                                </Link>
+                                </button>
                             </div>
                         </div>
                     </div>
+                </form>
                 </div>
+
             </div>
         </FrontendLayout>
     );

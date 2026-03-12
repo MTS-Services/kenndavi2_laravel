@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\FrontendController;
+use App\Http\Controllers\Frontend\OrderController;
 use Illuminate\Support\Facades\Route;
 
 Route::name('frontend.')->controller(FrontendController::class)->group(function () {
@@ -13,7 +14,6 @@ Route::name('frontend.')->controller(FrontendController::class)->group(function 
 
     Route::get('/', 'index')->name('home');
     Route::get('/product-details/{id}', 'productDetails')->name('product-details');
-    Route::get('/order-confirmed!', 'orderConfirmed')->name('order-confirmed');
     Route::get('/sauce-recipes', 'sauceRecipes')->name('sauce-recipes');
     Route::get('/recipe-details/{id}', 'recipeDetails')->name('recipe-details');
     Route::get('/terms-conditions', 'termsConditions')->name('terms-conditions');
@@ -23,5 +23,10 @@ Route::name('frontend.')->controller(FrontendController::class)->group(function 
         Route::post('/add', [CartController::class, 'add'])->name('add');
         Route::post('/update', [CartController::class, 'update'])->name('update');
         Route::delete('/remove/{id}', [CartController::class, 'remove'])->name('remove');
+    });
+
+    Route::group(['prefix' => 'orders', 'as' => 'orders.'], function () {
+        Route::get('/order-confirmed', [OrderController::class, 'orderConfirmed'])->name('order-confirmed');
+        Route::post('/store', [OrderController::class, 'store'])->name('store');
     });
 });
