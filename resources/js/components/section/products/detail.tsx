@@ -193,6 +193,7 @@ export default function ProductDetail({
                             </button>
                             <Link
                                 href={route('frontend.shopping-info')}
+                                onClick={handleAddToCart}
                                 className="flex cursor-pointer border border-text-buy-now px-6 py-5 font-public-sans text-xs font-bold text-text-buy-now uppercase"
                             >
                                 Buy Now

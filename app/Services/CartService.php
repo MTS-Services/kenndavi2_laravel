@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class CartService
@@ -41,10 +42,18 @@ class CartService
     public function addToCart(array $data)
     {
         if (Auth::guard('web')->check()) {
-            $cart = $this->model::firstOrCreate(['user_id' => Auth::guard('web')->id()]);
+            $cart = $this->model::firstOrCreate([
+                'user_id' => Auth::guard('web')->id(),
+                'creater_type' => User::class,
+                'creater_id' => Auth::guard('web')->id(),
+            ]);
         } else {
             $sessionId = session()->getId();
-            $cart = $this->model::firstOrCreate(['session_id' => $sessionId]);
+            $cart = $this->model::firstOrCreate([
+                'session_id' => $sessionId,
+                'creater_type' => null,
+                'creater_id' => null,
+            ]);
         }
 
         $product = $this->product::findOrFail($data['product_id']);
@@ -61,6 +70,8 @@ class CartService
                 'product_id'   => $product->id,
                 'product_name' => $product->title,
                 'quantity'     => $data['quantity'] ?? 1,
+                'creater_type' => User::class,
+                'creater_id'   => Auth::guard('web')->check() ? Auth::guard('web')->id() : null,
             ]);
         }
 
