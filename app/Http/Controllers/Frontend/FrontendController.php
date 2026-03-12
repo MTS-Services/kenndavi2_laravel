@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\TermsAndCondition;
+use App\Services\CartService;
 use App\Services\ProductService;
 use App\Services\RecipeService;
 use App\Services\UserAccountSettinsService;
@@ -17,12 +18,14 @@ class FrontendController extends Controller
     protected ProductService $productService;
     protected UserAccountSettinsService $userAccountService;
     protected RecipeService $recipeService;
+    protected CartService $cartService;
 
-    public function __construct(ProductService $productService, UserAccountSettinsService $userAccountService, RecipeService $recipeService)
+    public function __construct(ProductService $productService, UserAccountSettinsService $userAccountService, RecipeService $recipeService, CartService $cartService)
     {
         $this->productService = $productService;
         $this->userAccountService = $userAccountService;
         $this->recipeService = $recipeService;
+        $this->cartService = $cartService;
     }
 
 
@@ -59,6 +62,12 @@ class FrontendController extends Controller
         if ($data['user']) {
             $data['user']->load('addresses');
         }
+        
+        $cartDatas = $this->cartService->getAllDatas();
+        
+        // Merge cart data with existing data
+        $data = array_merge($data, $cartDatas);
+        
         return Inertia::render('frontend/shopping-info', $data);
     }
 

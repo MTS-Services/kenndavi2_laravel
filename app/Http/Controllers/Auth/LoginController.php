@@ -38,6 +38,7 @@ class LoginController extends Controller
         ]);
 
         $credentials = $request->only('email', 'password');
+        $oldSessionId = session()->getId();
 
         // Attempt login
         if (! Auth::attempt($credentials)) {
@@ -76,9 +77,7 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
-
-
-        dd($this->cartService->authCheck());
+        $this->cartService->authCheck($oldSessionId); 
 
 
         if ($isFirstLogin) {

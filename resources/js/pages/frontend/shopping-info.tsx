@@ -29,10 +29,15 @@ interface Address {
 interface PageProps extends Record<string, any> {
     user?: User;
     addresses?: Address[];
+    cart?: {
+        id: number;
+        items: any[];
+    } | null;
+    cartItems?: any[];
 }
 
 export default function ShippingInformationPage() {
-    const { user, addresses } = usePage<PageProps>().props;
+    const { user, addresses, cart, cartItems } = usePage<PageProps>().props;
 
     const shippingAddress = addresses?.find((addr) => addr.type === 'shipping');
     console.log(shippingAddress);
@@ -71,15 +76,25 @@ export default function ShippingInformationPage() {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
-    const orderItem = {
-        name: 'Sweet BBQ Sauces',
-        quantity: 1,
-        price: 70,
-        image: '/assets/images/product/Rectangle 20.png',
-    };
+    // Transform cart items for display
+    const cartProducts = (cartItems || []).map((item: any) => {
+        const imagePath = item.product?.images?.[0]?.image;
+        const fullImagePath = imagePath ? `/storage/${imagePath}` : '/assets/images/product/placeholder.png';
+        
+        return {
+            ...item,
+            name: item.product_name,
+            price: parseFloat(item.product?.price || 0),
+            image: fullImagePath
+        };
+    });
 
-    const subTotal = orderItem.price * orderItem.quantity;
-    const shipping = 20;
+    // Calculate totals dynamically
+    const subTotal = cartProducts.reduce((total: number, product: any) => {
+        return total + (product.price * product.quantity);
+    }, 0);
+    
+    const shipping = subTotal > 0 ? 20 : 0;
     const total = subTotal + shipping;
 
     return (
@@ -237,27 +252,29 @@ export default function ShippingInformationPage() {
                                     Order Summery
                                 </h2>
 
-                                {/* Product Row */}
-                                <div className="mb-6 flex items-center gap-3">
-                                    <div className="h-14 w-14 flex-shrink-0 overflow-hidden rounded-sm border border-text-gray-300">
-                                        <img
-                                            src={orderItem.image}
-                                            alt={orderItem.name}
-                                            className="h-full w-full object-cover"
-                                        />
+                                {/* Product Rows */}
+                                {cartProducts.map((product: any) => (
+                                    <div key={product.id} className="mb-4 flex items-center gap-3">
+                                        <div className="h-14 w-14 flex-shrink-0 overflow-hidden rounded-sm border border-text-gray-300">
+                                            <img
+                                                src={product.image || '/assets/images/product/placeholder.png'}
+                                                alt={product.name || 'Product'}
+                                                className="h-full w-full object-cover"
+                                            />
+                                        </div>
+                                        <div>
+                                            <p className="font-aktiv-grotesk text-base font-normal text-text-title">
+                                                {product.name}
+                                            </p>
+                                            <p className="mt-0.5 font-public-sans text-sm font-normal text-text-body">
+                                                {product.quantity} ×{' '}
+                                                <span className="font-semibold text-text-green">
+                                                    ${parseFloat(product.price || 0).toFixed(2)}
+                                                </span>
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p className="font-aktiv-grotesk text-base font-normal text-text-title">
-                                            {orderItem.name}
-                                        </p>
-                                        <p className="mt-0.5 font-public-sans text-sm font-normal text-text-body">
-                                            {orderItem.quantity} ×{' '}
-                                            <span className="font-semibold text-text-green">
-                                                ${orderItem.price}
-                                            </span>
-                                        </p>
-                                    </div>
-                                </div>
+                                ))}
 
                                 {/* Price Rows */}
                                 <div className="mb-4 space-y-3">

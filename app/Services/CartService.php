@@ -103,22 +103,28 @@ class CartService
         return true;
     }
 
-public function authCheck()
+public function authCheck(string $sessionId = null)
 {
     if (Auth::guard('web')->check()) {
 
         $user = Auth::guard('web')->user();
 
-        $guestCart = $this->model::with('items')
-            ->where('session_id', session()->getId())
-            ->first();
+        $sessionId = $sessionId ?? session()->getId();
 
-        if ($guestCart) {
+        $guestCarts = $this->model::with('items')
+            ->where('session_id', $sessionId)
+            ->get();
 
-            $userCart = $this->model::firstOrCreate([
-                'user_id' => $user->id
-            ]);
 
+        if ($guestCarts->isEmpty()) {
+            return false;
+        }
+
+        $userCart = $this->model::firstOrCreate([
+            'user_id' => $user->id
+        ]);
+
+        foreach ($guestCarts as $guestCart) {
             foreach ($guestCart->items as $guestItem) {
 
                 $existingItem = $this->cartItem::where('cart_id', $userCart->id)
@@ -133,9 +139,9 @@ public function authCheck()
             }
 
             $guestCart->delete();
-
-            return true;
         }
+
+        return true;
     }
 
     return false;
