@@ -9,6 +9,14 @@ class Cart extends Model
     protected $fillable = [
         'user_id',
         'session_id',
+
+        'created_at',
+        'updated_at',
+        'creater_id',
+        'creater_type',
+        'updater_id',
+        'updater_type',
+
     ];
 
     public function user()
