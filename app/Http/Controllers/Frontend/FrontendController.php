@@ -47,11 +47,12 @@ class FrontendController extends Controller
 
     public function productDetails($id): Response
     {
-
         $product = $this->productService->getById($id);
+        $calculatedData = $this->productService->getProductCalculatedData($product);
 
         return Inertia::render('frontend/product-details', [
-            'product' => $product
+            'product' => $product,
+            'calculated' => $calculatedData
         ]);
     }
 
@@ -65,16 +66,23 @@ class FrontendController extends Controller
         
         $cartDatas = $this->cartService->getAllDatas();
         
+        // Add calculated data for cart items
+        if (isset($cartDatas['cartItems'])) {
+            $cartDatas['cartItems'] = $cartDatas['cartItems']->map(function ($cartItem) {
+                if ($cartItem->product) {
+                    $calculatedData = $this->productService->getProductCalculatedData($cartItem->product, $cartItem->quantity);
+                    $cartItem->calculated = $calculatedData;
+                }
+                return $cartItem;
+            });
+        }
+        
         // Merge cart data with existing data
         $data = array_merge($data, $cartDatas);
         
         return Inertia::render('frontend/shopping-info', $data);
     }
 
-    public function orderConfirmed(): Response
-    {
-        return Inertia::render('frontend/order-confirmed');
-    }
     public function sauceRecipes(): Response
     {
         $recipes = $this->recipeService->getAllDatats();

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Enums\ProductDiscountType;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
@@ -23,6 +24,123 @@ class ProductService
     public function getById(int $id): Product
     {
         return $this->model::with(['images', 'tag'])->findOrFail($id);
+    }
+
+    public function getDiscountPrice(Product $product): float
+    {
+        $price = (float) $product->price;
+        $discount = (float) ($product->discount ?? 0);
+        $discountType = $product->discount_type ?? ProductDiscountType::PERCENTAGE;
+        
+        if ($discount <= 0) {
+            return $price;
+        }
+        
+        return match($discountType) {
+            ProductDiscountType::PERCENTAGE => $price - ($price * $discount / 100),
+            ProductDiscountType::FIXED => max(0, $price - $discount),
+            default => $price
+        };
+    }
+
+    public function getTotalPrice(Product $product, int $quantity = 1): float
+    {
+        return $this->getDiscountPrice($product) * $quantity;
+    }
+
+    public function getDiscountAmount(Product $product): float
+    {
+        $price = (float) $product->price;
+        $discount = (float) ($product->discount ?? 0);
+        $discountType = $product->discount_type ?? ProductDiscountType::PERCENTAGE;
+        
+        if ($discount <= 0) {
+            return 0;
+        }
+        
+        return match($discountType) {
+            ProductDiscountType::PERCENTAGE => $price * $discount / 100,
+            ProductDiscountType::FIXED => min($discount, $price),
+            default => 0
+        };
+    }
+
+    public function getFormattedPrice(float $price): string
+    {
+        return '$' . number_format($price, 2);
+    }
+
+    public function getFormattedDiscount(Product $product): string
+    {
+        $discount = (float) ($product->discount ?? 0);
+        $discountType = $product->discount_type ?? ProductDiscountType::PERCENTAGE;
+        
+        if ($discount <= 0) {
+            return '';
+        }
+        
+        return match($discountType) {
+            ProductDiscountType::PERCENTAGE => $discount . '% ',
+            ProductDiscountType::FIXED => '$' . number_format($discount, 2),
+            default => ''
+        };
+    }
+
+    public function hasDiscount(Product $product): bool
+    {
+        return !empty($product->discount) && (float) $product->discount > 0;
+    }
+
+    public function getStockStatus(Product $product): string
+    {
+        $stock = (int) ($product->stock_level ?? 0);
+        
+        return match(true) {
+            $stock <= 0 => 'out_of_stock',
+            $stock <= 5 => 'low_stock',
+            default => 'in_stock'
+        };
+    }
+
+    public function getStockStatusText(Product $product): string
+    {
+        return match($this->getStockStatus($product)) {
+            'out_of_stock' => 'Out of Stock',
+            'low_stock' => 'Low Stock',
+            'in_stock' => 'In Stock',
+            default => 'Unknown'
+        };
+    }
+
+    public function canAddToCart(Product $product, int $quantity = 1): bool
+    {
+        return (int) ($product->stock_level ?? 0) >= $quantity;
+    }
+
+    public function getProductCalculatedData(Product $product, int $quantity = 1): array
+    {
+        $originalPrice = (float) $product->price;
+        $discountValue = (float) ($product->discount ?? 0);
+        $discountType = $product->discount_type ?? ProductDiscountType::PERCENTAGE;
+        $discountedPrice = $this->getDiscountPrice($product);
+        $discountAmount = $this->getDiscountAmount($product);
+        
+        return [
+            'original_price' => $originalPrice,
+            'discount_value' => $discountValue,
+            'discount_type' => $discountType->value,
+            'discount_amount' => $discountAmount,
+            'discounted_price' => $discountedPrice,
+            'total_price' => $discountedPrice * $quantity,
+            'formatted_original_price' => $this->getFormattedPrice($originalPrice),
+            'formatted_discounted_price' => $this->getFormattedPrice($discountedPrice),
+            'formatted_discount' => $this->getFormattedDiscount($product),
+            'has_discount' => $this->hasDiscount($product),
+            'stock_status' => $this->getStockStatus($product),
+            'stock_status_text' => $this->getStockStatusText($product),
+            'can_add_to_cart' => $this->canAddToCart($product, $quantity),
+            'stock_level' => (int) ($product->stock_level ?? 0),
+        ];
     }
 
     public function getPaginated(int $perPage = 10)

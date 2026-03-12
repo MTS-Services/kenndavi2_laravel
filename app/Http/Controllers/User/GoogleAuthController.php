@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Mail\UserWelcomeMail;
 use App\Models\User;
+use App\Services\CartService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Laravel\Socialite\Facades\Socialite;
@@ -12,11 +13,18 @@ use Illuminate\Http\Request;
 
 class GoogleAuthController extends Controller
 {
+
+    protected CartService $cartService;
+
+    public function __construct(CartService $cartService)
+    {
+        $this->cartService = $cartService;
+    }
+
     public function redirect()
     {
         // dd(Socialite::driver('google')->redirect());
         return Socialite::driver('google')->redirect();
-
     }
 
     public function callback(Request $request)
@@ -38,12 +46,16 @@ class GoogleAuthController extends Controller
             ]
         );
 
+        $oldSessionId = session()->getId();
+
         Auth::login($user);
 
-         $isFirstLogin = is_null($user->last_login_at);
+        $isFirstLogin = is_null($user->last_login_at);
         $user->update(['last_login_at' => now()]);
 
         $request->session()->regenerate();
+
+        $this->cartService->authCheck($oldSessionId);
 
         if ($isFirstLogin) {
             Mail::to($user->email)->send(new UserWelcomeMail([
