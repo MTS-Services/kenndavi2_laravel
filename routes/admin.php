@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\EditorUploadController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\RecipeController;
+use App\Http\Controllers\Admin\ShippingCostManagementController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\TermsAndConditionController;
 use App\Http\Controllers\Admin\TermsConditionsController;
@@ -87,6 +88,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/index', [TermsAndConditionController::class, 'index'])->name('index');
             Route::post('/store', [TermsAndConditionController::class, 'store'])->name('store');
             Route::put('/update/{termsAndCondition}', [TermsAndConditionController::class, 'update'])->name('update');
+        });
+
+        Route::group(['prefix' => 'shipping-cost-management', 'as' => 'scm.'], function () {
+            Route::get('/index', [ShippingCostManagementController::class, 'index'])->name('index');
+            Route::post('/store', [ShippingCostManagementController::class, 'store'])->name('store');
+            Route::put('/update/{shippingCost}', [ShippingCostManagementController::class, 'update'])->name('update');
         });
 
     });

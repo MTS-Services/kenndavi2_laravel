@@ -97,7 +97,7 @@ export const NavItem = React.memo<NavItemProps>(({
                         className={cn(
                             'group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium',
                             'text-text-body transition-all duration-200',
-                            'bg-text-buy-now/15 hover:bg-bg-button hover:text-text-white',
+                            ' hover:bg-bg-button hover:text-text-white',
                             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bg-button focus-visible:ring-offset-2',
                             'w-full text-left',
                             isCollapsed ? 'justify-center px-2' : '',

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Services\OrderService;
 use App\Services\UserAccountSettinsService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -11,10 +12,12 @@ use Inertia\Response;
 class UserController extends Controller
 {
     protected UserAccountSettinsService $userAccountService;
+    protected OrderService $orderService;
 
-    public function __construct(UserAccountSettinsService $userAccountService)
+    public function __construct(UserAccountSettinsService $userAccountService, OrderService $orderService)
     {
         $this->userAccountService = $userAccountService;
+        $this->orderService = $orderService;
     }
 
     public function index(): Response
@@ -27,7 +30,11 @@ class UserController extends Controller
 
     public function orders(): Response
     {
-        return Inertia::render('user/order/orders');
+        $orders = $this->orderService->getOrdersByUserId();
+        // dd($orders);
+        return Inertia::render('user/order/orders', [
+            'orders' => $orders
+        ]);
     }
 
     public function productToReview(): Response
