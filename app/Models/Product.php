@@ -46,4 +46,9 @@ class Product extends Model
     {
         return $this->belongsToMany(Recipe::class, 'recipe_related_products', 'product_id', 'recipe_id');
     }
+    
+    public function feedback()
+    {
+        return $this->hasMany(Feedback::class);
+    }
 }

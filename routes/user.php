@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\User\FeedbackController;
 use App\Http\Controllers\User\GoogleAuthController;
 use App\Http\Controllers\User\UserAuthController;
 use App\Http\Controllers\User\UserController;
@@ -36,6 +37,12 @@ Route::prefix('user')->name('user.')->group(function () {
         Route::post('billing-address', 'billingAddress')->name('billing-address');
         Route::post('shipping-address', 'shippingAddress')->name('shipping-address');
 
+    });
+
+    Route::controller(FeedbackController::class)->group(function () {
+       Route::get('index', 'index')->name('index');
+       Route::get('create', 'create')->name('create');
+       Route::post('store', 'store')->name('store');
     });
 
 });
