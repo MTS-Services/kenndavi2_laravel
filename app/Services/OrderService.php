@@ -28,6 +28,12 @@ class OrderService
         protected ProductService $productService,
     ) {}
 
+    public function getAllOrders()
+    {
+        return $this->order::with(['orderItems.product.images', 'orderAddress'])
+            ->latest()
+            ->get();
+    }
 
     public function getLatestOrder()
     {
@@ -61,7 +67,7 @@ class OrderService
 
             $order = $this->order::create([
                 'user_id'        => $user->id,
-                'order_number'   => '#' . time(),
+                'order_number'   => '#ORD-' . time(),
                 'subtotal'       => $data['subTotal'] ?? 0,
                 'shipping_cost'  => $data['shipping'] ?? 0,
                 'tax'            => 0,

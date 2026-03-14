@@ -2,17 +2,41 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
+use App\Models\Order;
+use App\Services\OrderService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Inertia\Response;
 
 class OrderController extends Controller
 {
+    protected OrderService $orderService;
+
+    public function __construct()
+    {
+        $this->orderService = app()->make(OrderService::class);
+    }
+
     public function index()
     {
-        return Inertia::render('admin/order-management/index');
+        $orders = $this->orderService->getAllOrders();
+
+        return Inertia::render('admin/order-management/index', [
+            'orders'        => $orders,
+            'statusOptions' => OrderStatus::options(),
+        ]);
     }
+
+// OrderController.php
+public function updateStatus(Request $request, $id)
+{
+    $order = Order::findOrFail($id);
+    $order->update(['order_status' => $request->status]);
+
+    
+    return redirect()->back();
+}
     public function create()
     {
         return Inertia::render('admin/order-management/create');

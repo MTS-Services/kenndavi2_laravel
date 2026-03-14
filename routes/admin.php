@@ -61,6 +61,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::group(['prefix' => 'order-management', 'as' => 'om.'], function () {
             Route::get('/index', [OrderController::class, 'index'])->name('index');
             Route::get('/create', [OrderController::class, 'create'])->name('create');
+            Route::post('/update-status/{id}', [OrderController::class, 'updateStatus'])->name('update-status');
         });
         Route::group(['prefix' => 'recipe-management', 'as' => 'rm.'], function () {
             Route::get('/index', [RecipeController::class, 'index'])->name('index');
