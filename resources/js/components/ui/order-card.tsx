@@ -77,6 +77,25 @@ export default function OrderCard({ orders: initialOrders, statusOptions }: Prop
         setSelectedOrder(detailedOrder);
     };
 
+    const handleStatusChange = (order_number: string, status: string) => {
+        router.post(
+            route('admin.om.update-status', order_number),
+            { status },
+            {
+                onSuccess: () => {
+                    console.log('Status updated successfully');
+                    // Optional: update state locally
+                    // setOrders(prev =>
+                    //     prev.map(o => o.order_number === orderNumber ? { ...o, status } : o)
+                    // );
+                },
+                onError: (errors) => {
+                    console.error(errors);
+                }
+            }
+        );
+    };
+
     return (
         <>
             <div className="w-full overflow-x-auto">
@@ -100,8 +119,9 @@ export default function OrderCard({ orders: initialOrders, statusOptions }: Prop
                                     <td className="px-6 py-4 font-roboto text-base font-normal text-text-title">{order.order_address?.full_name || 'N/A'}</td>
                                     <td className="px-6 py-4 font-roboto text-base font-normal text-text-title">{order.total}</td>
                                     <td className="px-6 py-4">
-                                        <select
+                                       <select
                                             value={order.status}
+                                            onChange={(e) => handleStatusChange(order.order_number, e.target.value)}
                                             className={`appearance-none pl-3 pr-8 py-1.5 rounded-full text-xs font-medium border cursor-pointer focus:outline-none ${opt?.color} `}
                                         >
                                             {statusOptions.map((opt) => (

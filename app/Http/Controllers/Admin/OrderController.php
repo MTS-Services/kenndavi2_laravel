@@ -18,33 +18,26 @@ class OrderController extends Controller
         $this->orderService = app()->make(OrderService::class);
     }
 
-public function index()
-{
-    $orders = $this->orderService->getAllOrders();
+    public function index()
+    {
+        $orders = $this->orderService->getAllOrders();
 
-    return Inertia::render('admin/order-management/index', [
-        'orders'        => $orders,
-        'statusOptions' => OrderStatus::options(),
-    ]);
-}
+        return Inertia::render('admin/order-management/index', [
+            'orders'        => $orders,
+            'statusOptions' => OrderStatus::options(),
+        ]);
+    }
 
-public function updateStatus(Request $request, $orderNumber)
-{
-    $enumValues = array_column(OrderStatus::cases(), 'value');
+    public function updateStatus(Request $request, $order_number)
+    {
+        $order = Order::where('order_number', $order_number)->firstOrFail();
+        $order->update(['order_status' => $request->status]);
 
-    $validated = $request->validate([
-        'status' => ['required', 'string', \Illuminate\Validation\Rule::in($enumValues)],
-    ]);
-
-    $order = Order::where('order_number', $orderNumber)->firstOrFail();
-
-    $order->update(['order_status' => $validated['status']]);
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Order status updated successfully',
-    ]);
-}
+        return response()->json([
+            'success' => true,
+            'message' => 'Order status updated successfully',
+        ]);
+    }
 
     public function create()
     {

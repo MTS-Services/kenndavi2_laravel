@@ -48,7 +48,7 @@ export default function OrderDetails({ order, statusOptions, onClose, onStatusCh
                         Order Details: <span>{order.id}</span>
                     </h2>
                     <button onClick={onClose}
-                        className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors text-gray-500">
+                        className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors text-gray-500 cursor-pointer">
                         <X className="w-4 h-4" />
                     </button>
                 </div>
