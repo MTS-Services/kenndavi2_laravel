@@ -37,6 +37,14 @@ class OrderService
             ->first();
     }
 
+    public function getOrdersByUserId()
+    {
+        return $this->order::with(['orderItems.product.images', 'orderAddress'])
+            ->where('user_id', auth('web')->id())
+            ->latest()
+            ->get();
+    }
+
     public function create(array $data = [])
     {
         $user = Auth::guard('web')->user();
