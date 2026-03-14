@@ -3,9 +3,17 @@ import { NavItem } from '@/components/ui/nav-item';
 import { cn } from '@/lib/utils';
 import { type NavItemType, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { Box, Home, LayoutGrid, ShoppingCart, Users, CookingPot, ReceiptText, UsersRound } from 'lucide-react';
+import {
+    Box,
+    CookingPot,
+    Home,
+    LayoutGrid,
+    ReceiptText,
+    ShoppingCart,
+    Users,
+    UsersRound,
+} from 'lucide-react';
 import * as React from 'react';
-import { text } from 'stream/consumers';
 
 // Navigation configuration
 const adminNavItems: NavItemType[] = [
@@ -52,10 +60,25 @@ const adminNavItems: NavItemType[] = [
         slug: 'terms-conditions',
     },
     {
+        title: 'Settings',
+        href: '#',
+        icon: Users,
+        children: [
+            {
+                title: 'Shipping Cost',
+                href: route('admin.scm.index'),
+                icon: Box,
+                slug: 'shipping-cost-management',
+            },
+
+        ],
+    },
+
+    {
         title: 'Profile',
         href: route('admin.profile'),
         icon: Users,
-        slug: 'profile',    
+        slug: 'profile',
     },
 ];
 
@@ -87,11 +110,11 @@ export const AdminSidebar = React.memo<AdminSidebarProps>(
                 {/* Mobile menu overlay */}
                 {isMobileMenuOpen && (
                     <div className="fixed inset-0 z-40 md:hidden">
-                        <div 
-                            className="fixed inset-0 bg-black bg-opacity-50"
+                        <div
+                            className="bg-opacity-50 fixed inset-0 bg-black"
                             onClick={() => setIsMobileMenuOpen(false)}
                         />
-                        <div className="fixed left-0 top-0 h-full w-64 bg-bg-white shadow-lg">
+                        <div className="fixed top-0 left-0 h-full w-64 bg-bg-white shadow-lg">
                             {/* Mobile sidebar content */}
                             <div className="flex h-full flex-col">
                                 {/* Logo Section */}
@@ -105,10 +128,14 @@ export const AdminSidebar = React.memo<AdminSidebarProps>(
                                 <div className="flex-1 overflow-y-auto px-3 py-4">
                                     <nav className="space-y-1">
                                         {adminNavItems.map((item, index) => {
-                                            const isParentActive = activeSlug === item.slug;
-                                            const isChildActive = item.children?.some(
-                                                (child) => child.slug === activeSlug
-                                            );
+                                            const isParentActive =
+                                                activeSlug === item.slug;
+                                            const isChildActive =
+                                                item.children?.some(
+                                                    (child) =>
+                                                        child.slug ===
+                                                        activeSlug,
+                                                );
 
                                             return (
                                                 <NavItem
@@ -116,8 +143,13 @@ export const AdminSidebar = React.memo<AdminSidebarProps>(
                                                     item={item}
                                                     isCollapsed={false}
                                                     activeSlug={activeSlug}
-                                                    isActive={isParentActive || isChildActive}
-                                                    permissions={userPermissions}
+                                                    isActive={
+                                                        isParentActive ||
+                                                        isChildActive
+                                                    }
+                                                    permissions={
+                                                        userPermissions
+                                                    }
                                                 />
                                             );
                                         })}
@@ -167,11 +199,10 @@ export const AdminSidebar = React.memo<AdminSidebarProps>(
                     <div className="custom-scrollbar flex-1 overflow-y-auto px-3 py-4">
                         <nav className="space-y-1">
                             {adminNavItems.map((item, index) => {
-                                const isParentActive =
-                                    activeSlug === item.slug;
+                                const isParentActive = activeSlug === item.slug;
 
                                 const isChildActive = item.children?.some(
-                                    (child) => child.slug === activeSlug
+                                    (child) => child.slug === activeSlug,
                                 );
 
                                 return (
@@ -180,7 +211,9 @@ export const AdminSidebar = React.memo<AdminSidebarProps>(
                                         item={item}
                                         isCollapsed={isCollapsed}
                                         activeSlug={activeSlug}
-                                        isActive={isParentActive || isChildActive}
+                                        isActive={
+                                            isParentActive || isChildActive
+                                        }
                                         permissions={userPermissions}
                                     />
                                 );
