@@ -13,9 +13,9 @@ class OrderController extends Controller
 {
     protected OrderService $orderService;
 
-    public function __construct()
+    public function __construct(OrderService $orderService)
     {
-        $this->orderService = app()->make(OrderService::class);
+        $this->orderService = $orderService;
     }
 
     public function index()
@@ -28,15 +28,16 @@ class OrderController extends Controller
         ]);
     }
 
-// OrderController.php
-public function updateStatus(Request $request, $id)
-{
-    $order = Order::findOrFail($id);
-    $order->update(['order_status' => $request->status]);
+    // OrderController.php
+    public function updateStatus(Request $request, $id)
+    {
+        $order = Order::findOrFail($id);
+        $order->update(['order_status' => $request->status]);
 
-    
-    return redirect()->back();
-}
+        return back()->with([
+            'success' => 'Order status updated successfully'
+        ]);
+    }
     public function create()
     {
         return Inertia::render('admin/order-management/create');
