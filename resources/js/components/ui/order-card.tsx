@@ -81,13 +81,12 @@ export default function OrderCard({ orders: initialOrders, statusOptions }: Prop
     };
 
     const handleStatusChange = (id: string, status: string) => {
-        console.log(id, status);
         router.post(
-            route('admin.om.update-status', {id}),{ status },
+            route('admin.om.update-status', {id}),
+            { status },
             {
                 onSuccess: () => {
-                    console.log('Status updated successfully');
-
+                    toast.success('Status updated successfully');
                 },
                 onError: (errors) => {
                     console.error(errors);

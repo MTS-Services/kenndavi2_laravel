@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\UserType;
+use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\User;
 use App\Services\DataTableService;
+use App\Services\OrderService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -14,17 +15,27 @@ use Inertia\Response;
 
 class AdminController extends Controller
 {
-    public function __construct(protected DataTableService $dataTableService) {}
+   
+
+    protected OrderService $orderService;
+    protected DataTableService $dataTableService;
+     public function __construct(DataTableService $dataTableService,  OrderService $orderService) {
+        
+        $this->dataTableService = $dataTableService;
+        $this->orderService = $orderService;
+
+     }
+
+
 
     public function dashboard(): Response
     {
-        $stats = [
-            'users' => User::count(),
-            'users_last_7_days' => User::where('created_at', '>=', now()->subDays(7))->count(),
-        ];
+
+          $orders = $this->orderService->getAllOrders();
 
         return Inertia::render('admin/dashboard', [
-            'stats' => $stats
+            'orders' => $orders,
+             'statusOptions' => OrderStatus::options(),
         ]);
     }
 

@@ -131,62 +131,10 @@ const StatCard = ({ title, value, subtext, icon: Icon, trendValue }: any) => (
 );
 
 //  Orders data defined directly in Index — no controller needed
-const orders: Order[] = [
-    {
-        id: '#ord-001',
-        buyer: 'Arlene McCoy',
-        amount: '$219.78',
-        status: 'Pending',
-        date: '07/05/2016',
-    },
-    {
-        id: '#ord-002',
-        buyer: 'Cody Fisher',
-        amount: '$219.78',
-        status: 'Shipped',
-        date: '07/05/2016',
-    },
-    {
-        id: '#ord-003',
-        buyer: 'Jacob Jones',
-        amount: '$219.78',
-        status: 'Delivered',
-        date: '07/05/2016',
-    },
-    {
-        id: '#ord-004',
-        buyer: 'Jenny Wilson',
-        amount: '$219.78',
-        status: 'Pending',
-        date: '07/05/2016',
-    },
-    {
-        id: '#ord-005',
-        buyer: 'Guy Hawkins',
-        amount: '$219.78',
-        status: 'Pending',
-        date: '07/05/2016',
-    },
-    {
-        id: '#ord-006',
-        buyer: 'Robert Fox',
-        amount: '$219.78',
-        status: 'Pending',
-        date: '07/05/2016',
-    },
-    {
-        id: '#ord-007',
-        buyer: 'Cameron Diaz',
-        amount: '$219.78',
-        status: 'Delivered',
-        date: '07/05/2016',
-    },
-];
+
 
 export default function Index() {
-    const { props } = usePage();
-    const { stats = { users: 0, users_last_7_days: 0 }, userTypeCounts = {} } =
-        props as unknown as Props;
+     const { orders, statusOptions } = usePage().props as any;
 
     return (
         <AdminLayout activeSlug={'dashboard'}>
@@ -254,7 +202,7 @@ export default function Index() {
                         Recent Orders
                     </h2>
                 </div>
-                <OrderCard orders={orders} />
+                <OrderCard orders={orders} statusOptions={statusOptions} />
                </div>
             </div>
         </AdminLayout>
