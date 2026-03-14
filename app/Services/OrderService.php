@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\OrderPaymentStatus;
 use App\Enums\OrderStatus;
+use App\Mail\OrderConfirmedMail;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderAddresse;
@@ -12,6 +13,7 @@ use App\Models\User;
 use App\Services\ProductService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class OrderService
 {
@@ -115,6 +117,10 @@ class OrderService
             $this->orderItem::insert($items);
 
             $cart->delete();
+
+
+            $order->load('orderAddress', 'orderItems');
+            Mail::to($data['email'])->send(new OrderConfirmedMail($order));
 
             return $order;
         });

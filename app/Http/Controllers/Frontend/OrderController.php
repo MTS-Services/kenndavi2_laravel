@@ -21,7 +21,6 @@ class OrderController extends Controller
 public function orderConfirmed(): Response
 {
     $order = $this->orderService->getLatestOrder();
-    // dd($order);
     return Inertia::render('frontend/order-confirmed', [
         'order' => $order,
     ]);
@@ -29,7 +28,6 @@ public function orderConfirmed(): Response
 
     public function store(Request $request)
     {
-        // dd($request->all());
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
