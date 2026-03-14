@@ -22,17 +22,7 @@ class CartController extends Controller
     public function index(): Response
     {
         $data = $this->cartService->getAllDatas();
-        
-        if (isset($data['cartItems'])) {
-            $data['cartItems'] = $data['cartItems']->map(function ($cartItem) {
-                if ($cartItem->product) {
-                    $calculatedData = $this->productService->getProductCalculatedData($cartItem->product, $cartItem->quantity);
-                    $cartItem->calculated = $calculatedData;
-                }
-                return $cartItem;
-            });
-        }
-        
+
         return Inertia::render('frontend/product-card', $data);
     }
     public function add(Request $request)

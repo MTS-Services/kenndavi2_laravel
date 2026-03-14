@@ -10,6 +10,10 @@ Route::name('frontend.')->controller(FrontendController::class)->group(function 
     Route::middleware('auth')->group(function () {
 
         Route::get('/shopping-info', 'shoppingInfo')->name('shopping-info');
+        Route::group(['prefix' => 'orders', 'as' => 'orders.'], function () {
+            Route::get('/order-confirmed', [OrderController::class, 'orderConfirmed'])->name('order-confirmed');
+            Route::post('/store', [OrderController::class, 'store'])->name('store');
+        });
     });
 
     Route::get('/', 'index')->name('home');
@@ -23,10 +27,5 @@ Route::name('frontend.')->controller(FrontendController::class)->group(function 
         Route::post('/add', [CartController::class, 'add'])->name('add');
         Route::post('/update', [CartController::class, 'update'])->name('update');
         Route::delete('/remove/{id}', [CartController::class, 'remove'])->name('remove');
-    });
-
-    Route::group(['prefix' => 'orders', 'as' => 'orders.'], function () {
-        Route::get('/order-confirmed', [OrderController::class, 'orderConfirmed'])->name('order-confirmed');
-        Route::post('/store', [OrderController::class, 'store'])->name('store');
     });
 });

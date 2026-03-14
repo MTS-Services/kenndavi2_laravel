@@ -17,6 +17,7 @@ class OrderAddresse extends Model
         'state',
         'postal_code',
         'country',
+        'email',
 
 
         'created_at',
