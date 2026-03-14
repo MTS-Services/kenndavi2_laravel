@@ -206,6 +206,7 @@ const handleSubmit = (e: React.FormEvent) => {
                                             placeholder="Enter phone"
                                             className="placeholder-text-text-body w-full border border-text-gray-300 px-4 py-3 font-public-sans text-sm text-text-body transition-colors outline-none focus:border-text-buy-now"
                                         />
+                                        {errors.phone && <p className="mt-1 text-sm text-red-600">{errors.phone}</p>}
                                     </div>
                                 </div>
 

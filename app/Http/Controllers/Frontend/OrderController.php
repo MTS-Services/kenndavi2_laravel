@@ -18,10 +18,14 @@ class OrderController extends Controller
     }
     
 
-    public function orderConfirmed(): Response
-    {
-        return Inertia::render('frontend/order-confirmed');
-    }
+public function orderConfirmed(): Response
+{
+    $order = $this->orderService->getLatestOrder();
+    // dd($order);
+    return Inertia::render('frontend/order-confirmed', [
+        'order' => $order,
+    ]);
+}
 
     public function store(Request $request)
     {
