@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { router } from '@inertiajs/react';
 import OrderDetails from './order-details';
 import type { StatusOption } from '@/pages/admin/order-management/index';
+import { toast } from 'sonner';
 
 export type Order = {
+    id: string;
     order_number: string;
     status: string;
     total: number;
@@ -51,7 +53,8 @@ export default function OrderCard({ orders: initialOrders, statusOptions }: Prop
 
     const handleViewOrder = (order: Order) => {
         const detailedOrder = {
-            id: order.order_number,
+            id: order.id,
+            order_number: order.order_number,
             buyer: order.order_address?.full_name || 'Unknown',
             amount: `$${Number(order.total).toFixed(2)}`,
             status: order.status,
@@ -77,17 +80,14 @@ export default function OrderCard({ orders: initialOrders, statusOptions }: Prop
         setSelectedOrder(detailedOrder);
     };
 
-    const handleStatusChange = (order_number: string, status: string) => {
+    const handleStatusChange = (id: string, status: string) => {
+        console.log(id, status);
         router.post(
-            route('admin.om.update-status', order_number),
-            { status },
+            route('admin.om.update-status', {id}),{ status },
             {
                 onSuccess: () => {
                     console.log('Status updated successfully');
-                    // Optional: update state locally
-                    // setOrders(prev =>
-                    //     prev.map(o => o.order_number === orderNumber ? { ...o, status } : o)
-                    // );
+
                 },
                 onError: (errors) => {
                     console.error(errors);
@@ -121,7 +121,7 @@ export default function OrderCard({ orders: initialOrders, statusOptions }: Prop
                                     <td className="px-6 py-4">
                                        <select
                                             value={order.status}
-                                            onChange={(e) => handleStatusChange(order.order_number, e.target.value)}
+                                            onChange={(e) => handleStatusChange(order.id, e.target.value)}
                                             className={`appearance-none pl-3 pr-8 py-1.5 rounded-full text-xs font-medium border cursor-pointer focus:outline-none ${opt?.color} `}
                                         >
                                             {statusOptions.map((opt) => (

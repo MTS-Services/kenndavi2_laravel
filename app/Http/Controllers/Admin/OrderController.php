@@ -28,17 +28,15 @@ class OrderController extends Controller
         ]);
     }
 
-    public function updateStatus(Request $request, $order_number)
-    {
-        $order = Order::where('order_number', $order_number)->firstOrFail();
-        $order->update(['order_status' => $request->status]);
+// OrderController.php
+public function updateStatus(Request $request, $id)
+{
+    $order = Order::findOrFail($id);
+    $order->update(['order_status' => $request->status]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Order status updated successfully',
-        ]);
-    }
-
+    
+    return redirect()->back();
+}
     public function create()
     {
         return Inertia::render('admin/order-management/create');
