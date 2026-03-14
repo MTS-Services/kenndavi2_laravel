@@ -28,6 +28,12 @@ class OrderService
         protected ProductService $productService,
     ) {}
 
+    public function getAllOrders()
+    {
+        return $this->order::with(['orderItems.product.images', 'orderAddress'])
+            ->latest()
+            ->get();
+    }
 
     public function getLatestOrder()
     {
