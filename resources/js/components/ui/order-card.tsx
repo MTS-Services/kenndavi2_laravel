@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 export type Order = {
     id: string;
     order_number: string;
-    status: string;
+    order_status: string;
     total: number;
     created_at: string;
     updated_at: string;
@@ -40,7 +40,7 @@ export type OrderDetailData = {
     id: string;
     buyer: string;
     amount: string;
-    status: string;
+    order_status: string;
     date: string;
     email: string;
     phone: string;
@@ -76,7 +76,7 @@ export default function OrderCard({ orders: initialOrders, statusOptions }: Prop
             order_number: order.order_number,
             buyer: order.order_address?.full_name || 'Unknown',
             amount: `$${Number(order.total).toFixed(2)}`,
-            status: order.status,
+            order_status: order.order_status,
             date: order.created_at ? new Date(order.created_at).toLocaleDateString('en-US', {
                 month: '2-digit',
                 day: '2-digit',
@@ -106,10 +106,10 @@ export default function OrderCard({ orders: initialOrders, statusOptions }: Prop
         setSelectedOrder(detailedOrder);
     };
 
-    const handleStatusChange = (id: string, status: string) => {
+    const handleStatusChange = (id: string, order_status: string) => {
         router.post(
             route('admin.om.update-status', {id}),
-            { status },
+            { order_status },
             {
                 onSuccess: () => {
                     toast.success('Status updated successfully');
@@ -136,7 +136,7 @@ export default function OrderCard({ orders: initialOrders, statusOptions }: Prop
                     </thead>
                     <tbody>
                         {visible.map((order) => {
-                            const opt   = statusOptions.find((o) => o.value === order.status);
+                            const opt   = statusOptions.find((o) => o.value === order.order_status);
 
                             return (
                                 <tr key={order.order_number} className="border-b border-text-gray-300 hover:bg-bg-card transition-colors bg-bg-white">
@@ -145,7 +145,7 @@ export default function OrderCard({ orders: initialOrders, statusOptions }: Prop
                                     <td className="px-6 py-4 font-roboto text-base font-normal text-text-title">{order.total}</td>
                                     <td className="px-6 py-4">
                                        <select
-                                            value={order.status}
+                                            value={order.order_status}
                                             onChange={(e) => handleStatusChange(order.id, e.target.value)}
                                             className={`appearance-none pl-3 pr-8 py-1.5 rounded-full text-xs font-medium border cursor-pointer focus:outline-none ${opt?.color} `}
                                         >

@@ -8,7 +8,7 @@ interface OrderDetailsProps {
         order_number: string;
         buyer: string;
         amount: string;
-        status: string;
+        order_status: string;
         date: string;
         email: string;
         phone: string;
@@ -29,7 +29,7 @@ interface OrderDetailsProps {
 
 
 export default function OrderDetails({ order, statusOptions, onClose, onStatusChange }: OrderDetailsProps) {
-    const [currentValue, setCurrentValue] = useState(order.status);
+    const [currentValue, setCurrentValue] = useState(order.order_status);
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
     const currentOpt  = statusOptions.find((o) => o.value === currentValue) ?? statusOptions[0];

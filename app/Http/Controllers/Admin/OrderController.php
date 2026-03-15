@@ -32,7 +32,7 @@ class OrderController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $order = Order::findOrFail($id);
-        $order->update(['order_status' => $request->status]);
+        $order->update(['order_status' => $request->order_status]);
 
         return back()->with([
             'success' => 'Order status updated successfully'
