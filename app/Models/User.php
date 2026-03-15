@@ -72,6 +72,11 @@ class User extends Authenticatable
         return $this->hasOne(Cart::class);
     }
 
+    public function feedback()
+    {
+        return $this->hasMany(Feedback::class);
+    }
+
     protected $appends = ['image_url'];
 
     public function getImageUrlAttribute()

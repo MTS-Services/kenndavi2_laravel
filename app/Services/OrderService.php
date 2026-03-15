@@ -51,6 +51,15 @@ class OrderService
             ->get();
     }
 
+    public function getOrderByDeliverd()
+    {
+        return $this->order::with(['orderItems.product.images', 'orderAddress'])
+            ->where('user_id', auth('web')->id())
+            ->where('order_status', OrderStatus::DELIVERED)
+            ->latest()
+            ->get();
+    }
+
     public function create(array $data = [])
     {
         $user = Auth::guard('web')->user();

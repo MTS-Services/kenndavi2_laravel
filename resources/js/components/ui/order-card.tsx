@@ -7,13 +7,32 @@ import { toast } from 'sonner';
 export type Order = {
     id: string;
     order_number: string;
-    status: string;
+    order_status: string;
     total: number;
     created_at: string;
     updated_at: string;
     order_address: {
         full_name: string;
+        email: string;
+        phone: string;
+        address_line1: string;
+        address_line2: string;
+        city: string;
+        state: string;
+        zip_code: string;
+        country: string;
     };
+    order_items: Array<{
+        product_name: string;
+        quantity: number;
+        price: number;
+        product?: {
+            images: Array<{
+                image: string;
+                is_primary: boolean;
+            }>;
+        };
+    }>;
 };
 
 // Type for OrderDetails component
@@ -21,12 +40,12 @@ export type OrderDetailData = {
     id: string;
     buyer: string;
     amount: string;
-    status: string;
+    order_status: string;
     date: string;
     email: string;
     phone: string;
     address: string;
-    items: Array<{ name: string; quantity: number; price: string; image: string }>;
+    order_items: Array<{ name: string; quantity: number; price: string; image: string }>;
     subtotal: string;
     shipping: string;
     tax: string;
@@ -57,16 +76,23 @@ export default function OrderCard({ orders: initialOrders, statusOptions }: Prop
             order_number: order.order_number,
             buyer: order.order_address?.full_name || 'Unknown',
             amount: `$${Number(order.total).toFixed(2)}`,
-            status: order.status,
+            order_status: order.order_status,
             date: order.created_at ? new Date(order.created_at).toLocaleDateString('en-US', {
                 month: '2-digit',
                 day: '2-digit',
                 year: 'numeric',
             }).replace(/\//g, '/') : '',
-            email: 'customer@example.com',
-            phone: '+1 (555) 123-4567',
-            address: '123 Main St, Apt 4B, New York, NY 10001',
-            items: [{
+            email: order.order_address?.email || 'Unknown',
+            phone: order.order_address?.phone || 'Unknown',
+            address: `${order.order_address?.address_line1}, ${order.order_address?.city}, ${order.order_address?.state} ${order.order_address?.zip_code}, ${order.order_address?.country}`,
+            order_items: order.order_items?.map((item) => ({
+                name: item.product_name,
+                quantity: item.quantity,
+                price: `$${Number(item.price).toFixed(2)}`,
+                image: item.product?.images?.find((img) => img.is_primary)?.image ?? 
+                       item.product?.images?.[0]?.image ?? 
+                       '/assets/images/products/placeholder.png'
+            })) || [{
                 name: 'Product Item',
                 quantity: 1,
                 price: `$${Number(order.total).toFixed(2)}`,
@@ -80,10 +106,10 @@ export default function OrderCard({ orders: initialOrders, statusOptions }: Prop
         setSelectedOrder(detailedOrder);
     };
 
-    const handleStatusChange = (id: string, status: string) => {
+    const handleStatusChange = (id: string, order_status: string) => {
         router.post(
             route('admin.om.update-status', {id}),
-            { status },
+            { order_status },
             {
                 onSuccess: () => {
                     toast.success('Status updated successfully');
@@ -110,7 +136,7 @@ export default function OrderCard({ orders: initialOrders, statusOptions }: Prop
                     </thead>
                     <tbody>
                         {visible.map((order) => {
-                            const opt   = statusOptions.find((o) => o.value === order.status);
+                            const opt   = statusOptions.find((o) => o.value === order.order_status);
 
                             return (
                                 <tr key={order.order_number} className="border-b border-text-gray-300 hover:bg-bg-card transition-colors bg-bg-white">
@@ -119,7 +145,7 @@ export default function OrderCard({ orders: initialOrders, statusOptions }: Prop
                                     <td className="px-6 py-4 font-roboto text-base font-normal text-text-title">{order.total}</td>
                                     <td className="px-6 py-4">
                                        <select
-                                            value={order.status}
+                                            value={order.order_status}
                                             onChange={(e) => handleStatusChange(order.id, e.target.value)}
                                             className={`appearance-none pl-3 pr-8 py-1.5 rounded-full text-xs font-medium border cursor-pointer focus:outline-none ${opt?.color} `}
                                         >
@@ -155,11 +181,11 @@ export default function OrderCard({ orders: initialOrders, statusOptions }: Prop
                 </span>
                 <div className="flex gap-2">
                     <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}
-                        className="px-4 py-1.5 text-sm border border-text-green text-text-green rounded-lg hover:bg-bg-light-green disabled:opacity-40 disabled:cursor-not-allowed transition-colors font-medium">
+                        className="px-4 py-1.5 text-sm border border-text-green text-text-green rounded-lg hover:bg-bg-light-green disabled:opacity-40 disabled:cursor-not-allowed transition-colors font-medium cursor-pointer">
                         Previous
                     </button>
                     <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-                        className="px-4 py-1.5 text-sm border border-text-green text-text-green rounded-lg hover:bg-bg-light-green disabled:opacity-40 disabled:cursor-not-allowed transition-colors font-medium">
+                        className="px-4 py-1.5 text-sm border border-text-green text-text-green rounded-lg hover:bg-bg-light-green disabled:opacity-40 disabled:cursor-not-allowed transition-colors font-medium cursor-pointer">
                         Next
                     </button>
                 </div>
