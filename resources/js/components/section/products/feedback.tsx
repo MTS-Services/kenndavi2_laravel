@@ -6,32 +6,114 @@ type RatingBreakdownRow = {
     count: string;
 };
 
-const ratingBreakdown: RatingBreakdownRow[] = [
-    { stars: 5, percentage: 63, count: '94,532' },
-    { stars: 4, percentage: 24, count: '6,717' },
-    { stars: 3, percentage: 9, count: '714' },
-    { stars: 2, percentage: 1, count: '152' },
-    { stars: 1, percentage: 7, count: '643' },
-];
-
 type Feedback = {
     name: string;
     time: string;
     rating: number;
     comment: string;
-    avatar: string;
+    image: string | null;
 };
 
-const allFeedbacks: Feedback[] = [
-    { name: 'Darrell Steward', time: 'Just now', rating: 5, comment: 'This sweet BBQ sauce completely changed my grilling game. The flavor is rich, smoky, and perfectly balanced!', avatar: '/assets/images/avatars/01.png' },
-    { name: 'Brooklyn Simmons', time: '2 mins ago', rating: 5, comment: 'I used it on chicken wings and everyone asked for the recipe. Absolutely delicious!', avatar: '/assets/images/avatars/02.png' },
-    { name: 'Kathryn Murphy', time: '21 mins ago', rating: 5, comment: 'Not too sweet, not too smoky — just perfect. My family loves it.', avatar: '/assets/images/avatars/03.png' },
-    { name: 'Guy Hawkins', time: '1 hour ago', rating: 5, comment: "Best BBQ sauce I've tried so far. The texture is smooth and coats the meat beautifully.", avatar: '/assets/images/avatars/04.png' },
-    { name: 'Robert Fox', time: '1 day ago', rating: 5, comment: 'I even use it as a dip for fries and nuggets. So addictive!', avatar: '/assets/images/avatars/05.png' },
-    { name: 'Esther Howard', time: '1 day ago', rating: 5, comment: "The flavor tastes premium and natural. You can really tell it's made with quality ingredients.", avatar: '/assets/images/avatars/06.png' },
-    { name: 'Esther Howard', time: '1 day ago', rating: 5, comment: 'My weekend BBQ parties are incomplete without this sauce now.', avatar: '/assets/images/avatars/06.png' },
-    { name: 'Esther Howard', time: '1 day ago', rating: 5, comment: 'It caramelizes perfectly on the grill. Gives that restaurant-style finish.', avatar: '/assets/images/avatars/06.png' },
-];
+interface Props {
+    currentPage: number;
+    totalPages: number;
+    onPageChange: (page: number) => void;
+    feedbacks: Feedback[];
+    ratingBreakdown: Array<{
+        stars: number;
+        percentage: number;
+        count: number;
+    }>;
+    averageRating: number;
+    totalReviews: number;
+}
+
+export default function ProductFeedback({ currentPage, totalPages, onPageChange, feedbacks, ratingBreakdown, averageRating, totalReviews }: Props) {
+    
+    const paginatedFeedbacks = feedbacks.slice(
+        (currentPage - 1) * 4,
+        currentPage * 4
+    );
+
+    return (
+        <div id="customer-feedback" className="my-16">
+            <h2 className="mb-8 font-bebas-neue text-[40px] font-normal uppercase text-text-title">Customer Feedback</h2>
+
+            <div className="mb-10 flex flex-col gap-6 md:flex-row">
+                <div className="flex min-w-50 flex-col items-center justify-center rounded-sm border bg-[#FBF4CE] px-10 py-8">
+                    <span className="font-public-sans text-[56px] font-medium text-base text-text-title">{averageRating}</span>
+                    <div className="mt-2"><StarRating rating={averageRating} size="md" /></div>
+                    <p className="mt-2 font-public-sans text-sm font-normal text-text-body">
+                        Customer Rating{' '}
+                        <span className="font-public-sans text-base font-normal text-text-gray-300">({totalReviews})</span>
+                    </p>
+                </div>
+
+                <div className="flex flex-1 flex-col justify-center gap-2">
+                    {ratingBreakdown.map((row: any) => (
+                        <div key={row.stars} className="flex items-center gap-3">
+                            <div className="flex w-24 shrink-0 items-center gap-0.5">
+                                {Array.from({ length: 5 }).map((_, index) => (
+                                    <Star key={index} className={`h-3.5 w-3.5 ${index < row.stars ? 'fill-text-star-rating text-text-star-rating' : 'fill-gray-200 text-gray-200'}`} />
+                                ))}
+                            </div>
+                            <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-100">
+                                <div className="h-full rounded-full bg-text-star-rating" style={{ width: `${row.percentage}%` }} />
+                            </div>
+                            <div className="flex w-24 shrink-0 items-center gap-1.5">
+                                <span className="font-public-sans text-sm font-semibold text-text-title">{row.percentage}%</span>
+                                <span className="font-public-sans text-xs font-normal text-text-gray-300">({row.count})</span>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            <div className="mb-8 w-full border-b border-gray-100" />
+
+            <h3 className="mb-6 font-public-sans text-base font-semibold text-text-title">Customer Feedback</h3>
+
+            <div className="max-w-2xl space-y-7">
+                {paginatedFeedbacks.map((feedback) => (
+                    <div key={`${feedback.name}-${feedback.time}`}>
+                        <div className="mb-2 flex items-center gap-3">
+                            <div className="flex h-9 w-9 shrink-0 overflow-hidden rounded-full bg-gray-200">
+                                {feedback.image ? (
+                                    <img
+                                        src={feedback.image}
+                                        alt={feedback.name}
+                                        className="h-full w-full object-cover"
+                                        onError={(event) => { (event.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                                    />
+                                ) : (
+                                    <div className="h-full w-full bg-gray-300 flex items-center justify-center">
+                                        <span className="text-gray-500 text-xs">No Image</span>
+                                    </div>
+                                )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="font-public-sans text-sm font-semibold text-text-title">{feedback.name}</span>
+                                <span className="text-xs text-text-gray-300">·</span>
+                                <span className="font-public-sans text-xs font-normal text-text-gray-300">{feedback.time}</span>
+                            </div>
+                        </div>
+                        <StarRating rating={feedback.rating} size="sm" />
+                        <p className="mt-1.5 font-aktiv-grotesk text-sm font-normal text-text-body">{feedback.comment}</p>
+                    </div>
+                ))}
+            </div>
+
+            {/* Pagination */}
+            <div className="mt-10 flex justify-center">
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={onPageChange}
+                />
+            </div>
+        </div>
+    );
+}
 
 type StarRatingProps = { rating: number; size?: 'sm' | 'md' };
 
@@ -126,93 +208,6 @@ function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) 
             <button type="button" onClick={() => onPageChange(totalPages)} disabled={currentPage === totalPages} className={arrowBtn}>
                 <ChevronsRight className="h-4 w-4" />
             </button>
-        </div>
-    );
-}
-
-interface Props {
-    currentPage: number;
-    totalPages: number;
-    onPageChange: (page: number) => void;
-    feedbacks: Feedback[];
-}
-
-export default function ProductFeedback({ currentPage, totalPages, onPageChange, feedbacks }: Props) {
-    const paginatedFeedbacks = feedbacks.slice(
-        (currentPage - 1) * 4,
-        currentPage * 4
-    );
-
-    return (
-        <div id="customer-feedback" className="my-16">
-            <h2 className="mb-8 font-bebas-neue text-[40px] font-normal uppercase text-text-title">Customer Feedback</h2>
-
-            <div className="mb-10 flex flex-col gap-6 md:flex-row">
-                <div className="flex min-w-50 flex-col items-center justify-center rounded-sm border bg-[#FBF4CE] px-10 py-8">
-                    <span className="font-public-sans text-[56px] font-medium text-base text-text-title">4.7</span>
-                    <div className="mt-2"><StarRating rating={5} size="md" /></div>
-                    <p className="mt-2 font-public-sans text-sm font-normal text-text-body">
-                        Customer Rating{' '}
-                        <span className="font-public-sans text-base font-normal text-text-gray-300">(934,516)</span>
-                    </p>
-                </div>
-
-                <div className="flex flex-1 flex-col justify-center gap-2">
-                    {ratingBreakdown.map((row) => (
-                        <div key={row.stars} className="flex items-center gap-3">
-                            <div className="flex w-24 shrink-0 items-center gap-0.5">
-                                {Array.from({ length: 5 }).map((_, index) => (
-                                    <Star key={index} className={`h-3.5 w-3.5 ${index < row.stars ? 'fill-text-star-rating text-text-star-rating' : 'fill-gray-200 text-gray-200'}`} />
-                                ))}
-                            </div>
-                            <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-100">
-                                <div className="h-full rounded-full bg-text-star-rating" style={{ width: `${row.percentage}%` }} />
-                            </div>
-                            <div className="flex w-24 shrink-0 items-center gap-1.5">
-                                <span className="font-public-sans text-sm font-semibold text-text-title">{row.percentage}%</span>
-                                <span className="font-public-sans text-xs font-normal text-text-gray-300">({row.count})</span>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            <div className="mb-8 w-full border-b border-gray-100" />
-
-            <h3 className="mb-6 font-public-sans text-base font-semibold text-text-title">Customer Feedback</h3>
-
-            <div className="max-w-2xl space-y-7">
-                {paginatedFeedbacks.map((feedback) => (
-                    <div key={`${feedback.name}-${feedback.time}`}>
-                        <div className="mb-2 flex items-center gap-3">
-                            <div className="flex h-9 w-9 shrink-0 overflow-hidden rounded-full bg-gray-200">
-                                <img
-                                    src={feedback.avatar}
-                                    alt={feedback.name}
-                                    className="h-full w-full object-cover"
-                                    onError={(event) => { (event.currentTarget as HTMLImageElement).style.display = 'none'; }}
-                                />
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <span className="font-public-sans text-sm font-semibold text-text-title">{feedback.name}</span>
-                                <span className="text-xs text-text-gray-300">·</span>
-                                <span className="font-public-sans text-xs font-normal text-text-gray-300">{feedback.time}</span>
-                            </div>
-                        </div>
-                        <StarRating rating={feedback.rating} size="sm" />
-                        <p className="mt-1.5 font-aktiv-grotesk text-sm font-normal text-text-body">{feedback.comment}</p>
-                    </div>
-                ))}
-            </div>
-
-            {/* Pagination */}
-            <div className="mt-10 flex justify-center">
-                <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={onPageChange}
-                />
-            </div>
         </div>
     );
 }

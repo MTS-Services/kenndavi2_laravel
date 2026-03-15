@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\TermsAndCondition;
 use App\Services\CartService;
+use App\Services\FeedbackService;
 use App\Services\ProductService;
 use App\Services\RecipeService;
 use App\Services\UserAccountSettinsService;
@@ -19,13 +20,15 @@ class FrontendController extends Controller
     protected UserAccountSettinsService $userAccountService;
     protected RecipeService $recipeService;
     protected CartService $cartService;
+    protected FeedbackService $feedbackService;
 
-    public function __construct(ProductService $productService, UserAccountSettinsService $userAccountService, RecipeService $recipeService, CartService $cartService)
+    public function __construct(ProductService $productService, UserAccountSettinsService $userAccountService, RecipeService $recipeService, CartService $cartService, FeedbackService $feedbackService)
     {
         $this->productService = $productService;
         $this->userAccountService = $userAccountService;
         $this->recipeService = $recipeService;
         $this->cartService = $cartService;
+        $this->feedbackService = $feedbackService;
     }
 
 
@@ -49,10 +52,15 @@ class FrontendController extends Controller
     {
         $product = $this->productService->getById($id);
         $calculatedData = $this->productService->getProductCalculatedData($product);
+        $feedbackData = $this->feedbackService->getFeedbacksByProductId($id);
 
         return Inertia::render('frontend/product-details', [
             'product' => $product,
-            'calculated' => $calculatedData
+            'calculated' => $calculatedData,
+            'feedbacks' => $feedbackData['feedbacks'],
+            'rating_breakdown' => $feedbackData['rating_breakdown'],
+            'average_rating' => $feedbackData['average_rating'],
+            'total_reviews' => $feedbackData['total_reviews']
         ]);
     }
 

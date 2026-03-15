@@ -121,7 +121,7 @@ export default function Review() {
                                 <button 
                                     type="submit"
                                     disabled={processing}
-                                    className="w-full rounded-md bg-text-buy-now text-text-white py-3 font-poppins text-base font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-full cursor-pointer rounded-md bg-text-buy-now text-text-white py-3 font-poppins text-base font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {processing ? 'Submitting...' : 'Submit Review'}
                                 </button>

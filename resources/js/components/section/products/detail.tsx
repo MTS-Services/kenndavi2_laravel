@@ -58,6 +58,8 @@ interface Props {
     onImageSelect: (image: string) => void;
     onQuantityDecrease: () => void;
     onQuantityIncrease: () => void;
+    averageRating: number;
+    totalReviews: number;
 }
 
 export default function ProductDetail({
@@ -68,11 +70,13 @@ export default function ProductDetail({
     onImageSelect,
     onQuantityDecrease,
     onQuantityIncrease,
+    averageRating,
+    totalReviews,
 }: Props) {
     const productImages =
         product.images?.map((img) => `/storage/${img.image}`) || [];
-    const rating = product.rating || 5;
-    const reviewsCount = product.reviews_count || 3197;
+    const rating = averageRating || 0;
+    const reviewsCount = totalReviews || 0;
 
     const handleAddToCart = () => {
 
