@@ -8,69 +8,11 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 
 // Custom styles for Swiper navigation
-const testimonialData = [
-    {
-        id: 1,
-        review: "This is hands down the best BBQ sauce I've ever tried. The perfect balance of sweet and smoky flavor makes every grilled dish taste amazing. Highly recommended!",
-        reviewerName: 'Rahim A.',
-        reviewerTitle: 'Honda Rider',
-        image: '/assets/images/home/Ellipse 1.png',
-    },
-    {
-        id: 2,
-        review: 'The Honey BBQ sauce is incredibly smooth and rich. It gives my chicken wings a beautiful glaze and an unforgettable taste. My family loves it!',
-        reviewerName: 'Karim B.',
-        reviewerTitle: 'Honda Rider',
-        image: '/assets/images/home/Ellipse 1.png',
-    },
-    {
-        id: 3,
-        review: 'The Teriyaki BBQ sauce adds a bold, savory twist to my grilled dishes. It is now a must-have in my kitchen for marinades and stir-fries.',
-        reviewerName: 'Jamal C.',
-        reviewerTitle: 'Honda Rider',
-        image: '/assets/images/home/Ellipse 1.png',
-    },
-    {
-        id: 4,
-        review: 'Absolutely love the Spicy BBQ sauce! It has the perfect kick without being overpowering. Great for ribs and brisket.',
-        reviewerName: 'Ahmed D.',
-        reviewerTitle: 'Food Blogger',
-        image: '/assets/images/home/Ellipse 2.png',
-    },
-    {
-        id: 5,
-        review: 'The Original BBQ sauce brings back childhood memories. Authentic flavor that pairs perfectly with everything.',
-        reviewerName: 'Sami E.',
-        reviewerTitle: 'Chef',
-        image: '/assets/images/home/Ellipse 3.png',
-    },
-    {
-        id: 6,
-        review: 'The Original BBQ sauce brings back childhood memories. Authentic flavor that pairs perfectly with everything.',
-        reviewerName: 'Omar F.',
-        reviewerTitle: 'Chef',
-        image: '/assets/images/home/Ellipse 3.png',
-    },
-    {
-        id: 7,
-        review: 'The Original BBQ sauce brings back childhood memories. Authentic flavor that pairs perfectly with everything.',
-        reviewerName: 'Yusuf G.',
-        reviewerTitle: 'Chef',
-        image: '/assets/images/home/Ellipse 3.png',
-    },
-    {
-        id: 8,
-        review: 'The Original BBQ sauce brings back childhood memories. Authentic flavor that pairs perfectly with everything.',
-        reviewerName: 'Hassan H.',
-        reviewerTitle: 'Chef',
-        image: '/assets/images/home/Ellipse 3.png',
-    },
-];
 
-export default function Testimonial() {
+export default function Testimonial({ feedbacks }: { feedbacks?: any }) {
     const swiperRef = useRef<SwiperType | null>(null);
     const [activeIndex, setActiveIndex] = useState(0);
-    const totalSlides = testimonialData.length;
+    const totalSlides = feedbacks?.length || 0;
     return (
         <>
             <div className="my-12 sm:my-28">
@@ -102,10 +44,10 @@ export default function Testimonial() {
                                 1024: { slidesPerView: 3, spaceBetween: 30 },
                             }}
                         >
-                            {testimonialData.map((testimonial) => (
-                                <SwiperSlide key={testimonial.id}>
+                            {feedbacks?.map((feedback: any) => (
+                                <SwiperSlide key={feedback.id}>
                                     <TestimonialCard
-                                        testimonial={testimonial}
+                                        testimonial={feedback}
                                     />
                                 </SwiperSlide>
                             ))}

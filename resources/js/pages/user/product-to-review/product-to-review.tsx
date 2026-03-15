@@ -146,12 +146,12 @@ export default function ProductToReview() {
                                             product.product_id,
                                             product.order_id,
                                         ) ? (
-                                            <Link
-                                                href="#"
+                                            <a target="_blank"
+                                                href={route('frontend.product-details', product.id)}
                                                 className="inline-flex items-center justify-center bg-text-green w-full py-2 text-sm font-bold text-text-white uppercase xl:py-4"
                                             >
                                                 Details
-                                            </Link>
+                                            </a>
                                         ) : (
                                             <Link
                                                 href={route('user.fd.create', {

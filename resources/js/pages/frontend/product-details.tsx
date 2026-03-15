@@ -38,6 +38,21 @@ type PageProps = {
         can_add_to_cart: boolean;
         stock_level: number;
     };
+    feedbacks: Array<{
+        id: number;
+        name: string;
+        time: string;
+        rating: number;
+        comment: string;
+        image: string | null;
+    }>;
+    rating_breakdown: Array<{
+        stars: number;
+        percentage: number;
+        count: number;
+    }>;
+    average_rating: number;
+    total_reviews: number;
 };
 
 const allFeedbacks = [
@@ -50,15 +65,31 @@ const allFeedbacks = [
     { name: 'Esther Howard', time: '1 day ago', rating: 5, comment: 'My weekend BBQ parties are incomplete without this sauce now.', avatar: '/assets/images/avatars/06.png' },
     { name: 'Esther Howard', time: '1 day ago', rating: 5, comment: 'It caramelizes perfectly on the grill. Gives that restaurant-style finish.', avatar: '/assets/images/avatars/06.png' },
 ];
+// const feedbacks = product.feedbacks || [];
 
 const TOTAL_PAGES = 10;
 
 export default function ProductDetailsPage() {
-    const { product, calculated } = usePage<PageProps>().props;
+    const { product, calculated, feedbacks, rating_breakdown, average_rating, total_reviews } = usePage<PageProps>().props;
     const productImages = product.images?.map(img => `/storage/${img.image}`) || [];
     const [selectedImage, setSelectedImage] = useState<string>(productImages[0] || '/assets/images/product/Rectangle 20.png');
     const [quantity, setQuantity] = useState<number>(1);
     const [currentPage, setCurrentPage] = useState<number>(1);
+
+    // Transform feedback data for the component
+    const transformedFeedbacks = feedbacks?.map((feedback: any) => ({
+        name: feedback.user?.name || 'Anonymous User',
+        time: new Date(feedback.created_at).toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'short', 
+            day: 'numeric' 
+        }),
+        rating: feedback.rating,
+        comment: feedback.message,
+        image: feedback.user?.image,
+    })) || [];
+
+    console.log(transformedFeedbacks);
 
     const handleDecrease = (): void => setQuantity((current) => (current > 1 ? current - 1 : current));
     const handleIncrease = (): void => setQuantity((current) => current + 1);
@@ -85,13 +116,18 @@ export default function ProductDetailsPage() {
                         onImageSelect={handleImageSelect}
                         onQuantityDecrease={handleDecrease}
                         onQuantityIncrease={handleIncrease}
+                        averageRating={average_rating}
+                        totalReviews={total_reviews}
                     />
                     
                     <ProductFeedback
                         currentPage={currentPage}
                         totalPages={TOTAL_PAGES}
                         onPageChange={handlePageChange}
-                        feedbacks={allFeedbacks}
+                        feedbacks={feedbacks}
+                        ratingBreakdown={rating_breakdown}
+                        averageRating={average_rating}
+                        totalReviews={total_reviews}
                     />
                 </div>
             </div>
