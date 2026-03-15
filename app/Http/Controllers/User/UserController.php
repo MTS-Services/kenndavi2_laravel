@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Services\FeedbackService;
 use App\Services\OrderService;
@@ -35,25 +36,39 @@ class UserController extends Controller
     public function orders(): Response
     {
         $orders = $this->orderService->getOrdersByUserId();
-        // dd($orders);
         return Inertia::render('user/order/orders', [
-            'orders' => $orders
+            'orders' => $orders,
+            'statusOptions' => OrderStatus::options(),
         ]);
     }
 
-public function productToReview(): Response
-{
-    $orders = $this->orderService->getOrderByDeliverd();
+    public function orderDetails($id): Response
+    {
+        $order = $this->orderService->getOrderById($id);
+        
+        if (!$order) {
+            abort(404, 'Order not found');
+        }
+        
+        return Inertia::render('user/order/order-details', [
+            'order' => $order,
+            'statusOptions' => OrderStatus::options(),
+        ]);
+    }
 
-    $feedbacks = $this->feedbackService->getUserFeedbacks(
-        Auth::guard('web')->id()
-    );
+    public function productToReview(): Response
+    {
+        $orders = $this->orderService->getOrderByDeliverd();
 
-    return Inertia::render('user/product-to-review/product-to-review', [
-        'orders' => $orders,
-        'feedbacks' => $feedbacks
-    ]);
-}
+        $feedbacks = $this->feedbackService->getUserFeedbacks(
+            Auth::guard('web')->id()
+        );
+
+        return Inertia::render('user/product-to-review/product-to-review', [
+            'orders' => $orders,
+            'feedbacks' => $feedbacks
+        ]);
+    }
 
 
 
