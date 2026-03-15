@@ -36,10 +36,12 @@ class FrontendController extends Controller
     {
         $products = $this->productService->getPaginated(10);
         $recipes = $this->recipeService->getAll(9);
+        $feedbacks = $this->feedbackService->all()->load('user');
 
         return Inertia::render('frontend/index', [
             'products' => $products,
-            'recipes' => $recipes
+            'recipes' => $recipes,
+            'feedbacks' => $feedbacks
         ]);
     }
 

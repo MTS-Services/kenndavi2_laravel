@@ -33,7 +33,7 @@ class FeedbackService
 
     public function all()
     {
-        return $this->feedback->all();
+        return $this->feedback->orderBy('created_at', 'desc')->get();
     }
 
     public function getUserFeedbacks($userId)
