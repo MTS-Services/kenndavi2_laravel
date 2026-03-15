@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Feedback extends Model
 {
-
     protected $fillable = [
         'id',
         'user_id',
         'product_id',
+        'order_id',
         'rating',
         'message',
 
@@ -32,5 +32,10 @@ class Feedback extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+    
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
     }
 }

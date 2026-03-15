@@ -1,9 +1,9 @@
 <?php
 
-use App\Traits\AuditColumnsTrait;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Traits\AuditColumnsTrait;
 
 return new class extends Migration
 {
@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('product_id');
+            $table->unsignedBigInteger('order_id');
             $table->string('rating');
             $table->longText('message');
             $table->timestamps();

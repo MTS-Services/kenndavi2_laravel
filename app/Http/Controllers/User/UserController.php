@@ -3,21 +3,25 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Services\FeedbackService;
 use App\Services\OrderService;
 use App\Services\UserAccountSettinsService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
     protected UserAccountSettinsService $userAccountService;
     protected OrderService $orderService;
+    protected FeedbackService $feedbackService;
 
-    public function __construct(UserAccountSettinsService $userAccountService, OrderService $orderService)
+    public function __construct(UserAccountSettinsService $userAccountService, OrderService $orderService, FeedbackService $feedbackService)
     {
         $this->userAccountService = $userAccountService;
         $this->orderService = $orderService;
+        $this->feedbackService = $feedbackService;
     }
 
     public function index(): Response
@@ -37,15 +41,21 @@ class UserController extends Controller
         ]);
     }
 
-    public function productToReview(): Response
-    {
-        return Inertia::render('user/product-to-review/product-to-review');
-    }
+public function productToReview(): Response
+{
+    $orders = $this->orderService->getOrderByDeliverd();
 
-    public function review(): Response
-    {
-        return Inertia::render('user/product-to-review/review');
-    }
+    $feedbacks = $this->feedbackService->getUserFeedbacks(
+        Auth::guard('web')->id()
+    );
+
+    return Inertia::render('user/product-to-review/product-to-review', [
+        'orders' => $orders,
+        'feedbacks' => $feedbacks
+    ]);
+}
+
+
 
     public function accountSettings(): Response
     {

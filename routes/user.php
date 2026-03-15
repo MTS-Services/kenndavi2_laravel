@@ -25,54 +25,29 @@ Route::prefix('user')->name('user.')->group(function () {
     Route::get('/pending-verification', [UserController::class, 'accountPending'])->name('pending-verification');
     Route::middleware(['auth'])->group(function () {
 
-    Route::controller(UserController::class)->group(function () {
-        Route::get('/dashboard', 'index')->name('dashboard');
-        Route::get('/orders', 'orders')->name('orders');
-        Route::get('/product-to-review', 'productToReview')->name('product-to-review');
-        Route::get('/review', 'review')->name('review');
-        Route::get('/account-settings', 'accountSettings')->name('account-settings');
+        Route::controller(UserController::class)->group(function () {
+            Route::get('/dashboard', 'index')->name('dashboard');
+            Route::get('/orders', 'orders')->name('orders');
+            Route::get('/product-to-review', 'productToReview')->name('product-to-review');
+            Route::get('/review', 'review')->name('review');
+            Route::get('/account-settings', 'accountSettings')->name('account-settings');
 
-        Route::post('/account-settings-update', 'accountSettingsUpdate')->name('account-settings.update');
-        Route::post('/change-password', 'changePassword')->name('change-password');
-        Route::post('/image-update', 'imageUpdate')->name('image-update');
-        Route::post('/billing-address', 'billingAddress')->name('billing-address');
-        Route::post('/shipping-address', 'shippingAddress')->name('shipping-address');
+            Route::post('/account-settings-update', 'accountSettingsUpdate')->name('account-settings.update');
+            Route::post('/change-password', 'changePassword')->name('change-password');
+            Route::post('/image-update', 'imageUpdate')->name('image-update');
+            Route::post('/billing-address', 'billingAddress')->name('billing-address');
+            Route::post('/shipping-address', 'shippingAddress')->name('shipping-address');
+        });
+
+        Route::post('/logout', [UserAuthController::class, 'logout'])->name('logout');
+
+        Route::group(['prefix' => 'feedback', 'as' => 'fd.'], function () {
+            Route::get('/index', [FeedbackController::class, 'index'])->name('index');
+            Route::get('/create/{id}', [FeedbackController::class, 'create'])->name('create');
+            Route::post('/store', [FeedbackController::class, 'store'])->name('store');
+            Route::get('/{id}/view', [FeedbackController::class, 'show'])->name('view');
+        });
     });
-
-    Route::post('/logout', [UserAuthController::class, 'logout'])->name('logout');
-
-    Route::group(['prefix' => 'feedback', 'as' => 'fd.'], function () {
-        Route::get('/index', [FeedbackController::class, 'index'])->name('index');
-        Route::get('/create', [FeedbackController::class, 'create'])->name('create');
-        Route::post('/store', [FeedbackController::class, 'store'])->name('store');
-        Route::get('/{id}/view', [FeedbackController::class, 'show'])->name('view');
-    });
-
-});
-
-    // Route::middleware(['auth'])->controller(UserController::class)->group(function () {
-    //     Route::post('/logout', [UserAuthController::class, 'logout'])->name('logout');
-
-    //     Route::get('/dashboard', 'index')->name('dashboard');
-    //     Route::get('/orders', 'orders')->name('orders');
-    //     Route::get('product-to-review', 'productToReview')->name('product-to-review');
-    //     Route::get('review', 'review')->name('review');
-    //     Route::get('account-settings', 'accountSettings')->name('account-settings');
-    //     Route::post('account-settings-update', 'accountSettingsUpdate')->name('account-settings.update');
-    //     Route::post('change-password', 'changePassword')->name('change-password');
-    //     Route::post('image-update', 'imageUpdate')->name('image-update');
-    //     Route::post('billing-address', 'billingAddress')->name('billing-address');
-    //     Route::post('shipping-address', 'shippingAddress')->name('shipping-address');
-    // });
-
-
-    // Route::group(['prefix' => 'feedback', 'as' => 'fd.'], function () {
-    //     Route::get('/index', [FeedbackController::class, 'index'])->name('index');
-    //     Route::get('/create', [FeedbackController::class, 'create'])->name('create');
-    //     Route::post('/store', [FeedbackController::class, 'store'])->name('store');
-    //     Route::get('/{id}/view', [FeedbackController::class, 'show'])->name('view');
-    // });
-
 });
 
 
