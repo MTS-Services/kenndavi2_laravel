@@ -31,7 +31,7 @@ class FeedbackService
         return $this->feedback->where('id', $id)->first();
     }
 
-    public function all()
+    public function getAllFeedbacks()
     {
         return $this->feedback->orderBy('created_at', 'desc')->get();
     }

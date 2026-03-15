@@ -68,8 +68,8 @@ class FeedbackController extends Controller
             return redirect()->route('user.product-to-review')
                 ->with('success', 'Review submitted successfully!');
         } catch (\Exception $e) {
-
-            dd($e);
+            return redirect()->back()
+                ->with('error', 'Failed to submit review. Please try again.');
         }
     }
 

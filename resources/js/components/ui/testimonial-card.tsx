@@ -4,7 +4,7 @@ interface Feedback {
     user: {
         name: string;
         title: string;
-        image: string;
+        image_url: string;
     };
 }
 
@@ -40,7 +40,7 @@ export default function TestimonialCard({ testimonial }: Props) {
                 {/* Avatar */}
                 <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden mr-4">
                     <img 
-                        src={testimonial.user.image} 
+                        src={testimonial.user.image_url} 
                         alt={testimonial.user.name}
                         className="w-full h-full object-cover"
                     />
