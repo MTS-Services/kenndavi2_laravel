@@ -5,6 +5,7 @@ import type { StatusOption } from '@/pages/admin/order-management/index';
 interface OrderDetailsProps {
     order: {
         id: string;
+        order_number: string;
         buyer: string;
         amount: string;
         status: string;
@@ -12,11 +13,13 @@ interface OrderDetailsProps {
         email: string;
         phone: string;
         address: string;
-        items: Array<{ name: string; quantity: number; price: string; image: string }>;
+        
         subtotal: string;
         shipping: string;
         tax:      string;
         total:    string;
+        order_items: Array<{ name: string; quantity: number; price: string; image: string }>;
+
     };
     statusOptions: StatusOption[];
     onClose: () => void;
@@ -45,7 +48,7 @@ export default function OrderDetails({ order, statusOptions, onClose, onStatusCh
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                     <h2 className="font-poppins text-2xl font-normal text-text-title">
-                        Order Details: <span>{order.id}</span>
+                        Order Details: <span>{order.order_number}</span>
                     </h2>
                     <button onClick={onClose}
                         className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors text-gray-500 cursor-pointer">
@@ -87,7 +90,7 @@ export default function OrderDetails({ order, statusOptions, onClose, onStatusCh
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-text-gray-300">
-                                {order.items.map((item, idx) => (
+                                {order.order_items.map((item, idx) => (
                                     <tr key={idx} className="hover:bg-gray-50/50">
                                         <td className="px-4 py-3.5 font-roboto font-normal text-text-title text-base">{item.name}</td>
                                         <td className="px-4 py-3.5 font-roboto font-normal text-text-title text-base">{item.quantity}</td>
@@ -114,7 +117,7 @@ export default function OrderDetails({ order, statusOptions, onClose, onStatusCh
                         <div className="relative inline-block">
                             <button
                                 onClick={() => setDropdownOpen((v) => !v)}
-                                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium transition-all select-none hover:opacity-80`}
+                                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium transition-all select-none hover:opacity-80 cursor-pointer`}
                             >
                                 {currentOpt.label}
                                 <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
@@ -127,9 +130,9 @@ export default function OrderDetails({ order, statusOptions, onClose, onStatusCh
                                             <button
                                                 key={opt.value}
                                                 onClick={() => handleStatusChange(opt)}
-                                                className={`w-full text-left px-4 py-2.5 text-sm font-medium flex items-center gap-2 hover:bg-gray-50 transition-colors`}
+                                                className={`w-full text-left px-4 py-2.5 text-sm font-medium flex items-center gap-2 hover:bg-gray-50 transition-colors cursor-pointer`}
                                             >
-                                                {opt.value ?? <Package className="w-3.5 h-3.5" />}
+                                                {/* {opt.value ?? <Package className="w-3.5 h-3.5" />} */}
                                                 {opt.label}
                                             </button>
                                         );
