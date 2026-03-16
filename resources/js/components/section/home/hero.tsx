@@ -71,13 +71,13 @@ export default function Hero() {
                             <div className="absolute inset-0 top-1/2 flex -translate-y-1/2 items-center">
                                 <div className="container px-4 text-text-white">
                                     <div className="">
-                                        <div className="mb-16 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/51 px-3 py-1.5 backdrop-blur-xs">
+                                        <div className="mb-4 sm:mb-16 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/51 px-3 py-1.5 backdrop-blur-xs">
                                             <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
                                             <span className="font-bebas-neue text-base font-normal text-text-buy-now uppercase">
                                                 {slide.rating}
                                             </span>
                                         </div>
-                                        <h1 className="mb-6 font-bebas-neue text-4xl leading-tight font-normal sm:text-6xl md:text-8xl lg:text-9xl">
+                                        <h1 className="mb-4 sm:mb-6 font-bebas-neue text-4xl leading-tight font-normal sm:text-6xl md:text-8xl lg:text-9xl">
                                             {slide.title}
                                         </h1>
                                         <p className="mb-4 max-w-xl font-inter text-lg leading-relaxed md:text-xl">
