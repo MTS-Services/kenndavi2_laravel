@@ -20,7 +20,7 @@ export default function SauceRecipes() {
     const { recipes } = usePage<PageProps>().props;
 
     return (
-        <FrontendLayout activePage="">
+        <FrontendLayout activePage="recipes">
             <div className="my-12 sm:my-28">
                 <div className="container mx-auto px-4">
                     <div>

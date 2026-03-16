@@ -55,6 +55,16 @@ function FrontendHeader({ activePage, subPage, cartImage }: Props) {
                         >
                             Sauces
                         </Link>
+                         <Link
+                           href={route('frontend.sauce-recipes')}
+                            className={`font-normal text-text-white text-4xl transition-colors font-bebas-neue border-b-2 ${
+                                activePage === 'recipes'
+                                    ? 'border-white'
+                                    : 'border-transparent hover:border-gray-400'
+                            }`}
+                        >
+                            Recipes
+                        </Link>
                     </nav>
 
                    

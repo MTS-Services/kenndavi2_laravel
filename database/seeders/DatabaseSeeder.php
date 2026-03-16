@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
             ProductTagSeeder::class,
             ProductSeeder::class,
+            RecipeSeeder::class,
         ]);
     }
 }
