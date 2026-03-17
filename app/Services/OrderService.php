@@ -35,6 +35,34 @@ class OrderService
             ->get();
     }
 
+    public function getOrderStats()
+    {
+        $orders = $this->order::where('user_id', auth('web')->id())->get();
+        
+        return [
+            'pending' => $orders->where('order_status', OrderStatus::PENDING->value)->count(),
+            'confirmed' => $orders->where('order_status', OrderStatus::CONFIRMED->value)->count(),
+            'processing' => $orders->where('order_status', OrderStatus::PROCESSING->value)->count(),
+            'shipped' => $orders->where('order_status', OrderStatus::SHIPPED->value)->count(),
+            'delivered' => $orders->where('order_status', OrderStatus::DELIVERED->value)->count(),
+            'cancelled' => $orders->where('order_status', OrderStatus::CANCELLED->value)->count(),
+        ];
+    }
+
+    public function getAdminOrderStats()
+    {
+        $orders = $this->order::all();
+        
+        return [
+            'pending' => $orders->where('order_status', OrderStatus::PENDING->value)->count(),
+            'confirmed' => $orders->where('order_status', OrderStatus::CONFIRMED->value)->count(),
+            'processing' => $orders->where('order_status', OrderStatus::PROCESSING->value)->count(),
+            'shipped' => $orders->where('order_status', OrderStatus::SHIPPED->value)->count(),
+            'delivered' => $orders->where('order_status', OrderStatus::DELIVERED->value)->count(),
+            'cancelled' => $orders->where('order_status', OrderStatus::CANCELLED->value)->count(),
+        ];
+    }
+
     public function getLatestOrder()
     {
         return $this->order::with(['orderItems.product.images', 'orderAddress'])
