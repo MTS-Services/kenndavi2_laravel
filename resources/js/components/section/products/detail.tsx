@@ -77,22 +77,23 @@ export default function ProductDetail({
     const rating = averageRating || 0;
     const reviewsCount = totalReviews || 0;
 
-    // const handleAddToCart = () => {
+    const handleAddToCart = () => {
+        router.post(
+            route('frontend.cart.add'),
+            {
+                product_id: product.id,
+                quantity: quantity,
+            },
+            {
+                onSuccess: () => toast.success('Added to cart!'),
+                onError: (errors) => toast.error('Failed to add to cart'),
+            },
+        );
+    };
 
-    //     router.post(
-    //         route('frontend.cart.add'),
-    //         {
-    //             product_id: product.id,
-    //             quantity: quantity,
-    //         },
-    //         {
-    //             onSuccess: () => toast.success('Added to cart!'),
-    //             onError: (errors) => toast.error('Failed to add to cart'),
-    //         },
-    //     );
-    // };
     const handleBuyNow = (e: React.MouseEvent) => {
         e.preventDefault();
+        // First add to cart, then redirect to shopping info
         router.post(
             route('frontend.cart.add'),
             { product_id: product.id, quantity: quantity },
@@ -209,19 +210,19 @@ export default function ProductDetail({
                         <div className="flex items-center justify-center gap-3">
                             <button
                                 type="button"
-                                onClick={handleBuyNow}
+                                onClick={handleAddToCart}
                                 className="flex cursor-pointer items-center gap-2 bg-text-buy-now px-6 py-5 font-public-sans text-xs font-bold text-text-white uppercase"
                             >
                                 <span>Add to cart</span>
                                 <ShoppingCartIcon className="h-4 w-4" />
                             </button>
-                            <Link
-                                href={route('frontend.shopping-info')}
+                            <button
+                                type="button"
                                 onClick={handleBuyNow}
                                 className="flex cursor-pointer border border-text-buy-now px-6 py-5 font-public-sans text-xs font-bold text-text-buy-now uppercase"
                             >
                                 Buy Now
-                            </Link>
+                            </button>
                         </div>
                     </div>
                 </div>
