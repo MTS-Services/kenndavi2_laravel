@@ -113,12 +113,18 @@ export default function OrderCard({ orders: initialOrders, statusOptions }: Prop
             {
                 onSuccess: () => {
                     toast.success('Status updated successfully');
+                    // Reload the page to refresh data
+                    window.location.reload();
                 },
                 onError: (errors) => {
                     console.error(errors);
                 }
             }
         );
+    };
+
+    const handleDetailsStatusChange = (order_id: string, new_status: string) => {
+        handleStatusChange(order_id, new_status);
     };
 
     return (
@@ -196,6 +202,7 @@ export default function OrderCard({ orders: initialOrders, statusOptions }: Prop
                     order={selectedOrder}
                     statusOptions={statusOptions}
                     onClose={() => setSelectedOrder(null)}
+                    onStatusChange={(new_status) => handleDetailsStatusChange(selectedOrder.id, new_status)}
                 />
             )}
         </>
