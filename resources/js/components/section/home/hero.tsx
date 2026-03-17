@@ -17,7 +17,7 @@ export default function Hero() {
             title: "Welcome to Northside",
             description: "Whatever you're slapping on the grill make it better with northside legendary Texas flavor and love.",
             rating: "4.6 Rating from 500+ Clients",
-            image: "/assets/images/home/banner.png"
+            image: "/assets/images/home/banner.jpg"
         },
         {
             id: 2,
@@ -64,6 +64,8 @@ export default function Hero() {
                                 alt="Hero Banner"
                                 className="h-full w-full object-cover"
                             />
+                            {/* Black overlay for better text visibility */}
+                            <div className="absolute inset-0 bg-black/40"></div>
                             {/* Bottom fade to white  */}
                             <div className="absolute right-0 bottom-0 left-0 h-4 bg-linear-to-t from-white to-transparent"></div>
 

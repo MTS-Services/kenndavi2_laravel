@@ -26,6 +26,17 @@
     font-style: normal;
 }
 
+/* Swiper equal height slides */
+.swiper-equal-height .swiper-slide {
+    height: auto;
+    display: flex;
+}
+
+.swiper-equal-height .swiper-slide > div {
+    height: 100%;
+    width: 100%;
+}
+
 @theme {
 
     --font-bebas-neue: 'Bebas Neue', ui-sans-serif, system-ui, sans-serif;
