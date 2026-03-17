@@ -14,16 +14,15 @@ interface Props {
 
 export default function TestimonialCard({ testimonial }: Props) {  
     return (
-        <div className="bg-bg-white shadow-lg px-5 py-8 rounded-sm border border-gray-100">
+        <div className="bg-bg-white shadow-lg px-5 py-8 rounded-sm border border-gray-100 h-full flex flex-col">
             {/* Star Rating */}
             <div className="flex mb-8">
                 {[...Array(5)].map((_, i) => (
                     <svg
                         key={i}
-                        className={`w-6 h-6 text-gray-300 ${i < testimonial.rating ? 'text-text-testimonial fill-current' : 'text-gray-300'}`}
+                        className={`w-6 h-6 ${i < testimonial.rating ? 'text-text-testimonial fill-current' : 'text-gray-300'}`}
                         viewBox="0 0 20 20"
                         fill="currentColor"
-                        xmlns="http://www.w3.org/2000/svg"
                     >
                         <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
                     </svg>
@@ -31,7 +30,7 @@ export default function TestimonialCard({ testimonial }: Props) {
             </div>
             
             {/* Review Text */}
-            <p className="text-base font-normal font-inter text-text-testimonial-desc mb-6 line-clamp-3">
+            <p className="text-base font-normal font-inter text-text-testimonial-desc mb-6 line-clamp-3 grow">
                 {testimonial.message}
             </p>
             

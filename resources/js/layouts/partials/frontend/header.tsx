@@ -1,6 +1,6 @@
 import { Link } from '@inertiajs/react';
 import { ShoppingCart, User, Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { usePage } from '@inertiajs/react';
 
 interface Props {
@@ -13,6 +13,20 @@ function FrontendHeader({ activePage, subPage, cartImage }: Props) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { auth, cart_count } = usePage().props as any;
     const user = auth?.user;
+
+    // Handle smooth scrolling for hash fragments
+    useEffect(() => {
+        const hash = window.location.hash;
+        if (hash === '#our-sauces') {
+            // Small delay to ensure the page is fully loaded
+            setTimeout(() => {
+                const element = document.getElementById('our-sauces');
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 300); // Increased delay for Inertia navigation
+        }
+    }, []);
 
     return (
         <header className="bg-bg-header py-0.5 md:py-1 lg:py-2">
@@ -39,18 +53,23 @@ function FrontendHeader({ activePage, subPage, cartImage }: Props) {
                             HOME
                         </Link>
                         <Link
-                            href="#our-sauces"
+                            href="/#our-sauces"
                             className={`font-normal text-text-white text-4xl transition-colors font-bebas-neue border-b-2 uppercase ${
                                 activePage === 'sauce-recipes'
                                     ? 'border-white'
                                     : 'border-transparent hover:border-gray-400'
                             }`}
                             onClick={(e) => {
-                                e.preventDefault();
-                                const element = document.getElementById('our-sauces');
-                                if (element) {
-                                    element.scrollIntoView({ behavior: 'smooth' });
+                                // If we're already on the home page, just scroll smoothly
+                                if (window.location.pathname === '/') {
+                                    e.preventDefault();
+                                    const element = document.getElementById('our-sauces');
+                                    if (element) {
+                                        element.scrollIntoView({ behavior: 'smooth' });
+                                    }
                                 }
+                                // If we're on another page, let Inertia handle navigation
+                                // The useEffect will handle the smooth scroll after navigation
                             }}
                         >
                             Sauces
@@ -125,18 +144,22 @@ function FrontendHeader({ activePage, subPage, cartImage }: Props) {
                                 HOME
                             </Link>
                             <Link
-                                href="#our-sauces"
+                                href="/#our-sauces"
                                 className={`font-normal text-text-white text-xl transition-colors font-bebas-neue ${
                                     activePage === 'sauce-recipes'
                                         ? 'border-b-2 border-text-white'
                                         : 'hover:border-gray-400'
                                 }`}
                                 onClick={(e) => {
-                                    e.preventDefault();
-                                    const element = document.getElementById('our-sauces');
-                                    if (element) {
-                                        element.scrollIntoView({ behavior: 'smooth' });
+                                    // If we're already on the home page, just scroll smoothly
+                                    if (window.location.pathname === '/') {
+                                        e.preventDefault();
+                                        const element = document.getElementById('our-sauces');
+                                        if (element) {
+                                            element.scrollIntoView({ behavior: 'smooth' });
+                                        }
                                     }
+                                    // Close mobile menu
                                     setIsMobileMenuOpen(false);
                                 }}
                             >

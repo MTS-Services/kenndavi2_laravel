@@ -31,7 +31,7 @@ class RecipeService
      */
     public function getById($id)
     {
-        return $this->model->with('relatedProducts')->findOrFail($id);
+        return $this->model->with('relatedProducts.images')->findOrFail($id);
     }
 
     /**
