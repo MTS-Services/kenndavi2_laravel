@@ -15,8 +15,7 @@ class CartService
         protected Cart $model,
         protected CartItem $cartItem,
         protected Product $product
-    ) {
-    }
+    ) {}
 
     public function getAllDatas(): array
     {
@@ -52,17 +51,21 @@ class CartService
     public function addToCart(array $data): bool
     {
         if (Auth::guard('web')->check()) {
-            $cart = $this->model::firstOrCreate([
-                'user_id'      => Auth::guard('web')->id(),
-                'creater_type' => User::class,
-                'creater_id'   => Auth::guard('web')->id(),
-            ]);
+            $cart = $this->model::firstOrCreate(
+                ['user_id' => Auth::guard('web')->id()],
+                [
+                    'creater_type' => User::class,
+                    'creater_id'   => Auth::guard('web')->id(),
+                ]
+            );
         } else {
-            $cart = $this->model::firstOrCreate([
-                'session_id'   => session()->getId(),
-                'creater_type' => null,
-                'creater_id'   => null,
-            ]);
+            $cart = $this->model::firstOrCreate(
+                ['session_id' => session()->getId()],
+                [
+                    'creater_type' => null,
+                    'creater_id'   => null,
+                ]
+            );
         }
 
         $product  = $this->product::findOrFail($data['product_id']);
@@ -85,6 +88,43 @@ class CartService
 
         return true;
     }
+
+    // public function addToCart(array $data): bool
+    // {
+    //     if (Auth::guard('web')->check()) {
+    //         $cart = $this->model::firstOrCreate([
+    //             'user_id'      => Auth::guard('web')->id(),
+    //             'creater_type' => User::class,
+    //             'creater_id'   => Auth::guard('web')->id(),
+    //         ]);
+    //     } else {
+    //         $cart = $this->model::firstOrCreate([
+    //             'session_id'   => session()->getId(),
+    //             'creater_type' => null,
+    //             'creater_id'   => null,
+    //         ]);
+    //     }
+
+    //     $product  = $this->product::findOrFail($data['product_id']);
+    //     $cartItem = $this->cartItem::where('cart_id', $cart->id)
+    //         ->where('product_id', $product->id)
+    //         ->first();
+
+    //     if ($cartItem) {
+    //         $cartItem->increment('quantity', $data['quantity'] ?? 1);
+    //     } else {
+    //         $this->cartItem::create([
+    //             'cart_id'      => $cart->id,
+    //             'product_id'   => $product->id,
+    //             'product_name' => $product->title,
+    //             'quantity'     => $data['quantity'] ?? 1,
+    //             'creater_type' => User::class,
+    //             'creater_id'   => Auth::guard('web')->check() ? Auth::guard('web')->id() : null,
+    //         ]);
+    //     }
+
+    //     return true;
+    // }
 
     public function updateCartItem(array $data): bool
     {
