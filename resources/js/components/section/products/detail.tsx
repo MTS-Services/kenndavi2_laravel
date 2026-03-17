@@ -1,6 +1,5 @@
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { MinusIcon, PlusIcon, ShoppingCartIcon, Star } from 'lucide-react';
-import { router } from '@inertiajs/react';
 import { toast } from 'sonner';
 
 type StarRatingProps = { rating: number; size?: 'sm' | 'md' };
@@ -78,17 +77,31 @@ export default function ProductDetail({
     const rating = averageRating || 0;
     const reviewsCount = totalReviews || 0;
 
-    const handleAddToCart = () => {
+    // const handleAddToCart = () => {
 
+    //     router.post(
+    //         route('frontend.cart.add'),
+    //         {
+    //             product_id: product.id,
+    //             quantity: quantity,
+    //         },
+    //         {
+    //             onSuccess: () => toast.success('Added to cart!'),
+    //             onError: (errors) => toast.error('Failed to add to cart'),
+    //         },
+    //     );
+    // };
+    const handleBuyNow = (e: React.MouseEvent) => {
+        e.preventDefault();
         router.post(
             route('frontend.cart.add'),
+            { product_id: product.id, quantity: quantity },
             {
-                product_id: product.id,
-                quantity: quantity,
-            },
-            {
-                onSuccess: () => toast.success('Added to cart!'),
-                onError: (errors) => toast.error('Failed to add to cart'),
+                onSuccess: () => {
+                    toast.success('Added to cart!');
+                    router.visit(route('frontend.shopping-info'));
+                },
+                onError: () => toast.error('Failed to add to cart'),
             },
         );
     };
@@ -196,7 +209,7 @@ export default function ProductDetail({
                         <div className="flex items-center justify-center gap-3">
                             <button
                                 type="button"
-                                onClick={handleAddToCart}
+                                onClick={handleBuyNow}
                                 className="flex cursor-pointer items-center gap-2 bg-text-buy-now px-6 py-5 font-public-sans text-xs font-bold text-text-white uppercase"
                             >
                                 <span>Add to cart</span>
@@ -204,7 +217,7 @@ export default function ProductDetail({
                             </button>
                             <Link
                                 href={route('frontend.shopping-info')}
-                                onClick={handleAddToCart}
+                                onClick={handleBuyNow}
                                 className="flex cursor-pointer border border-text-buy-now px-6 py-5 font-public-sans text-xs font-bold text-text-buy-now uppercase"
                             >
                                 Buy Now
