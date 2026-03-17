@@ -23,12 +23,14 @@ interface CartData {
         items: CartItem[];
     } | null;
     cartItems: CartItem[];
+    shippingCost?: number;
+    formattedShippingCost?: string;
 }
 
 export default function ProductCard() {
     const { props } = usePage();
     const cartData = props as any;
-    const { cart, cartItems } = cartData;
+    const { cart, cartItems, shippingCost, formattedShippingCost } = cartData;
     
     // Add checked property to cart items and use calculated data
     const initialProducts = (cartItems || []).map((item: any) => {
@@ -87,7 +89,8 @@ export default function ProductCard() {
         return total;
     }, 0);
     
-    const shipping = subTotal > 0 ? 20 : 0; // Free shipping if no items
+    // Shipping cost: 0 if subtotal is 1 or less, otherwise use dynamic cost
+    const shipping = subTotal <= 1 ? 0 : (shippingCost || 0);
     const total = subTotal + shipping;
     return (
         <FrontendLayout>

@@ -69,6 +69,7 @@ class FrontendController extends Controller
     public function shoppingInfo(): Response
     {
         $data = $this->userAccountService->getShippingInfo();
+        $shippingCost = $this->productService->getShippingCost();
 
         if ($data['user']) {
             $data['user']->load('addresses');
@@ -87,8 +88,11 @@ class FrontendController extends Controller
             });
         }
         
-        // Merge cart data with existing data
-        $data = array_merge($data, $cartDatas);
+        // Merge cart data with existing data and shipping cost
+        $data = array_merge($data, $cartDatas, [
+            'shippingCost' => $shippingCost,
+            'formattedShippingCost' => '$' . number_format($shippingCost, 2),
+        ]);
         
         return Inertia::render('frontend/shopping-info', $data);
     }
