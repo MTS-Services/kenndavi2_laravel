@@ -307,7 +307,7 @@ class PaymentController extends Controller
                         'currency' => strtolower($currency),
                         'unit_amount' => $amountInCents,
                         'product_data' => [
-                            'name' => "Order #{$order->id}",
+                            'name' => "Order Number: {$order->order_number}",
                         ],
                     ],
                 ]],
@@ -395,7 +395,7 @@ class PaymentController extends Controller
                         'currency_code' => strtoupper($currency),
                         'value' => number_format($amountInCents / 100, 2, '.', ''),
                     ],
-                    'description' => "Order #{$order->id}",
+                    'description' => "Order Number: {$order->order_number}",
                     'custom_id' => (string) $payment->id,
                     'reference_id' => (string) $order->id,
                 ]],

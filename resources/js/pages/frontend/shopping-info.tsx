@@ -123,15 +123,6 @@ const handleSubmit = (e: React.FormEvent) => {
         <FrontendLayout>
             <div className="mb-12 sm:mb-28">
                 <div className="container mx-auto px-4 py-10 lg:py-16">
-                    {errors && Object.keys(errors).length > 0 && (
-                        <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-                            <ul className="list-disc list-inside">
-                                {Object.values(errors).map((error, index) => (
-                                    <li key={index}>{error}</li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
                     <form onSubmit={handleSubmit}>
                         <div className="grid gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.7fr)] xl:gap-16">
                             {/* Left: Shipping Form */}

@@ -74,27 +74,8 @@ class FrontendController extends Controller
         if ($data['user']) {
             $data['user']->load('addresses');
         }
-
+        
         $cartDatas = $this->cartService->getAllDatas();
-
-        if (isset($cartDatas['cartItems'])) {
-            $cartDatas['cartItems'] = $cartDatas['cartItems']->map(function ($cartItem) {
-                if ($cartItem->product) {
-                    $calculatedData = $this->productService->getProductCalculatedData(
-                        $cartItem->product,
-                        $cartItem->quantity
-                    );
-                    $cartItem->calculated = $calculatedData;
-                }
-                return $cartItem;
-            });
-        }
-
-        $data = array_merge($data, [
-            'cart'      => $cartDatas['cart'],
-            'cartItems' => $cartDatas['cartItems'],
-        ]);
-
         
         // Merge cart data with existing data and shipping cost
         $data = array_merge($data, $cartDatas, [
