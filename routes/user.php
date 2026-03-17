@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\User\FeedbackController;
 use App\Http\Controllers\User\GoogleAuthController;
+use App\Http\Controllers\User\PaymentController;
 use App\Http\Controllers\User\UserAuthController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
@@ -47,6 +48,11 @@ Route::prefix('user')->name('user.')->group(function () {
             Route::get('/create/{id}', [FeedbackController::class, 'create'])->name('create');
             Route::post('/store', [FeedbackController::class, 'store'])->name('store');
             Route::get('/{id}/view', [FeedbackController::class, 'show'])->name('view');
+        });
+
+        Route::controller(PaymentController::class)->prefix('payment')->name('payment.')->group(function () {
+            Route::get('/start', 'start')->name('start');
+            Route::get('/success/{gateway}', 'success')->name('success');
         });
     });
 });

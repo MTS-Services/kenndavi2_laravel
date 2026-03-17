@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use App\Enums\PaymentMethod;
 use App\Http\Controllers\Controller;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
@@ -21,14 +22,20 @@ class OrderController extends Controller
 public function orderConfirmed(): Response
 {
     $order = $this->orderService->getLatestOrder();
+    $order->load(['orderItems.product.images', 'orderAddress', 'payment']);
     return Inertia::render('frontend/order-confirmed', [
         'order' => $order,
+        'paymentMethod' => collect(PaymentMethod::cases())->map(function($method) {
+            return [
+                'value' => $method->value,
+                'label' => $method->label(),
+            ];
+        })
     ]);
 }
 
     public function store(Request $request)
     {
-
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email',
@@ -45,8 +52,18 @@ public function orderConfirmed(): Response
         ]);
 
         try {
-            $this->orderService->create($validated);
-            return redirect()->route('frontend.orders.order-confirmed');
+            $order = $this->orderService->create($validated);
+            
+            // Set up payment session data
+            session(['payment_pending' => [
+                'order_id' => $order->id,
+                'encrypted_service_id' => encrypt($order->id),
+                'address_id' => $order->orderAddress->id,
+                'payment_method' => 'stripe',
+                'amount' => $order->total,
+            ]]);
+            
+            return redirect()->route('user.payment.start');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to create order: ' . $e->getMessage());
         }
