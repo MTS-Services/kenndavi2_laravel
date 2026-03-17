@@ -117,6 +117,12 @@ class ProductService
         return (int) ($product->stock_level ?? 0) >= $quantity;
     }
 
+    public function getShippingCost(): float
+    {
+        $shippingCost = \App\Models\ShippingCost::latest()->first();
+        return $shippingCost ? (float) $shippingCost->cost : 20.00;
+    }
+
     public function getProductCalculatedData(Product $product, int $quantity = 1): array
     {
         $originalPrice = (float) $product->price;
