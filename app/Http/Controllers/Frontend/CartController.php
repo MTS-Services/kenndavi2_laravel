@@ -22,6 +22,13 @@ class CartController extends Controller
     public function index(): Response
     {
         $data = $this->cartService->getAllDatas();
+        $shippingCost = $this->productService->getShippingCost();
+        
+        // Add shipping cost to data
+        $data = array_merge($data, [
+            'shippingCost' => $shippingCost,
+            'formattedShippingCost' => '$' . number_format($shippingCost, 2),
+        ]);
 
         return Inertia::render('frontend/product-card', $data);
     }

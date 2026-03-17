@@ -17,6 +17,12 @@ class CartService
         protected Product $product
     ) {}
 
+    public function getShippingCost(): float
+    {
+        $shippingCost = \App\Models\ShippingCost::latest()->first();
+        return $shippingCost ? (float) $shippingCost->cost : 20.00;
+    }
+
     public function getAllDatas(): array
     {
         $cart = $this->model

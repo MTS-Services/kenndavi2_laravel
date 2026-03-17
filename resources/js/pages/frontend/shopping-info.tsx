@@ -34,11 +34,13 @@ interface PageProps extends Record<string, any> {
         items: any[];
     } | null;
     cartItems?: any[];
+    shippingCost?: number;
+    formattedShippingCost?: string;
     errors?: Record<string, string>;
 }
 
 export default function ShippingInformationPage() {
-    const { user, addresses, cart, cartItems, errors } = usePage<PageProps>().props;
+    const { user, addresses, cart, cartItems, errors, shippingCost, formattedShippingCost } = usePage<PageProps>().props;
 
     const shippingAddress = addresses?.find((addr) => addr.type === 'shipping');
 
@@ -113,7 +115,8 @@ const handleSubmit = (e: React.FormEvent) => {
         return total + (product.price * product.quantity);
     }, 0);
     
-    const shipping = subTotal > 0 ? 20 : 0;
+    // Shipping cost: 0 if subtotal is 1 or less, otherwise use dynamic cost
+    const shipping = subTotal <= 1 ? 0 : (shippingCost || 0);
     const total = subTotal + shipping;
 
     return (
