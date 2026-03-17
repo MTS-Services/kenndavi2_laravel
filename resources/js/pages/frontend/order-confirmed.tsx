@@ -32,15 +32,40 @@ interface OrderAddress {
 interface Order {
     id: number;
     order_number: string;
-    created_at: string;
+    user_id: number;
     subtotal: number;
     shipping_cost: number;
-    discount: number;
+    tax: number;
     total: number;
+    discount: number;
+    currency: string;
     order_status: string;
     payment_status: string;
+    notes: string | null;
+    created_at: string;
+    updated_at: string;
     order_address: OrderAddress;
     order_items: OrderItem[];
+    payment: Payment | null;
+}
+
+interface Payment {
+    id: number;
+    order_id: number;
+    user_id: number;
+    payment_method: string;
+    transaction_id: string | null;
+    amount: number;
+    currency: string;
+    status: string;
+    paid_at: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+interface PaymentMethodOption {
+    value: string;
+    label: string;
 }
 
 const primaryImage = (items: OrderItem[]) => {
@@ -52,7 +77,12 @@ const primaryImage = (items: OrderItem[]) => {
     return cartProducts;
 };
 
-export default function OrderConfirmed({ order }: { order?: Order }) {
+const getPaymentMethodLabel = (paymentMethodValue: string, paymentMethods: PaymentMethodOption[]): string => {
+    const method = paymentMethods.find(m => m.value === paymentMethodValue);
+    return method?.label || 'N/A';
+};
+
+export default function OrderConfirmed({ order, paymentMethod }: { order?: Order; paymentMethod?: PaymentMethodOption[] }) {
 
     return (
         <FrontendLayout>
@@ -211,7 +241,7 @@ export default function OrderConfirmed({ order }: { order?: Order }) {
 
                                         <div>
                                             <h4 className="text-center font-public-sans text-lg font-medium text-bg-button">
-                                                Payment Method : {order.payment_status}
+                                                Payment Method : {getPaymentMethodLabel(order.payment?.payment_method || '', paymentMethod || [])}
                                             </h4>
                                         </div>
                                     </div>

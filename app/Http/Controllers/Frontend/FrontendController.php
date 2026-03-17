@@ -32,7 +32,7 @@ class FrontendController extends Controller
     }
 
 
-    public function index(): Response 
+    public function index(): Response
     {
         $products = $this->productService->getPaginated(10);
         $recipes = $this->recipeService->getAll(6);
@@ -76,17 +76,6 @@ class FrontendController extends Controller
         }
         
         $cartDatas = $this->cartService->getAllDatas();
-        
-        // Add calculated data for cart items
-        if (isset($cartDatas['cartItems'])) {
-            $cartDatas['cartItems'] = $cartDatas['cartItems']->map(function ($cartItem) {
-                if ($cartItem->product) {
-                    $calculatedData = $this->productService->getProductCalculatedData($cartItem->product, $cartItem->quantity);
-                    $cartItem->calculated = $calculatedData;
-                }
-                return $cartItem;
-            });
-        }
         
         // Merge cart data with existing data and shipping cost
         $data = array_merge($data, $cartDatas, [

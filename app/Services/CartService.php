@@ -38,9 +38,12 @@ class CartService
             })
             ->first();
 
-        $cartItems = $cart ? $cart->items->map(function ($cartItem) {
+        // Use ProductService for consistent calculations
+        $productService = app(\App\Services\ProductService::class);
+        
+        $cartItems = $cart ? $cart->items->map(function ($cartItem) use ($productService) {
             if ($cartItem->product) {
-                $cartItem->calculated = $this->calculateItemData(
+                $cartItem->calculated = $productService->getProductCalculatedData(
                     $cartItem->product,
                     $cartItem->quantity
                 );
