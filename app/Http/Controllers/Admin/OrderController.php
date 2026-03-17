@@ -21,10 +21,12 @@ class OrderController extends Controller
     public function index()
     {
         $orders = $this->orderService->getAllOrders();
+        $orderStats = $this->orderService->getAdminOrderStats();
 
         return Inertia::render('admin/order-management/index', [
             'orders'        => $orders,
             'statusOptions' => OrderStatus::options(),
+            'orderStats'    => $orderStats,
         ]);
     }
 

@@ -1,7 +1,7 @@
 import OrderCard from '@/components/ui/order-card';
 import AdminLayout from '@/layouts/admin-layout';
 import { Head, usePage } from '@inertiajs/react';
-import { Clock, ShoppingCart, Truck, X } from 'lucide-react';
+import { CheckCircle, Clock, ShoppingCart, Truck, X } from 'lucide-react';
 
 export type StatusOption = {
     value: string;
@@ -24,34 +24,45 @@ const StatCard = ({ title, value, icon: Icon }: any) => (
 );
 
 export default function Index() {
-    const { orders, statusOptions } = usePage().props as any;
+    const { orders, statusOptions, orderStats } = usePage().props as any;
     
+    const stats = [
+        { title: 'Pending Orders', value: orderStats?.pending || 0, icon: Clock },
+        { title: 'Confirmed Orders', value: orderStats?.confirmed || 0, icon: ShoppingCart },
+        { title: 'Shipped Orders', value: orderStats?.shipped || 0, icon: Truck },
+        { title: 'Delivered Orders', value: orderStats?.delivered || 0, icon: CheckCircle },
+        { title: 'Cancelled Orders', value: orderStats?.cancelled || 0, icon: X },
+    ];
 
     return (
         <AdminLayout activeSlug={'order-management'}>
             <Head title="Admin Order Management" />
 
-            <div className="flex flex-col gap-2">
-                <h2 className="font-poppins text-[40px] font-medium text-text-title">Order Management</h2>
-                <p className="font-inter text-base font-normal text-text-body">
-                    Track and fulfill customer orders globally.
-                </p>
-            </div>
-
-            <div className="space-y-4">
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                    <StatCard title="Pending"       value="200"    icon={Clock} />
-                    <StatCard title="Shipped"        value="300"    icon={Truck} />
-                    <StatCard title="Completed"      value="677"    icon={ShoppingCart} />
-                    <StatCard title="Cancel Orders"  value="12,234" icon={X} />
+            <div className="flex flex-col gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+                    {stats.map((stat, index) => (
+                        <StatCard
+                            key={index}
+                            title={stat.title}
+                            value={stat.value}
+                            icon={stat.icon}
+                        />
+                    ))}
                 </div>
-            </div>
-
-            <div className="w-full overflow-hidden rounded-2xl border bg-white shadow-sm">
-                <div className="p-6">
-                    <h2 className="font-poppins text-2xl font-semibold text-text-title">Orders List</h2>
+                
+                <div className="space-y-4">
+                    <h2 className="font-poppins text-[40px] font-medium text-text-title">Order Management</h2>
+                    <p className="font-inter text-base font-normal text-text-body">
+                        Track and fulfill customer orders globally.
+                    </p>
                 </div>
-                <OrderCard orders={orders} statusOptions={statusOptions} />
+
+                <div className="w-full overflow-hidden rounded-2xl border bg-white shadow-sm">
+                    <div className="p-6">
+                        <h2 className="font-poppins text-2xl font-semibold text-text-title">Orders List</h2>
+                    </div>
+                    <OrderCard orders={orders} statusOptions={statusOptions} />
+                </div>
             </div>
         </AdminLayout>
     );
