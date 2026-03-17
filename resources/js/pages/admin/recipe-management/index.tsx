@@ -13,6 +13,8 @@ interface PageProps {
         total: number;
         from?: number;
         to?: number;
+        prev_page_url?: string | null;
+        next_page_url?: string | null;
     };
 }
 
@@ -42,13 +44,29 @@ export default function Index({ recipes }: PageProps) {
                 </span>
 
                 <div className="flex gap-2">
-                    <button className="rounded-lg border border-text-green px-4 py-1.5 text-sm font-medium text-text-green transition-colors hover:bg-bg-light-green">
+                    <Link
+                        href={recipes.prev_page_url ? recipes.prev_page_url : '#'}
+                        className={`rounded-lg border px-4 py-1.5 text-sm font-medium transition-colors ${
+                            recipes.prev_page_url
+                                ? 'border-text-green text-text-green hover:bg-bg-light-green'
+                                : 'border-gray-300 text-gray-400 cursor-not-allowed'
+                        }`}
+                        preserveScroll
+                    >
                         Previous
-                    </button>
+                    </Link>
 
-                    <button className="rounded-lg border border-text-green px-4 py-1.5 text-sm font-medium text-text-green transition-colors hover:bg-bg-light-green">
+                    <Link
+                        href={recipes.next_page_url ? recipes.next_page_url : '#'}
+                        className={`rounded-lg border px-4 py-1.5 text-sm font-medium transition-colors ${
+                            recipes.next_page_url
+                                ? 'border-text-green text-text-green hover:bg-bg-light-green'
+                                : 'border-gray-300 text-gray-400 cursor-not-allowed'
+                        }`}
+                        preserveScroll
+                    >
                         Next
-                    </button>
+                    </Link>
                 </div>
             </div>
         </AdminLayout>
