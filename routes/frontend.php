@@ -9,7 +9,7 @@ Route::name('frontend.')->controller(FrontendController::class)->group(function 
 
     Route::middleware('auth')->group(function () {
 
-        Route::get('/shopping-info', 'shoppingInfo')->name('shopping-info');
+        Route::get('/shipping-info', 'shippingInfo')->name('shipping-info');
         Route::group(['prefix' => 'orders', 'as' => 'orders.'], function () {
             Route::get('/order-confirmed', [OrderController::class, 'orderConfirmed'])->name('order-confirmed');
             Route::post('/store', [OrderController::class, 'store'])->name('store');

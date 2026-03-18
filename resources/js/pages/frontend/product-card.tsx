@@ -346,9 +346,18 @@ export default function ProductCard() {
 
                                 {/* Place Order Button */}
                                 <Link
-                                    href={route('frontend.shopping-info')}
+                                    href={products.length > 0 ? route('frontend.shipping-info') : '#'}
                                     type="button"
-                                    className="flex w-full items-center justify-center gap-2 bg-text-buy-now px-6 py-4 font-bebas-neue text-xl font-normal text-text-white uppercase"
+                                    className={`flex w-full items-center justify-center gap-2 px-6 py-4 font-bebas-neue text-xl font-normal uppercase ${
+                                        products.length > 0 
+                                            ? 'bg-text-buy-now text-white cursor-pointer' 
+                                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                    }`}
+                                    onClick={(e) => {
+                                        if (products.length === 0) {
+                                            e.preventDefault();
+                                        }
+                                    }}
                                 >
                                     Proceed to Checkout
                                     <ArrowRight className="h-4 w-4" />

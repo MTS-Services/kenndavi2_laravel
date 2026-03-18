@@ -66,7 +66,7 @@ class FrontendController extends Controller
         ]);
     }
 
-    public function shoppingInfo(): Response
+    public function shippingInfo(): Response
     {
         $data = $this->userAccountService->getShippingInfo();
         $shippingCost = $this->productService->getShippingCost();
@@ -83,7 +83,7 @@ class FrontendController extends Controller
             'formattedShippingCost' => '$' . number_format($shippingCost, 2),
         ]);
         
-        return Inertia::render('frontend/shopping-info', $data);
+        return Inertia::render('frontend/shipping-info', $data);
     }
 
     public function sauceRecipes(): Response

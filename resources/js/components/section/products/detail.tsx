@@ -100,7 +100,7 @@ export default function ProductDetail({
             {
                 onSuccess: () => {
                     toast.success('Added to cart!');
-                    router.visit(route('frontend.shopping-info'));
+                    router.visit(route('frontend.shipping-info'));
                 },
                 onError: () => toast.error('Failed to add to cart'),
             },
