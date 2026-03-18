@@ -73,6 +73,13 @@ class PaymentController extends Controller
         // Consume session immediately — prevents replay attacks
         session()->forget('payment_pending');
 
+        // Update payment status to PROCESSING when redirecting to payment gateway
+        $payment->update([
+            'status' => PaymentStatus::PROCESSING->value,
+            'updater_id' => $user->id,
+            'updater_type' => User::class,
+        ]);
+
         $currency = (string) config('services.stripe.currency', 'usd');
 
         if ($paymentMethod === PaymentMethod::STRIPE->value) {
@@ -252,14 +259,17 @@ class PaymentController extends Controller
                 'transaction_id' => $captureId,
                 'paypal_capture_id' => $captureId,
                 'paypal_payer_id' => $payerId,
+                'updater_id' => $payment->user_id,
+                'updater_type' => User::class,
             ]);
 
             $order = $payment->order;
             $order->update([
                 'order_status' => OrderStatus::CONFIRMED->value,
                 'payment_status' => OrderPaymentStatus::PAID->value,
+                'updater_id' => $payment->user_id,
+                'updater_type' => User::class,
             ]);
-
         });
 
         return redirect()->route('frontend.orders.order-confirmed', ['order' => $payment->order->id])
