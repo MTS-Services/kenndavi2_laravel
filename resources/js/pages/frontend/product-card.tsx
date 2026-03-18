@@ -1,7 +1,9 @@
 import FrontendLayout from '@/layouts/frontend-layout';
-import { Link, usePage, router } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import { ArrowRight, CheckCircle, Minus, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+
+import { Input } from '@/components/ui/input';
 
 interface CartItem {
     id: number;
@@ -31,42 +33,57 @@ export default function ProductCard() {
     const { props } = usePage();
     const cartData = props as any;
     const { cart, cartItems, shippingCost, formattedShippingCost } = cartData;
-    
+
     // Add checked property to cart items and use calculated data
     const initialProducts = (cartItems || []).map((item: any) => {
         const imagePath = item.product?.images?.[0]?.image;
-        
-        const fullImagePath = imagePath ? `/storage/${imagePath}` : '/assets/images/product/Rectangle 20.png';
-        
+
+        const fullImagePath = imagePath
+            ? `/storage/${imagePath}`
+            : '/assets/images/product/Rectangle 20.png';
+
         return {
             ...item,
             checked: true,
             name: item.product_name,
-            price: item.calculated?.discounted_price || parseFloat(item.product?.price || 0),
-            original_price: item.calculated?.original_price || parseFloat(item.product?.price || 0),
+            price:
+                item.calculated?.discounted_price ||
+                parseFloat(item.product?.price || 0),
+            original_price:
+                item.calculated?.original_price ||
+                parseFloat(item.product?.price || 0),
             has_discount: item.calculated?.has_discount || false,
-            formatted_price: item.calculated?.formatted_discounted_price || `$${parseFloat(item.product?.price || 0).toFixed(2)}`,
-            image: fullImagePath
+            formatted_price:
+                item.calculated?.formatted_discounted_price ||
+                `$${parseFloat(item.product?.price || 0).toFixed(2)}`,
+            image: fullImagePath,
         };
     });
-    
+
     const [products] = useState(initialProducts);
 
     const updateQuantity = (id: number, change: number) => {
-        const newQuantity = Math.max(1, products.find((p: any) => p.id === id)?.quantity + change || 1);
-        
-        router.post('/cart/update', {
-            cart_item_id: id,
-            quantity: newQuantity
-        }, {
-            preserveScroll: true,
-            onSuccess: () => {
-                window.location.reload();
+        const newQuantity = Math.max(
+            1,
+            products.find((p: any) => p.id === id)?.quantity + change || 1,
+        );
+
+        router.post(
+            '/cart/update',
+            {
+                cart_item_id: id,
+                quantity: newQuantity,
             },
-            onError: (errors) => {
-                console.error('Failed to update cart:', errors);
-            }
-        });
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    window.location.reload();
+                },
+                onError: (errors) => {
+                    console.error('Failed to update cart:', errors);
+                },
+            },
+        );
     };
 
     const removeProduct = (id: number) => {
@@ -77,25 +94,42 @@ export default function ProductCard() {
             },
             onError: (errors) => {
                 console.error('Failed to remove item:', errors);
-            }
+            },
         });
     };
 
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        router.post(
+            route('frontend.orders.store'),
+            {
+                subTotal: subTotal,
+                shipping: shipping,
+                total: total,
+            },
+            {
+                onError: (errors) => {
+                    console.log(errors);
+                },
+            },
+        );
+    };
     // Calculate totals dynamically using backend calculated data
     const subTotal = products.reduce((total: number, product: any) => {
         if (product.checked) {
-            return total + (product.price * product.quantity);
+            return total + product.price * product.quantity;
         }
         return total;
     }, 0);
-    
+
     // Shipping cost: 0 if subtotal is 1 or less, otherwise use dynamic cost
-    const shipping = subTotal <= 1 ? 0 : (shippingCost || 0);
+    const shipping = subTotal <= 1 ? 0 : shippingCost || 0;
     const total = subTotal + shipping;
     return (
         <FrontendLayout>
             <div>
-                <div className="container mx-auto px-4 py-10 lg:py-16 mb-12 sm:mb-28">
+                <div className="container mx-auto mb-12 px-4 py-10 sm:mb-28 lg:py-16">
                     <div className="grid gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.7fr)] xl:gap-16">
                         {/* Left Column - Shipping Table */}
                         <div className="rounded-sm border border-text-gray-300 p-6">
@@ -167,7 +201,7 @@ export default function ProductCard() {
                                                     }
                                                     className="flex h-9 w-9 items-center justify-center font-aktiv-grotesk text-base font-medium text-text-body"
                                                 >
-                                                    <Minus className="h-5 w-5 text-text-title cursor-pointer" />
+                                                    <Minus className="h-5 w-5 cursor-pointer text-text-title" />
                                                 </button>
                                                 <span className="flex h-9 w-9 items-center justify-center font-aktiv-grotesk text-base font-medium text-text-title">
                                                     {product.quantity
@@ -183,7 +217,7 @@ export default function ProductCard() {
                                                     }
                                                     className="flex h-9 w-9 items-center justify-center font-aktiv-grotesk text-base font-medium text-text-body"
                                                 >
-                                                    <Plus className="h-5 w-5 text-text-title cursor-pointer" />
+                                                    <Plus className="h-5 w-5 cursor-pointer text-text-title" />
                                                 </button>
                                             </div>
                                         </div>
@@ -221,11 +255,16 @@ export default function ProductCard() {
                                                     <div className="space-y-1">
                                                         {product.has_discount && (
                                                             <span className="text-sm text-gray-500 line-through">
-                                                                ${product.original_price.toFixed(2)}
+                                                                $
+                                                                {product.original_price.toFixed(
+                                                                    2,
+                                                                )}
                                                             </span>
                                                         )}
                                                         <span className="font-aktiv-grotesk text-base font-normal text-text-title">
-                                                            {product.formatted_price}
+                                                            {
+                                                                product.formatted_price
+                                                            }
                                                         </span>
                                                     </div>
                                                     <button
@@ -287,81 +326,93 @@ export default function ProductCard() {
                                     Order Summery
                                 </h2>
 
-                                {/* Product Rows */}
-                                {products.map((product: any) => (
-                                    <div key={product.id} className="mb-4 flex items-center gap-3">
-                                        <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-sm border border-text-gray-300">
-                                            <img
-                                                src={product.image || '/assets/images/product/placeholder.png'}
-                                                alt={product.name || 'Product'}
-                                                className="h-full w-full object-cover"
+                                <form onSubmit={handleSubmit}>
+                                    {products.map((product: any) => (
+                                        <div
+                                            key={product.id}
+                                            className="mb-4 flex items-center gap-3"
+                                        >
+                                            <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-sm border border-text-gray-300">
+                                                <img
+                                                    src={product.image}
+                                                    alt={product.name}
+                                                    className="h-full w-full object-cover"
+                                                />
+                                            </div>
+                                            <div>
+                                                <p className="font-aktiv-grotesk text-base font-normal text-text-title">
+                                                    {product.name}
+                                                </p>
+                                                <p className="mt-0.5 font-public-sans text-sm font-normal text-text-body">
+                                                    {product.quantity} ×{' '}
+                                                    <span className="font-semibold text-text-green">
+                                                        {
+                                                            product.formatted_price
+                                                        }
+                                                    </span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ))}
+
+                                    <div className="mb-4 space-y-3">
+                                        <div className="flex items-center justify-between">
+                                            <span className="font-aktiv-grotesk text-sm font-normal text-text-body">
+                                                Sub-total
+                                            </span>
+                                            <Input
+                                                type="hidden"
+                                                name="subTotal"
+                                                value={subTotal.toFixed(2)}
                                             />
+                                            <span className="font-aktiv-grotesk text-sm font-normal text-text-title">
+                                                ${subTotal.toFixed(2)}
+                                            </span>
                                         </div>
-                                        <div>
-                                            <p className="font-aktiv-grotesk text-sm font-normal text-text-title">
-                                                {product.name}
-                                            </p>
-                                            <p className="mt-0.5 font-public-sans text-xs font-normal text-text-body">
-                                                {product.quantity} ×{' '}
-                                                <span className="font-semibold text-text-green">
-                                                    ${parseFloat(product.price || 0).toFixed(2)}
-                                                </span>
-                                            </p>
+                                        <div className="flex items-center justify-between">
+                                            <span className="font-aktiv-grotesk text-sm font-normal text-text-body">
+                                                Shipping
+                                            </span>
+                                            <Input
+                                                type="hidden"
+                                                name="shipping"
+                                                value={shipping.toFixed(2)}
+                                            />
+                                            <span className="font-aktiv-grotesk text-sm font-normal text-text-title">
+                                                ${shipping.toFixed(2)}
+                                            </span>
                                         </div>
                                     </div>
-                                ))}
 
-                                {/* Price Rows */}
-                                <div className="mb-4 space-y-3">
-                                    <div className="flex items-center justify-between">
-                                        <span className="font-aktiv-grotesk text-sm font-normal text-text-body">
-                                            Sub-total
+                                    <div className="mb-4 w-full border-b border-text-gray-300"></div>
+
+                                    <div className="mb-6 flex items-center justify-between">
+                                        <span className="font-aktiv-grotesk text-base font-semibold text-text-title">
+                                            Total
                                         </span>
-                                        <span className="font-aktiv-grotesk text-sm font-normal text-text-title">
-                                            ${subTotal.toFixed(2)}
-                                        </span>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <span className="font-aktiv-grotesk text-sm font-normal text-text-body">
-                                            Shipping
-                                        </span>
-                                        <span className="font-aktiv-grotesk text-sm font-normal text-text-title">
-                                            ${shipping.toFixed(2)}
+                                        <Input
+                                            type="hidden"
+                                            name="total"
+                                            value={total.toFixed(2)}
+                                        />
+                                        <span className="font-aktiv-grotesk text-base font-semibold text-text-title">
+                                            ${total.toFixed(2)} USD
                                         </span>
                                     </div>
-                                </div>
 
-                                {/* Divider */}
-                                <div className="mb-4 w-full border-b border-text-gray-300"></div>
-
-                                {/* Total */}
-                                <div className="mb-6 flex items-center justify-between">
-                                    <span className="font-aktiv-grotesk text-base font-semibold text-text-title">
-                                        Total
-                                    </span>
-                                    <span className="font-aktiv-grotesk text-base font-semibold text-text-title">
-                                        ${total.toFixed(2)} USD
-                                    </span>
-                                </div>
-
-                                {/* Place Order Button */}
-                                <Link
-                                    href={products.length > 0 ? route('frontend.shipping-info') : '#'}
-                                    type="button"
-                                    className={`flex w-full items-center justify-center gap-2 px-6 py-4 font-bebas-neue text-xl font-normal uppercase ${
-                                        products.length > 0 
-                                            ? 'bg-text-buy-now text-white cursor-pointer' 
-                                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                    }`}
-                                    onClick={(e) => {
-                                        if (products.length === 0) {
-                                            e.preventDefault();
-                                        }
-                                    }}
-                                >
-                                    Proceed to Checkout
-                                    <ArrowRight className="h-4 w-4" />
-                                </Link>
+                                    <button
+                                        type="submit"
+                                        className={`flex w-full items-center justify-center gap-2 px-6 py-4 font-bebas-neue text-xl font-normal uppercase ${
+                                            products.length > 0
+                                                ? 'cursor-pointer bg-text-buy-now text-white'
+                                                : 'cursor-not-allowed bg-gray-300 text-gray-500'
+                                        }`}
+                                        disabled={products.length === 0}
+                                    >
+                                        Proceed to Checkout
+                                        <ArrowRight className="h-4 w-4" />
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>

@@ -119,28 +119,11 @@ class OrderService
                 'total'          => $data['total'] ?? 0,
                 'currency'       => 'USD',
                 'payment_status' => OrderPaymentStatus::UNPAID->value,
-                'order_status'   => OrderStatus::CONFIRMED->value,
+                'order_status'   => OrderStatus::PENDING->value,
                 'notes'          => null,
                 'creater_id'     => $user->id,
                 'creater_type'   => User::class,
             ]);
-
-            if (!empty($data)) {
-                $this->orderAddresse::create([
-                    'order_id'      => $order->id,
-                    'full_name'     => $data['name'],
-                    'phone'         => $data['phone'],
-                    'email'         => $data['email'],
-                    'address_line1' => $data['address_line1'],
-                    'address_line2' => $data['address_line2'] ?? null,
-                    'city'          => $data['city'],
-                    'state'         => $data['State'],
-                    'postal_code'   => $data['postalCode'],
-                    'country'       => $data['country'],
-                    'creater_id'    => $user->id,
-                    'creater_type'  => User::class,
-                ]);
-            }
 
             $items         = [];
             $totalDiscount = 0;
@@ -177,11 +160,40 @@ class OrderService
 
             $cart->delete();
 
-
             $order->load('orderAddress', 'orderItems');
-            Mail::to($data['email'])->send(new OrderConfirmedMail($order));
 
             return $order;
         });
+    }
+
+    public function orderPlace(array $data = [], $orderId)
+    {
+        // Get the order by ID
+        $order = $this->order->find($orderId);
+        if (!$order) {
+            throw new \Exception('Order not found');
+        }
+        
+        if (!empty($data)) {
+            $this->orderAddresse::create([
+                'order_id'      => $order->id,
+                'full_name'     => $data['name'],
+                'phone'         => $data['phone'],
+                'email'         => $data['email'],
+                'address_line1' => $data['address_line1'],
+                'address_line2' => $data['address_line2'] ?? null,
+                'city'          => $data['city'],
+                'state'         => $data['State'],
+                'postal_code'   => $data['postalCode'],
+                'country'       => $data['country'],
+                'creater_id'    => auth('web')->id(),
+                'creater_type'  => User::class,
+            ]);
+
+            // Send email after placing order address
+            Mail::to($data['email'])->send(new OrderConfirmedMail($order));
+        }
+
+        return $order;
     }
 }

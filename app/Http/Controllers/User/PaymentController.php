@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderAddresse;
 use App\Models\Payment;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -62,6 +63,8 @@ class PaymentController extends Controller
                 'amount' => $amount,
                 'payment_method' => $methodEnum->value,
                 'status' => PaymentStatus::PENDING->value,
+                'creater_id' => $user->id,
+                'creater_type' => User::class,
             ]);
 
             return [$order, $payment];
@@ -174,12 +177,16 @@ class PaymentController extends Controller
                 'transaction_id' => $chargeId ?? $sessionId,
                 'payment_intent_id' => $paymentIntentId,
                 'charge_id' => $chargeId,
+                'updater_id' => $payment->user_id,
+                'updater_type' => User::class,
             ]);
 
             $order = $payment->order;
             $order->update([
-                'status' => OrderStatus::CONFIRMED->value,
+                'order_status' => OrderStatus::CONFIRMED->value,
                 'payment_status' => OrderPaymentStatus::PAID->value,
+                'updater_id' => $payment->user_id,
+                'updater_type' => User::class,
             ]);
         });
 
@@ -249,7 +256,7 @@ class PaymentController extends Controller
 
             $order = $payment->order;
             $order->update([
-                'status' => OrderStatus::CONFIRMED->value,
+                'order_status' => OrderStatus::CONFIRMED->value,
                 'payment_status' => OrderPaymentStatus::PAID->value,
             ]);
 
@@ -291,7 +298,7 @@ class PaymentController extends Controller
         $successUrl = route('user.payment.success', ['gateway' => 'stripe'])
             .'?session_id={CHECKOUT_SESSION_ID}';
 
-        $cancelUrl = route('frontend.shipping-info', ['service_id' => $encryptedServiceId])
+        $cancelUrl = route('frontend.product-card')
             .'?payment=stripe_cancel';
 
         $response = Http::asForm()
@@ -381,7 +388,7 @@ class PaymentController extends Controller
         // Do not use placeholders like {TOKEN} in return_url.
         $successUrl = route('user.payment.success', ['gateway' => 'paypal']);
 
-        $cancelUrl = route('frontend.shipping-info', ['product_id' => $encryptedProductId])
+        $cancelUrl = route('frontend.product-card')
             .'?payment=paypal_cancel';
 
         // Step 2: Create PayPal order (custom_id = our payment id for success handler)
