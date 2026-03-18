@@ -147,7 +147,7 @@ export default function ProductToReview() {
                                             product.order_id,
                                         ) ? (
                                             <a target="_blank"
-                                                href={route('frontend.product-details', product.id)}
+                                                href={route('frontend.product-details', product.product_id)}
                                                 className="inline-flex items-center justify-center bg-text-green w-full py-2 text-sm font-bold text-text-white uppercase xl:py-4"
                                             >
                                                 Details
