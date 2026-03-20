@@ -1,6 +1,6 @@
 import { Link } from '@inertiajs/react';
 import React from 'react';
-import { Facebook, Instagram, Twitter, Phone, Mail } from 'lucide-react';
+import { Facebook, Instagram, Phone, Mail } from 'lucide-react';
 
 const FrontendFooter: React.FC = () => {
     return (
@@ -16,7 +16,6 @@ const FrontendFooter: React.FC = () => {
                             Crafted with passion and premium ingredients to bring bold, unforgettable flavors to your table.
                         </p>
                         <div className="flex space-x-4">
-                            <a href="#" className="text-text-white text-lg font-normal font-inter"><Twitter size={20} /></a>
                             <a href="#" className="text-text-white text-lg font-normal font-inter"><Facebook size={20} /></a>
                             <a href="#" className="text-text-white text-lg font-normal font-inter"><Instagram size={20} /></a>
                         </div>
