@@ -3,11 +3,16 @@ import { BicepsFlexed, Clock, Users, Utensils } from 'lucide-react';
 export default function Hero() {
     return (
         <div className="relative h-[calc(100vh-118px)]">
-            <img
-                src="/assets/images/home/banner.jpg"
-                alt="Hero Banner"
+            <video
                 className="h-full w-full object-cover"
-            />
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="metadata"
+            >
+                <source src="/video/hero-section-video.mp4" type="video/mp4" />
+            </video>
             {/* Black overlay for better text visibility */}
             <div className="absolute inset-0 bg-black/40"></div>
             {/* Bottom fade to white  */}
