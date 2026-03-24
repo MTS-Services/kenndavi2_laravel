@@ -6,7 +6,7 @@ const FrontendFooter: React.FC = () => {
     return (
         <footer className="bg-bg-footer text-text-white py-8">
             <div className="container mx-auto px-4">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {/* Column 1: Logo and Description */}
                     <div className="flex flex-col items-start">
                         <Link href={route('frontend.home')}>
@@ -17,7 +17,7 @@ const FrontendFooter: React.FC = () => {
                         </p>
                         <div className="flex space-x-4">
                             <a href="#" className="text-text-white text-lg font-normal font-inter"><Facebook size={20} /></a>
-                            <a href="#" className="text-text-white text-lg font-normal font-inter"><Instagram size={20} /></a>
+                            <a href="https://www.instagram.com/kenndavi2/" target="_blank" rel="noopener noreferrer" className="text-text-white text-lg font-normal font-inter"><Instagram size={20} /></a>
                         </div>
                     </div>
 
@@ -31,23 +31,12 @@ const FrontendFooter: React.FC = () => {
                         </ul>
                     </div>
 
-                    {/* Column 3: Open Time */}
-                    <div>
-                        <h3 className="text-text-white text-xl font-medium font-inter mb-4">Open Time</h3>
-                        <p className="text-text-white text-lg font-normal font-inter">Monday - Thursday: 8:30 am - 4:30 pm</p>
-                        <p className="text-text-white text-lg font-normal font-inter">Friday: 8:30 am - 2:30 pm</p>
-                    </div>
-
-                    {/* Column 4: Contacts */}
+                    {/* Column 3: Contacts */}
                     <div>
                         <h3 className="text-text-white text-xl font-medium font-inter mb-4">Contacts</h3>
                         <div className="flex items-center space-x-2 mb-2">
                             <Phone size={20} className="text-text-white text-lg font-normal font-inter" />
-                            <span className="text-text-white text-lg font-normal font-inter">01484 841395</span>
-                        </div>
-                        <div className="flex items-center space-x-2 mb-2">
-                            <Phone size={20} className="text-text-white text-lg font-normal font-inter" />
-                            <span className="text-text-white text-lg font-normal font-inter">+441484 841395</span>
+                            <span className="text-text-white text-lg font-normal font-inter">(202) 993-1664</span>
                         </div>
                         <div className="flex items-center space-x-2">
                             <Mail size={20} className="text-text-white text-lg font-normal font-inter" />

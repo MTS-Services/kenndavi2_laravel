@@ -1,5 +1,3 @@
-import { BicepsFlexed, Clock, Users, Utensils } from 'lucide-react';
-
 export default function Hero() {
     return (
         <div className="relative h-[calc(100vh-118px)]">
@@ -25,37 +23,8 @@ export default function Hero() {
                         Welcome to Northside
                     </h1>
                     <p className="mb-4 max-w-xl font-inter text-lg leading-relaxed md:text-xl">
-                        Whatever you're slapping on the grill make it better with northside legendary Texas flavor and love.
+                        No matter what's on your grill, make it unforgettable with the Taste of Da Northside legendary St. Louis flavor Bar-B-Que sauce.
                     </p>
-
-                    <div className="grid w-full grid-cols-2 gap-4 sm:max-w-2xl sm:grid-cols-4">
-                        <div className="flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-white/40 py-3 text-center backdrop-blur-xs sm:w-32">
-                            <Utensils className="h-9 w-9" />
-                            <p className="font-bebas-neue text-base font-normal text-text-white uppercase">
-                                {' '}
-                                Infinity <br />
-                                Test
-                            </p>
-                        </div>
-                        <div className="flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-white/40 py-3 text-center backdrop-blur-xs sm:w-32">
-                            <Users className="h-9 w-9" />
-                            <p className="font-bebas-neue text-base font-normal text-text-white uppercase">
-                                15k <br /> Clients
-                            </p>
-                        </div>
-                        <div className="flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-white/40 py-3 text-center backdrop-blur-xs sm:w-32">
-                            <Clock className="h-9 w-9" />
-                            <p className="font-bebas-neue text-base font-normal text-text-white uppercase">
-                                24 HOURs <br /> open to order
-                            </p>
-                        </div>
-                        <div className="flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-white/40 py-3 text-center backdrop-blur-xs sm:w-32">
-                            <BicepsFlexed className="h-9 w-9" />
-                            <p className="font-bebas-neue text-base font-normal text-text-white uppercase">
-                                10 years+ <br /> Experience
-                            </p>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
