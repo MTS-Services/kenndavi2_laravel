@@ -74,46 +74,46 @@ export default function OrderDetails() {
 
     return (
         <UserDashboardLayout>
-            <div className="flex flex-col gap-4 px-4 pb-6 md:px-6">
+            <div className="flex flex-col gap-4 px-4 pb-6 md:px-0">
                 <div
                     key={order.order_number}
-                    className="overflow-hidden border border-red-200"
+                    className="overflow-hidden"
                     style={{ backgroundColor: 'var(--color-order-card-bg)' }}
                 >
                     <div className="px-6 py-5 bg-bg-button/10">
                         <h2 className="font-inter text-2xl font-semibold text-text-title">
-                            Order Details
+                            Order
                         </h2>
                     </div>
                     
-                    <div className="grid grid-cols-[200px_1fr_180px_180px] items-center px-6 py-2.5 bg-bg-button/20">
+                    <div className="grid grid-cols-5 items-center px-6 py-2.5 bg-bg-button/30">
                         <div>
                             <p className="font-inter text-base font-normal uppercase text-text-title/70">
                                 Order Number :
                             </p>
-                            <p className="font-inter text-base font-bold text-text-title">
+                            <p className="font-inter text-base font-medium text-text-title">
                                 {order.order_number}
                             </p>
                         </div>
-                        <div>
+                        <div className="col-span-2">
                             <p className="font-inter text-base font-normal uppercase text-text-title/70">
                                 Products
                             </p>
                         </div>
-                        <div>
-                            <p className="font-inter text-base font-normal uppercase text-text-title/70">
+                        <div className="text-center">
+                            <p className="font-inter text-base font-normal  uppercase text-text-title/70">
                                 Order Total : ${order.total}
                             </p>
                         </div>
-                        <div>
+                        <div className="text-right">
                             <p className="font-inter text-base font-normal uppercase text-text-title/70">
-                                Shipping Status
+                                Status
                             </p>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-[200px_1fr_180px_180px] items-start px-6 py-5 bg-bg-button/10">
-                        <div className="flex flex-col gap-4 pr-5 border-r border-red-200">
+                    <div className="grid grid-cols-5 items-start px-6 py-5 bg-bg-button/10">
+                        <div className="flex flex-col gap-4 pr-5 border-r-2 border-bg-button/10">
                             <div>
                                 <p className="font-inter text-base font-medium text-text-title">
                                     Order Date :
@@ -160,17 +160,17 @@ export default function OrderDetails() {
                             </div>
                         </div>
 
-                        <div className="flex flex-col pl-5 gap-5">
+                        <div className="col-span-2 w-full flex flex-col pl-5 gap-5">
                             {order.order_items?.map((item, idx) => {
                                 const img = primaryImage(item);
                                 return (
-                                    <div key={idx} className="flex items-center gap-3">
-                                        <div className="shrink-0 overflow-hidden w-[70px] h-[70px] bg-white">
+                                    <div key={idx} className="flex gap-3">
+                                        <div className="shrink-0 overflow-hidden w-[64px] h-[60px]">
                                             {img ? (
                                                 <img
                                                     src={img}
                                                     alt={item.product_name}
-                                                    className="h-full w-full object-cover"
+                                                    className="h-full w-full object-cover rounded-xl"
                                                 />
                                             ) : (
                                                 <div className="flex h-full w-full items-center justify-center bg-[#f0e0e0]">
@@ -195,7 +195,7 @@ export default function OrderDetails() {
                             {order.order_items?.map((item, idx) => (
                                 <div
                                     key={idx}
-                                    className="flex items-center"
+                                    className="flex items-center justify-center"
                                     style={{ height: '70px' }}
                                 >
                                     <p className="font-inter text-base font-normal text-text-title">
@@ -205,7 +205,7 @@ export default function OrderDetails() {
                             ))}
                         </div>
 
-                        <div className="flex items-center justify-start" style={{ height: '70px' }}>
+                        <div className="flex items-center justify-end" style={{ height: '70px' }}>
                             <span
                                 className={`font-inter text-base font-normal ${
                                     opt?.color?.startsWith('text-') ? opt.color : ''

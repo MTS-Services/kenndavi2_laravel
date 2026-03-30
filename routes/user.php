@@ -53,6 +53,7 @@ Route::prefix('user')->name('user.')->group(function () {
         Route::controller(PaymentController::class)->prefix('payment')->name('payment.')->group(function () {
             Route::get('/start', 'start')->name('start');
             Route::get('/success/{gateway}', 'success')->name('success');
+            Route::get('/cancel/{orderId}', 'cancel')->name('cancel');
         });
     });
 });

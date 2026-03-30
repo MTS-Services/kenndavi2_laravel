@@ -87,7 +87,7 @@ export default function Sidebar() {
 
                 {/* User Profile Section */}
 
-                <nav className="p-4 space-y-1">
+                <nav className="space-y-1">
                     
                     <NavItem
                         href={route('user.dashboard')}
