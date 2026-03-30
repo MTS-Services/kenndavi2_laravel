@@ -29,7 +29,9 @@ Route::prefix('user')->name('user.')->group(function () {
         Route::controller(UserController::class)->group(function () {
             Route::get('/dashboard', 'index')->name('dashboard');
             Route::get('/orders', 'orders')->name('orders');
-            Route::get('/orders-details/{id}', 'orderDetails')->name('order-details');
+            Route::get('/order-details/{id}', 'orderDetails')->name('order-details');
+            Route::get('/order/{id}/payment', 'orderPayment')->name('order.payment');
+            Route::get('/order/{id}/cancel', 'orderCancel')->name('order.cancel');
             Route::get('/product-to-review', 'productToReview')->name('product-to-review');
             Route::get('/review', 'review')->name('review');
             Route::get('/account-settings', 'accountSettings')->name('account-settings');

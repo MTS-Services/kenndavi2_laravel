@@ -47,39 +47,39 @@ class PaymentController extends Controller
         /**
          * 🚫 BLOCK: If order already paid or failed
          */
-        if ($order->payment_status !== OrderPaymentStatus::UNPAID) {
-            return redirect()
-                ->route('frontend.orders')
-                ->withErrors(['payment' => 'This order is already processed.']);
-        }
+        // if ($order->payment_status !== OrderPaymentStatus::UNPAID) {
+        //     return redirect()
+        //         ->route('user.orders')
+        //         ->withErrors(['payment' => 'This order is already processed.']);
+        // }
 
         /**
          * 🚫 BLOCK: If payment already exists (IMPORTANT)
          */
-        $existingPayment = Payment::where('order_id', $order->id)->first();
+        // $existingPayment = Payment::where('order_id', $order->id)->first();
 
-        if ($existingPayment) {
-            return redirect()
-                ->route('frontend.orders')
-                ->withErrors(['payment' => 'Payment already initiated for this order.']);
-        }
+        // if ($existingPayment) {
+        //     return redirect()
+        //         ->route('user.orders')
+        //         ->withErrors(['payment' => 'Payment already initiated for this order.']);
+        // }
 
 
-        if (
-            $existingPayment &&
-            $existingPayment->status === PaymentStatus::PROCESSING &&
-            $existingPayment->created_at->diffInMinutes(now()) > 1
-        ) {
-            $existingPayment->update([
-                'status' => PaymentStatus::FAILED->value,
-                'updated_at' => now(),
-            ]);
+        // if (
+        //     $existingPayment &&
+        //     $existingPayment->status === PaymentStatus::PROCESSING &&
+        //     $existingPayment->created_at->diffInMinutes(now()) > 1
+        // ) {
+        //     $existingPayment->update([
+        //         'status' => PaymentStatus::FAILED->value,
+        //         'updated_at' => now(),
+        //     ]);
 
-            $order->update([
-                'payment_status' => OrderPaymentStatus::FAILED->value,
-                'order_status' => OrderStatus::CANCELLED->value,
-            ]);
-        }
+        //     $order->update([
+        //         'payment_status' => OrderPaymentStatus::FAILED->value,
+        //         'order_status' => OrderStatus::CANCELLED->value,
+        //     ]);
+        // }
 
         // Ensure address belongs to user
         $address = OrderAddresse::where('id', $addressId)->where('order_id', $orderId)->firstOrFail();

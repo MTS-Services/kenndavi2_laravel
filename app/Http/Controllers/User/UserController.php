@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Enums\OrderPaymentStatus;
 use App\Enums\OrderStatus;
+use App\Enums\PaymentStatus;
 use App\Http\Controllers\Controller;
 use App\Services\FeedbackService;
 use App\Services\OrderService;
 use App\Services\UserAccountSettinsService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\Auth;
@@ -55,6 +58,57 @@ class UserController extends Controller
             'statusOptions' => OrderStatus::options(),
         ]);
     }
+
+public function orderPayment($id)
+{
+    Log::info('Searching for order with ID: ' . $id);
+
+    $order = $this->orderService->getOrderById($id); // ✅ FIXED
+
+    if (!$order) {
+        Log::error('Order not found with ID: ' . $id);
+        abort(404, 'Order not found');
+    }
+
+    if ($order->payment_status === OrderPaymentStatus::PAID->value) {
+        return redirect()->route('user.order-details', ['id' => $order->id])
+            ->with('error', 'Payment is already completed');
+    }
+
+    session(['payment_pending' => [
+        'order_id' => $order->id,
+        'encrypted_service_id' => encrypt($order->id),
+        'address_id' => $order->orderAddress->id ?? null,
+        'payment_method' => 'stripe',
+        'amount' => $order->total,
+        'created_at' => now()->timestamp,
+        'user_id' => auth('web')->id(),
+    ]]);
+
+    return redirect()->route('user.payment.start');
+}
+
+public function orderCancel($id)
+{
+    Log::info('Attempting to cancel order with ID: ' . $id);
+
+    $order = $this->orderService->getOrderById($id);
+
+    if (!$order) {
+        Log::error('Order not found with ID: ' . $id);
+        abort(404, 'Order not found');
+    }
+
+    if ($order->payment_status === OrderPaymentStatus::PAID->value) {
+        return redirect()->route('user.order-details', ['id' => $order->id])
+            ->with('error', 'Completed payment orders cannot be cancelled');
+    }
+
+    $this->orderService->updateOrderStatus($order->id, OrderStatus::CANCELLED->value);
+
+    return redirect()->route('user.orders')
+        ->with('success', 'Order has been cancelled successfully');
+}
 
     public function productToReview(): Response
     {

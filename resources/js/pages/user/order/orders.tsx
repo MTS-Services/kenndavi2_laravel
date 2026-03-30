@@ -60,6 +60,11 @@ export default function Orders() {
                     <h2 className="font-poppins text-2xl font-semibold text-text-title">
                         Orders List
                     </h2>
+                    {props.errors && Object.keys(props.errors).length > 0 && (
+                        <div className="text-red-500">
+                            {Object.values(props.errors).flat().join(', ')}
+                        </div>
+                    )}
                 </div>
                 <table className="w-full text-sm">
                     <thead>

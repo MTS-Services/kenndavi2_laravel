@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Services\ProductService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class OrderService
@@ -78,6 +79,44 @@ class OrderService
             ->where('user_id', auth('web')->id())
             ->latest()
             ->get();
+    }
+
+    public function getOrderByOrderNumber($orderNumber)
+    {
+        Log::info('getOrderByOrderNumber called with: ' . $orderNumber);
+        
+        $order = $this->order::where('order_number', $orderNumber)
+            ->with(['orderItems.product.images', 'orderAddress', 'payment'])
+            ->first();
+            
+        if ($order) {
+            Log::info('Order found in database: ' . $order->id);
+        } else {
+            Log::error('Order NOT found in database for: ' . $orderNumber);
+            
+            // Let's check what order numbers exist
+            $allOrders = $this->order::pluck('order_number')->toArray();
+            Log::info('Available order numbers: ' . implode(', ', $allOrders));
+        }
+        
+        return $order;
+    }
+
+    public function updateOrderStatus($orderId, $status)
+    {
+        $order = $this->order::find($orderId);
+        if (!$order) {
+            return false;
+        }
+        
+        $order->update(['order_status' => $status]);
+        
+        // If order is cancelled, also update payment status
+        if ($status === OrderStatus::CANCELLED->value && $order->payment) {
+            $order->payment->update(['status' => PaymentStatus::FAILED->value]);
+        }
+        
+        return $order;
     }
 
     public function getOrderById($id)

@@ -1,11 +1,19 @@
 import UserDashboardLayout from '@/layouts/user-dashboard-layout';
-import { usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
+import { error } from 'console';
 
 interface Order {
     id: string;
     order_number: string;
     order_status: string;
     payment_method?: string;
+    payment_status?: string;
+    payment?: {
+        id: string;
+        status: string;
+        amount: number;
+        payment_method: string;
+    };
     total: number;
     created_at: string;
     order_address: {
@@ -75,15 +83,26 @@ export default function OrderDetails() {
     return (
         <UserDashboardLayout>
             <div className="flex flex-col gap-4 px-4 pb-6 md:px-0">
+                {props.errors && Object.keys(props.errors).length > 0 && (
+                    <div className="text-red-500">
+                        {Object.values(props.errors).flat().join(', ')}
+                    </div>
+                )}
                 <div
                     key={order.order_number}
                     className="overflow-hidden"
                     style={{ backgroundColor: 'var(--color-order-card-bg)' }}
                 >
-                    <div className="px-6 py-5 bg-bg-button/10">
+                    <div className="flex justify-between items-center px-6 py-5 bg-bg-button/10">
                         <h2 className="font-inter text-2xl font-semibold text-text-title">
                             Order
                         </h2>
+                        {order.payment_status !== 'paid' && order.order_status !== 'cancelled' && (
+                            <div className="flex gap-4">
+                                <Link href={`/user/order/${order.id}/payment`} className="font-inter text-base font-medium text-text-white px-4 py-2 rounded-xs hover:bg-text-green/70 bg-text-green">Try Payment</Link>
+                                <Link href={`/user/order/${order.id}/cancel`} className="font-inter text-base font-medium text-text-white px-4 py-2 rounded-xs hover:bg-bg-button/70 bg-bg-button">Cancell</Link>
+                            </div>
+                        )}
                     </div>
                     
                     <div className="grid grid-cols-5 items-center px-6 py-2.5 bg-bg-button/30">
