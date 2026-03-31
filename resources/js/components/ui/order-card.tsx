@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { router } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import OrderDetails from './order-details';
 import type { StatusOption } from '@/pages/admin/order-management/index';
 import { toast } from 'sonner';
@@ -164,15 +164,15 @@ export default function OrderCard({ orders: initialOrders, statusOptions }: Prop
                                     </td>
                                     <td className="px-6 py-4 font-roboto text-base font-normal text-text-title">{order.created_at?(new Date(order.created_at)).toLocaleDateString():''}</td>
                                     <td className="px-6 py-4">
-                                        <button
-                                            onClick={() => handleViewOrder(order)}
+                                        <Link
+                                            href={`/admin/order-management/details/${order.id}`}
                                             className="p-1.5 rounded-full text-text-title hover:bg-bg-card transition-colors cursor-pointer"
                                         >
                                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
                                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                                                 <circle cx="12" cy="12" r="3" />
                                             </svg>
-                                        </button>
+                                        </Link>
                                     </td>
                                 </tr>
                             );
@@ -197,14 +197,15 @@ export default function OrderCard({ orders: initialOrders, statusOptions }: Prop
                 </div>
             </div>
 
-            {selectedOrder && (
+            {/* {selectedOrder && (
                 <OrderDetails
                     order={selectedOrder}
                     statusOptions={statusOptions}
                     onClose={() => setSelectedOrder(null)}
                     onStatusChange={(new_status) => handleDetailsStatusChange(selectedOrder.id, new_status)}
                 />
-            )}
+            )} */}
+
         </>
     );
 }

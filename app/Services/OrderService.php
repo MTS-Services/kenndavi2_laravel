@@ -121,8 +121,7 @@ class OrderService
 
     public function getOrderById($id)
     {
-        return $this->order::with(['orderItems.product.images', 'orderAddress'])
-            ->where('user_id', auth('web')->id())
+        return $this->order::with(['orderItems.product.images', 'orderAddress', 'payment'])
             ->where('id', $id)
             ->first();
     }
@@ -304,11 +303,14 @@ class OrderService
             throw new \Exception('Order not found');
         }
 
-        // Update order status to PROCESSING when "Place Order" is clicked
+        // Update order with shipping info and totals
         $order->update([
-            'order_status' => OrderStatus::PROCESSING->value,
-            'updater_id' => auth('web')->id(),
-            'updater_type' => User::class,
+            'order_status'   => OrderStatus::PROCESSING->value,
+            'subtotal'       => $data['subTotal'] ?? $order->subtotal,
+            'shipping_cost'  => $data['shipping'] ?? $order->shipping_cost,
+            'total'          => $data['total'] ?? $order->total,
+            'updater_id'     => auth('web')->id(),
+            'updater_type'   => User::class,
         ]);
         
         if (!empty($data)) {

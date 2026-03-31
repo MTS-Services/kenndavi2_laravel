@@ -33,6 +33,7 @@ interface PageProps extends Record<string, any> {
         id: number;
         items: any[];
     } | null;
+    order?: any;
     orderItems?: any[];
     shippingCost?: number;
     formattedShippingCost?: string;
@@ -44,6 +45,7 @@ export default function ShippingInformationPage() {
         user,
         addresses,
         cart,
+        order,
         orderItems,
         errors,
         shippingCost,
@@ -108,7 +110,7 @@ export default function ShippingInformationPage() {
         );
     };
 
-    // Transform cart items with calculated data for display
+    // Transform order items with calculated data for display
     const orderItemsData = (orderItems || []).map((item: any) => {
         const imagePath = item.product?.images?.[0]?.image;
         const fullImagePath = imagePath
@@ -118,31 +120,20 @@ export default function ShippingInformationPage() {
         return {
             ...item,
             name: item.product_name,
-            price:
-                item.calculated?.discounted_price ||
-                parseFloat(item.product?.price || 0),
-            original_price:
-                item.calculated?.original_price ||
-                parseFloat(item.product?.price || 0),
-            has_discount: item.calculated?.has_discount || false,
-            formatted_price:
-                item.calculated?.formatted_discounted_price ||
-                `$${parseFloat(item.product?.price || 0).toFixed(2)}`,
-            formatted_original_price:
-                item.calculated?.formatted_original_price ||
-                `$${parseFloat(item.product?.price || 0).toFixed(2)}`,
+            price: parseFloat(item.price || 0), // Use price from order item (correct discounted price)
+            original_price: parseFloat(item.product?.price || 0),
+            has_discount: parseFloat(item.discount || 0) > 0,
+            formatted_price: `$${parseFloat(item.price || 0).toFixed(2)}`, // Use price from order item
+            formatted_original_price: `$${parseFloat(item.product?.price || 0).toFixed(2)}`,
             image: fullImagePath,
         };
     });
 
-    // Calculate totals dynamically
-    const subTotal = orderItemsData.reduce((total: number, product: any) => {
-        return total + product.price * product.quantity;
-    }, 0);
-
-    // Shipping cost: 0 if subtotal is 1 or less, otherwise use dynamic cost
-    const shipping = subTotal <= 1 ? 0 : shippingCost || 0;
-    const total = subTotal + shipping;
+    // Use order totals from database instead of calculating
+    const subTotal = parseFloat(order?.subtotal || 0);
+    // const shipping = parseFloat(order?.shipping_cost || 0);
+    const shipping = parseFloat(shippingCost || 0);
+    const total = subTotal + shipping; // Recalculate total with current shipping
 
     return (
         <FrontendLayout>
