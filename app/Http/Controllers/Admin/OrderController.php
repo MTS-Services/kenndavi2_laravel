@@ -44,4 +44,14 @@ class OrderController extends Controller
     {
         return Inertia::render('admin/order-management/create');
     }
+
+    public function details($id)
+    {
+        $order = $this->orderService->getOrderById($id);
+        return Inertia::render('admin/order-management/details', [
+            'order' => $order,
+            'statusOptions' => OrderStatus::options(),
+            'paymentStatusOptions' => \App\Enums\PaymentStatus::options(),
+        ]);
+    }
 }

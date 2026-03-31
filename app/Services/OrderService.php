@@ -121,8 +121,7 @@ class OrderService
 
     public function getOrderById($id)
     {
-        return $this->order::with(['orderItems.product.images', 'orderAddress'])
-            ->where('user_id', auth('web')->id())
+        return $this->order::with(['orderItems.product.images', 'orderAddress', 'payment'])
             ->where('id', $id)
             ->first();
     }

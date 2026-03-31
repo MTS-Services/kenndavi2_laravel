@@ -26,12 +26,12 @@ enum OrderStatus:string
     public function color(): string
     {
         return match($this) {
-            self::PENDING => 'badge-warning',
-            self::CONFIRMED => 'badge-info',
-            self::PROCESSING => 'badge-warning',
-            self::SHIPPED => 'badge-success',
-            self::DELIVERED => 'badge-success',
-            self::CANCELLED => 'badge-error',
+            self::PENDING => 'badge badge-warning',
+            self::CONFIRMED => 'badge badge-info',
+            self::PROCESSING => 'badge badge-warning',
+            self::SHIPPED => 'badge badge-success',
+            self::DELIVERED => 'badge badge-success',
+            self::CANCELLED => 'badge badge-error',
         };
     }
 
