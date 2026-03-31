@@ -7,6 +7,8 @@ interface Order {
     order_number: string;
     order_status: string;
     payment_status: string;
+    subtotal: number;
+    shipping_cost: number;
     total: number;
     created_at: string;
     updated_at: string;
@@ -25,6 +27,7 @@ interface Order {
         product_name: string;
         quantity: number;
         price: number;
+        discount?: number;
         product?: {
             images: Array<{
                 image: string;
@@ -253,7 +256,7 @@ export default function OrderManagementDetails() {
                             
                             <div>
                                 <p className="text-sm font-medium text-gray-500">Payment Status</p>
-                                <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium`}>
+                                <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(order.payment.status)}`}>
                                     {order.payment.status}
                                 </span>
                             </div>
@@ -294,11 +297,11 @@ export default function OrderManagementDetails() {
                         <div className="space-y-2">
                             <div className="flex justify-between">
                                 <span className="text-gray-600">Subtotal:</span>
-                                <span className="font-medium text-gray-900">{formatCurrency(order.total)}</span>
+                                <span className="font-medium text-gray-900">{formatCurrency(order.subtotal)}</span>
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-gray-600">Shipping:</span>
-                                <span className="font-medium text-gray-900">$0.00</span>
+                                <span className="font-medium text-gray-900">{formatCurrency(order.shipping_cost)}</span>
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-gray-600">Tax:</span>
