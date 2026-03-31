@@ -93,14 +93,26 @@ export default function ProductDetail({
 
     const handleBuyNow = (e: React.MouseEvent) => {
         e.preventDefault();
-        // First add to cart, then redirect to shopping info
+        // First add to cart, then proceed with checkout flow
         router.post(
             route('frontend.cart.add'),
             { product_id: product.id, quantity: quantity },
             {
                 onSuccess: () => {
                     toast.success('Added to cart!');
-                    router.visit(route('frontend.shipping-info'));
+                    // Create order first, then redirect to shipping-info
+                    router.post('/orders/store', {
+                        subTotal: calculated.discounted_price * quantity,
+                        shipping: 0,
+                        total: calculated.discounted_price * quantity,
+                    }, {
+                        onSuccess: () => {
+                            router.visit(route('frontend.shipping-info'));
+                        },
+                        onError: (errors) => {
+                            toast.error('Failed to create order');
+                        }
+                    });
                 },
                 onError: () => toast.error('Failed to add to cart'),
             },

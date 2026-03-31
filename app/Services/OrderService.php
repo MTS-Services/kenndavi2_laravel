@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\OrderPaymentStatus;
 use App\Enums\OrderStatus;
+use App\Enums\PaymentStatus;
 use App\Mail\OrderConfirmedMail;
 use App\Models\Cart;
 use App\Models\Order;
@@ -13,6 +14,7 @@ use App\Models\User;
 use App\Services\ProductService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class OrderService
@@ -79,6 +81,44 @@ class OrderService
             ->get();
     }
 
+    public function getOrderByOrderNumber($orderNumber)
+    {
+        Log::info('getOrderByOrderNumber called with: ' . $orderNumber);
+        
+        $order = $this->order::where('order_number', $orderNumber)
+            ->with(['orderItems.product.images', 'orderAddress', 'payment'])
+            ->first();
+            
+        if ($order) {
+            Log::info('Order found in database: ' . $order->id);
+        } else {
+            Log::error('Order NOT found in database for: ' . $orderNumber);
+            
+            // Let's check what order numbers exist
+            $allOrders = $this->order::pluck('order_number')->toArray();
+            Log::info('Available order numbers: ' . implode(', ', $allOrders));
+        }
+        
+        return $order;
+    }
+
+    public function updateOrderStatus($orderId, $status)
+    {
+        $order = $this->order::find($orderId);
+        if (!$order) {
+            return false;
+        }
+        
+        $order->update(['order_status' => $status]);
+        
+        // If order is cancelled, also update payment status
+        if ($status === OrderStatus::CANCELLED->value && $order->payment) {
+            $order->payment->update(['status' => PaymentStatus::FAILED->value]);
+        }
+        
+        return $order;
+    }
+
     public function getOrderById($id)
     {
         return $this->order::with(['orderItems.product.images', 'orderAddress'])
@@ -119,28 +159,11 @@ class OrderService
                 'total'          => $data['total'] ?? 0,
                 'currency'       => 'USD',
                 'payment_status' => OrderPaymentStatus::UNPAID->value,
-                'order_status'   => OrderStatus::CONFIRMED->value,
+                'order_status'   => OrderStatus::PENDING->value,
                 'notes'          => null,
                 'creater_id'     => $user->id,
                 'creater_type'   => User::class,
             ]);
-
-            if (!empty($data)) {
-                $this->orderAddresse::create([
-                    'order_id'      => $order->id,
-                    'full_name'     => $data['name'],
-                    'phone'         => $data['phone'],
-                    'email'         => $data['email'],
-                    'address_line1' => $data['address_line1'],
-                    'address_line2' => $data['address_line2'] ?? null,
-                    'city'          => $data['city'],
-                    'state'         => $data['State'],
-                    'postal_code'   => $data['postalCode'],
-                    'country'       => $data['country'],
-                    'creater_id'    => $user->id,
-                    'creater_type'  => User::class,
-                ]);
-            }
 
             $items         = [];
             $totalDiscount = 0;
@@ -177,11 +200,137 @@ class OrderService
 
             $cart->delete();
 
-
             $order->load('orderAddress', 'orderItems');
-            Mail::to($data['email'])->send(new OrderConfirmedMail($order));
 
             return $order;
         });
+    }
+
+    public function markOrderAsFailed($orderId)
+    {
+        $order = $this->order->find($orderId);
+        if (!$order) {
+            throw new \Exception('Order not found');
+        }
+
+        DB::transaction(function () use ($order) {
+            // Update order status
+            $order->update([
+                'order_status' => OrderStatus::CANCELLED->value,
+                'payment_status' => OrderPaymentStatus::FAILED->value,
+                'updater_id' => auth('web')->id(),
+                'updater_type' => User::class,
+            ]);
+
+            // Update payment status if payment exists
+            if ($order->payment) {
+                $order->payment->update([
+                    'status' => PaymentStatus::FAILED->value,
+                    'updater_id' => auth('web')->id(),
+                    'updater_type' => User::class,
+                ]);
+            }
+        });
+
+        return $order;
+    }
+
+    public function cancelOrder($orderId)
+    {
+        $order = $this->order->find($orderId);
+        if (!$order) {
+            throw new \Exception('Order not found');
+        }
+
+        DB::transaction(function () use ($order) {
+            // Update order status
+            $order->update([
+                'order_status' => OrderStatus::CANCELLED->value,
+                'payment_status' => OrderPaymentStatus::FAILED->value,
+                'updater_id' => auth('web')->id(),
+                'updater_type' => User::class,
+            ]);
+
+            // Update payment status if payment exists
+            if ($order->payment) {
+                $order->payment->update([
+                    'status' => PaymentStatus::FAILED->value,
+                    'updater_id' => auth('web')->id(),
+                    'updater_type' => User::class,
+                ]);
+            }
+        });
+
+        return $order;
+    }
+
+    public function refundOrder($orderId)
+    {
+        $order = $this->order->find($orderId);
+        if (!$order) {
+            throw new \Exception('Order not found');
+        }
+
+        DB::transaction(function () use ($order) {
+            // Update order status
+            $order->update([
+                'order_status' => OrderStatus::CANCELLED->value,
+                'payment_status' => OrderPaymentStatus::REFUNDED->value,
+                'updater_id' => auth('web')->id(),
+                'updater_type' => User::class,
+            ]);
+
+            // Update payment status if payment exists
+            if ($order->payment) {
+                $order->payment->update([
+                    'status' => PaymentStatus::REFUNDED->value,
+                    'updater_id' => auth('web')->id(),
+                    'updater_type' => User::class,
+                ]);
+            }
+
+            // TODO: Implement actual refund logic with payment gateways
+            // This would involve API calls to Stripe/PayPal to process refunds
+        });
+        
+        return $order;
+    }
+
+    public function orderPlace(array $data = [], $orderId)
+    {
+        // Get the order by ID
+        $order = $this->order->find($orderId);
+        if (!$order) {
+            throw new \Exception('Order not found');
+        }
+
+        // Update order status to PROCESSING when "Place Order" is clicked
+        $order->update([
+            'order_status' => OrderStatus::PROCESSING->value,
+            'updater_id' => auth('web')->id(),
+            'updater_type' => User::class,
+        ]);
+        
+        if (!empty($data)) {
+            $this->orderAddresse::create([
+                'order_id'      => $order->id,
+                'full_name'     => $data['name'],
+                'phone'         => $data['phone'],
+                'email'         => $data['email'],
+                'address_line1' => $data['address_line1'],
+                'address_line2' => $data['address_line2'] ?? null,
+                'city'          => $data['city'],
+                'state'         => $data['State'],
+                'postal_code'   => $data['postalCode'],
+                'country'       => $data['country'],
+                'creater_id'    => auth('web')->id(),
+                'creater_type'  => User::class,
+            ]);
+
+            // Send email after placing order address
+            Mail::to($data['email'])->send(new OrderConfirmedMail($order));
+        }
+
+        return $order;
     }
 }
