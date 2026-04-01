@@ -21,9 +21,9 @@ export default function SaucesCard({ product }: Props) {
                     alt={product?.title}
                     className="w-full h-full object-cover rounded-t-md"
                 />
-                <span className="absolute left-4 top-4 rounded-sm bg-bg-white px-3 py-1 font-inter text-sm font-medium text-text-title">
+                {/* <span className="absolute left-4 top-4 rounded-sm bg-bg-white px-3 py-1 font-inter text-sm font-medium text-text-title">
                     {product?.tag?.name}
-                </span>
+                </span> */}
                 </Link>
             </div>
             <div className="mt-3">   
