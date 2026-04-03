@@ -1,7 +1,6 @@
-import { Link } from '@inertiajs/react';
-import { ShoppingCart, User, Menu, X } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
+import { Menu, ShoppingCart, User, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface Props {
     activePage?: string;
@@ -22,7 +21,10 @@ function FrontendHeader({ activePage, subPage, cartImage }: Props) {
             setTimeout(() => {
                 const element = document.getElementById('our-sauces');
                 if (element) {
-                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    element.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start',
+                    });
                 }
             }, 300); // Increased delay for Inertia navigation
         }
@@ -31,20 +33,27 @@ function FrontendHeader({ activePage, subPage, cartImage }: Props) {
     return (
         <header className="bg-bg-header py-0.5 md:py-1 lg:py-2">
             <div className="container mx-auto px-4">
-                 {/* Desktop Layout */}
-                <div className="hidden md:flex items-center justify-between">
-                     {/* left Logo */}
+                {/* Desktop Layout */}
+                <div className="hidden items-center justify-between md:flex">
+                    {/* left Logo */}
                     <div className="flex transform flex-col items-center">
-                       <Link href="/" className="text-text-white transition-colors hover:text-gray-300">
-                            <img src="/assets/images/logo.png" alt="logo" className="max-w-40 max-h-40" />
+                        <Link
+                            href="/"
+                            className="text-text-white transition-colors hover:text-gray-300"
+                        >
+                            <img
+                                src="/assets/images/logo.png"
+                                alt="logo"
+                                className="max-h-40 max-w-40"
+                            />
                         </Link>
                     </div>
-               
+
                     {/* center Navigation */}
                     <nav className="flex items-center space-x-8">
                         <Link
                             href="/"
-                            className={`font-normal text-text-white text-4xl transition-colors font-bebas-neue border-b-2 ${
+                            className={`border-b-2 font-bebas-neue text-4xl font-normal text-text-white transition-colors ${
                                 activePage === 'home'
                                     ? 'border-white'
                                     : 'border-transparent hover:border-gray-400'
@@ -54,7 +63,7 @@ function FrontendHeader({ activePage, subPage, cartImage }: Props) {
                         </Link>
                         <Link
                             href="/#our-sauces"
-                            className={`font-normal text-text-white text-4xl transition-colors font-bebas-neue border-b-2 uppercase ${
+                            className={`border-b-2 font-bebas-neue text-4xl font-normal text-text-white uppercase transition-colors ${
                                 activePage === 'sauce-recipes'
                                     ? 'border-white'
                                     : 'border-transparent hover:border-gray-400'
@@ -63,9 +72,12 @@ function FrontendHeader({ activePage, subPage, cartImage }: Props) {
                                 // If we're already on the home page, just scroll smoothly
                                 if (window.location.pathname === '/') {
                                     e.preventDefault();
-                                    const element = document.getElementById('our-sauces');
+                                    const element =
+                                        document.getElementById('our-sauces');
                                     if (element) {
-                                        element.scrollIntoView({ behavior: 'smooth' });
+                                        element.scrollIntoView({
+                                            behavior: 'smooth',
+                                        });
                                     }
                                 }
                                 // If we're on another page, let Inertia handle navigation
@@ -74,9 +86,9 @@ function FrontendHeader({ activePage, subPage, cartImage }: Props) {
                         >
                             Sauces
                         </Link>
-                         <Link
-                           href={route('frontend.sauce-recipes')}
-                            className={`font-normal text-text-white text-4xl transition-colors font-bebas-neue border-b-2 ${
+                        <Link
+                            href={route('frontend.sauce-recipes')}
+                            className={`border-b-2 font-bebas-neue text-4xl font-normal text-text-white transition-colors ${
                                 activePage === 'recipes'
                                     ? 'border-white'
                                     : 'border-transparent hover:border-gray-400'
@@ -86,23 +98,31 @@ function FrontendHeader({ activePage, subPage, cartImage }: Props) {
                         </Link>
                     </nav>
 
-                   
-
                     {/* Right Icons */}
                     <div className="flex items-center space-x-4">
-                        <Link href={route('frontend.cart.index')} className="relative text-text-white transition-colors hover:text-gray-300">
+                        <Link
+                            href={route('frontend.cart.index')}
+                            className="relative text-text-white transition-colors hover:text-gray-300"
+                        >
                             <ShoppingCart size={24} />
                             {cart_count > 0 && (
-                                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                                <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
                                     {cart_count > 99 ? '99+' : cart_count}
                                 </span>
                             )}
                         </Link>
-                        
-                        <Link href={route('login')} className="text-text-white transition-colors hover:text-gray-300">
+
+                        <Link
+                            href={route('login')}
+                            className="text-text-white transition-colors hover:text-gray-300"
+                        >
                             {/* Show user image if authenticated, otherwise show user icon */}
                             {user ? (
-                                <img src={user.image_url} alt="User" className="w-10 h-10 rounded-full border-2 border-text-buy-now" />
+                                <img
+                                    src={user.image_url}
+                                    alt="User"
+                                    className="h-10 w-10 rounded-full border-2 border-text-buy-now"
+                                />
                             ) : (
                                 <User size={24} />
                             )}
@@ -111,33 +131,44 @@ function FrontendHeader({ activePage, subPage, cartImage }: Props) {
                 </div>
 
                 {/* Mobile Layout */}
-                <div className="md:hidden flex items-center justify-between">
+                <div className="flex items-center justify-between md:hidden">
                     {/* Logo on left */}
                     <div className="flex transform flex-col items-center">
-                       <Link href="/" className="text-text-white transition-colors hover:text-gray-300">
-                            <img src="/assets/images/logo.png" alt="logo" className="max-w-25 max-h-25" />
+                        <Link
+                            href="/"
+                            className="text-text-white transition-colors hover:text-gray-300"
+                        >
+                            <img
+                                src="/assets/images/logo.png"
+                                alt="logo"
+                                className="max-h-25 max-w-25"
+                            />
                         </Link>
                     </div>
 
                     {/* Menu icon on right */}
                     <button
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                        className="text-text-white hover:text-gray-300 transition-colors"
+                        className="text-text-white transition-colors hover:text-gray-300"
                     >
-                        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                        {isMobileMenuOpen ? (
+                            <X size={24} />
+                        ) : (
+                            <Menu size={24} />
+                        )}
                     </button>
                 </div>
 
                 {/* Mobile Menu */}
                 {isMobileMenuOpen && (
-                    <div className="md:hidden mt-4 py-4 border-t border-gray-600">
+                    <div className="mt-4 border-t border-gray-600 py-4 md:hidden">
                         <nav className="flex flex-col space-y-4">
                             <Link
                                 href="/"
-                                className={`border-b-2 border-text-white font-normal text-text-white text-xl transition-colors font-bebas-neue ${
+                                className={`border-b-2 border-text-white font-bebas-neue text-xl font-normal text-text-white transition-colors ${
                                     activePage === 'home'
-                                    ? 'border-white'
-                                    : 'border-transparent hover:border-gray-400'
+                                        ? 'border-white'
+                                        : 'border-transparent hover:border-gray-400'
                                 }`}
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
@@ -145,7 +176,7 @@ function FrontendHeader({ activePage, subPage, cartImage }: Props) {
                             </Link>
                             <Link
                                 href="/#our-sauces"
-                                className={`font-normal text-text-white text-xl transition-colors font-bebas-neue ${
+                                className={`font-bebas-neue text-xl font-normal text-text-white transition-colors ${
                                     activePage === 'sauce-recipes'
                                         ? 'border-b-2 border-text-white'
                                         : 'hover:border-gray-400'
@@ -154,9 +185,14 @@ function FrontendHeader({ activePage, subPage, cartImage }: Props) {
                                     // If we're already on the home page, just scroll smoothly
                                     if (window.location.pathname === '/') {
                                         e.preventDefault();
-                                        const element = document.getElementById('our-sauces');
+                                        const element =
+                                            document.getElementById(
+                                                'our-sauces',
+                                            );
                                         if (element) {
-                                            element.scrollIntoView({ behavior: 'smooth' });
+                                            element.scrollIntoView({
+                                                behavior: 'smooth',
+                                            });
                                         }
                                     }
                                     // Close mobile menu
@@ -165,19 +201,31 @@ function FrontendHeader({ activePage, subPage, cartImage }: Props) {
                             >
                                 Sauces
                             </Link>
+                            <Link
+                                href={route('frontend.sauce-recipes')}
+                                className={`border-b-2 border-text-white font-bebas-neue text-xl font-normal text-text-white transition-colors ${
+                                    activePage === 'recipes'
+                                        ? 'border-white'
+                                        : 'border-transparent hover:border-gray-400'
+                                }`}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                Recipes
+                            </Link>
                             <div className="flex items-center space-x-4 pt-4">
                                 <Link className="text-text-white transition-colors hover:text-gray-300">
                                     <ShoppingCart size={24} />
-                                   
                                 </Link>
-                                <Link href={route('login')} className="text-text-white transition-colors hover:text-gray-300">
+                                <Link
+                                    href={route('login')}
+                                    className="text-text-white transition-colors hover:text-gray-300"
+                                >
                                     <User size={24} />
                                 </Link>
                             </div>
                         </nav>
                     </div>
                 )}
-
             </div>
         </header>
     );
