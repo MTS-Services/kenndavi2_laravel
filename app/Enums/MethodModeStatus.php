@@ -2,27 +2,24 @@
 
 namespace App\Enums;
 
-enum PaymentMethod: string
+enum MethodModeStatus: string
 {
-    case STRIPE = 'stripe';
-    case PAYPAL = 'paypal';
-    case AUTHORIZE_NET = 'authorize_net';
+    case LIVE = 'live';
+    case SANDBOX = 'sandbox';
 
     public function label(): string
     {
         return match ($this) {
-            self::STRIPE => 'Stripe',
-            self::PAYPAL => 'PayPal',
-            self::AUTHORIZE_NET => 'Authorize.Net',
+            self::LIVE => __('Live'),
+            self::SANDBOX => __('Sandbox'),
         };
     }
 
     public function color(): string
     {
         return match ($this) {
-            self::STRIPE => 'badge-success',
-            self::PAYPAL => 'badge-info',
-            self::AUTHORIZE_NET => 'badge-warning',
+            self::LIVE => 'badge-success',
+            self::SANDBOX => 'badge-warning',
         };
     }
 

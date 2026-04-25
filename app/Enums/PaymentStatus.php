@@ -2,42 +2,47 @@
 
 namespace App\Enums;
 
-enum PaymentStatus:string
+enum PaymentStatus: string
 {
     case PENDING = 'pending';
-    case PROCESSING = 'processing';
     case COMPLETED = 'completed';
     case FAILED = 'failed';
+    case CANCELLED = 'cancelled';
     case REFUNDED = 'refunded';
 
-    public function label():string
+    public function label(): string
     {
         return match ($this) {
-            self::PENDING => 'Pending',
-            self::PROCESSING => 'Processing',
-            self::COMPLETED => 'Completed',
-            self::FAILED => 'Failed',
-            self::REFUNDED => 'Refunded',
+            self::PENDING => __('Pending'),
+            self::COMPLETED => __('Completed'),
+            self::FAILED => __('Failed'),
+            self::CANCELLED => __('Cancelled'),
+            self::REFUNDED => __('Refunded'),
         };
     }
-    
+
     public function color(): string
     {
         return match ($this) {
             self::PENDING => 'badge-warning',
-            self::PROCESSING => 'badge-info',
             self::COMPLETED => 'badge-success',
             self::FAILED => 'badge-danger',
-            self::REFUNDED => 'badge-secondary',
+            self::CANCELLED => 'badge-secondary',
+            self::REFUNDED => 'badge-purple',
         };
     }
-    
+
+    /**
+     * @return array<int, array{value: string, label: string}>
+     */
     public static function options(): array
     {
-        return array_map(fn($case) => [
-            'value' => $case->value,
-            'label' => $case->label(),
-            'color' => $case->color(),
-        ], self::cases());
+        return array_map(
+            fn(self $case) => [
+                'value' => $case->value,
+                'label' => $case->label(),
+            ],
+            self::cases(),
+        );
     }
 }

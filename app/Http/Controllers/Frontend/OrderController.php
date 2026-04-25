@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Enums\PaymentMethod;
 use App\Http\Controllers\Controller;
+use App\Services\CartService;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -11,28 +12,26 @@ use Inertia\Response;
 
 class OrderController extends Controller
 {
-    protected OrderService $orderService;
+    public function __construct(
+        protected OrderService $orderService,
+        protected CartService $cartService,
+    ) {}
 
-    public function __construct(OrderService $orderService)
+    public function orderSuccess(): Response
     {
-        $this->orderService = $orderService;
-    }
-    
+        $order = $this->orderService->getLatestOrder();
+        $order->load(['orderItems.product.images', 'orderAddress', 'payment']);
 
-public function orderConfirmed(): Response
-{
-    $order = $this->orderService->getLatestOrder();
-    $order->load(['orderItems.product.images', 'orderAddress', 'payment']);
-    return Inertia::render('frontend/order-confirmed', [
-        'order' => $order,
-        'paymentMethod' => collect(PaymentMethod::cases())->map(function($method) {
-            return [
-                'value' => $method->value,
-                'label' => $method->label(),
-            ];
-        })
-    ]);
-}
+        return Inertia::render('frontend/order-confirmed', [
+            'order' => $order,
+            'paymentMethod' => collect(PaymentMethod::cases())->map(function ($method) {
+                return [
+                    'value' => $method->value,
+                    'label' => $method->label(),
+                ];
+            }),
+        ]);
+    }
 
     public function store(Request $request)
     {
@@ -44,23 +43,23 @@ public function orderConfirmed(): Response
 
         try {
             $order = $this->orderService->create($validated);
-            
-            // Set up payment session data with security
+
             session(['payment_pending' => [
                 'order_id' => $order->id,
                 'encrypted_service_id' => encrypt($order->id),
                 'address_id' => $order->orderAddress->id ?? null,
                 'payment_method' => 'stripe',
                 'amount' => $order->total,
-                'created_at' => now()->timestamp, // Security timestamp
-                'user_id' => auth('web')->id(), // Security check
+                'created_at' => now()->timestamp,
+                'user_id' => auth('web')->id(),
             ]]);
-            
+
             return redirect()->route('frontend.shipping-info');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to create order: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to create order: '.$e->getMessage());
         }
     }
+
     public function placeOrder(Request $request)
     {
         $validated = $request->validate([
@@ -77,33 +76,46 @@ public function orderConfirmed(): Response
             'shipping' => 'required',
             'total' => 'required',
         ]);
-        
+
         try {
-            // Security: Check if payment session exists and is valid
             $paymentSession = session('payment_pending');
-            if (!$paymentSession) {
-                return redirect()->route('frontend.product-card')->with('error', 'Payment session expired');
-            }
-            
-            // Security: Verify user ID matches
-            if ($paymentSession['user_id'] !== auth('web')->id()) {
-                return redirect()->route('frontend.product-card')->with('error', 'Invalid payment session');
-            }
-            
-            // Security: Check session age (5 minutes max)
-            if (now()->timestamp - ($paymentSession['created_at'] ?? 0) > 300) {
+
+            if ($this->paymentPendingIsValid($paymentSession)) {
+                $orderId = $paymentSession['order_id'];
+                $order = $this->orderService->orderPlace($validated, $orderId);
+            } else {
                 session()->forget('payment_pending');
-                return redirect()->route('frontend.product-card')->with('error', 'Payment session expired');
+
+                $totals = $this->cartService->getCheckoutTotalsForAuthenticatedUser();
+                if ($totals['empty']) {
+                    return redirect()->route('frontend.cart.index')->with('error', 'Your cart is empty.');
+                }
+
+                $order = $this->orderService->create([
+                    'subTotal' => $totals['subtotal'],
+                    'shipping' => $totals['shipping'],
+                    'total' => $totals['total'],
+                ]);
+
+                session(['payment_pending' => [
+                    'order_id' => $order->id,
+                    'encrypted_service_id' => encrypt($order->id),
+                    'address_id' => $order->orderAddress->id ?? null,
+                    'payment_method' => 'stripe',
+                    'amount' => $order->total,
+                    'created_at' => now()->timestamp,
+                    'user_id' => auth('web')->id(),
+                ]]);
+
+                $validatedWithTotals = array_merge($validated, [
+                    'subTotal' => $totals['subtotal'],
+                    'shipping' => $totals['shipping'],
+                    'total' => $totals['total'],
+                ]);
+
+                $order = $this->orderService->orderPlace($validatedWithTotals, $order->id);
             }
-            
-            $orderId = $paymentSession['order_id'];
-            if (!$orderId) {
-                return redirect()->back()->with('error', 'Order not found');
-            }
-            
-            $order = $this->orderService->orderPlace($validated, $orderId);
-            
-            // Update payment session data with security
+
             session(['payment_pending' => [
                 'order_id' => $order->id,
                 'encrypted_service_id' => encrypt($order->id),
@@ -112,13 +124,36 @@ public function orderConfirmed(): Response
                 'amount' => $order->total,
                 'created_at' => now()->timestamp,
                 'user_id' => auth('web')->id(),
-                'step' => 'payment_started', // Track payment step
+                'step' => 'payment_started',
             ]]);
-            
+
             return redirect()->route('user.payment.start');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to place order: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to place order: '.$e->getMessage());
         }
     }
 
+    /**
+     * @param  array<string, mixed>|null  $session
+     */
+    private function paymentPendingIsValid(?array $session): bool
+    {
+        if (! $session || empty($session['order_id'])) {
+            return false;
+        }
+
+        if (($session['user_id'] ?? null) !== auth('web')->id()) {
+            session()->forget('payment_pending');
+
+            return false;
+        }
+
+        if (now()->timestamp - ($session['created_at'] ?? 0) > 300) {
+            session()->forget('payment_pending');
+
+            return false;
+        }
+
+        return true;
+    }
 }

@@ -1,13 +1,11 @@
 <?php
 
-use App\Traits\AuditColumnsTrait;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    use AuditColumnsTrait;
     /**
      * Run the migrations.
      */
@@ -15,19 +13,17 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('order_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('order_id')->constrained()->nullable()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->nullable()->cascadeOnDelete();
 
-            $table->string('payment_method');
-            $table->string('transaction_id')->nullable();
-            $table->string('payment_intent_id')->nullable();
-            $table->decimal('amount', 15, 2);
-            $table->string('currency')->default('USD');
-            $table->string('status');
+            $table->string('method')->index();
+            $table->string('txn_id')->nullable()->index();
+            $table->string('gateway_txn_id')->nullable()->index();
+            $table->decimal('amount', 15, 2)->index();
+            $table->string('currency')->default('USD')->index();
+            $table->string('status')->index();
             $table->json('gateway_response')->nullable();
-            $table->timestamp('paid_at')->nullable();
-            $this->addMorphedAuditColumns($table);
-
+            $table->timestamp('paid_at')->nullable()->index();
             $table->timestamps();
         });
     }

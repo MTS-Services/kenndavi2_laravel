@@ -33,6 +33,7 @@ interface PageProps extends Record<string, any> {
         id: number;
         items: any[];
     } | null;
+    cartItems?: any[];
     order?: any;
     orderItems?: any[];
     shippingCost?: number;
@@ -44,7 +45,7 @@ export default function ShippingInformationPage() {
     const {
         user,
         addresses,
-        cart,
+        cartItems,
         order,
         orderItems,
         errors,
@@ -92,12 +93,9 @@ export default function ShippingInformationPage() {
         e.preventDefault();
 
         router.post(
-            route('frontend.orders.placeOrder'),
+            route('user.checkout.place-order'),
             {
                 ...form,
-                subTotal: subTotal,
-                shipping: shipping,
-                total: total,
             },
             {
                 onSuccess: () => {
@@ -110,30 +108,67 @@ export default function ShippingInformationPage() {
         );
     };
 
-    // Transform order items with calculated data for display
-    const orderItemsData = (orderItems || []).map((item: any) => {
-        const imagePath = item.product?.images?.[0]?.image;
-        const fullImagePath = imagePath
-            ? `/storage/${imagePath}`
-            : '/assets/images/product/Rectangle 20.png';
+    const hasOrderItems = (orderItems?.length ?? 0) > 0;
 
-        return {
-            ...item,
-            name: item.product_name,
-            price: parseFloat(item.price || 0), // Use price from order item (correct discounted price)
-            original_price: parseFloat(item.product?.price || 0),
-            has_discount: parseFloat(item.discount || 0) > 0,
-            formatted_price: `$${parseFloat(item.price || 0).toFixed(2)}`, // Use price from order item
-            formatted_original_price: `$${parseFloat(item.product?.price || 0).toFixed(2)}`,
-            image: fullImagePath,
-        };
-    });
+    const summaryItems = hasOrderItems
+        ? (orderItems || []).map((item: any) => {
+              const imagePath = item.product?.images?.[0]?.image;
+              const fullImagePath = imagePath
+                  ? `/storage/${imagePath}`
+                  : '/assets/images/product/Rectangle 20.png';
 
-    // Use order totals from database instead of calculating
-    const subTotal = parseFloat(order?.subtotal || 0);
-    // const shipping = parseFloat(order?.shipping_cost || 0);
-    const shipping = parseFloat(shippingCost || 0);
-    const total = subTotal + shipping; // Recalculate total with current shipping
+              return {
+                  ...item,
+                  name: item.product_name,
+                  price: parseFloat(item.price || 0),
+                  original_price: parseFloat(item.product?.price || 0),
+                  has_discount: parseFloat(item.discount || 0) > 0,
+                  formatted_price: `$${parseFloat(item.price || 0).toFixed(2)}`,
+                  formatted_original_price: `$${parseFloat(item.product?.price || 0).toFixed(2)}`,
+                  image: fullImagePath,
+              };
+          })
+        : (cartItems || []).map((item: any) => {
+              const imagePath = item.product?.images?.[0]?.image;
+              const fullImagePath = imagePath
+                  ? `/storage/${imagePath}`
+                  : '/assets/images/product/Rectangle 20.png';
+              const unitPrice =
+                  item.calculated?.discounted_price ??
+                  parseFloat(item.product?.price || 0);
+
+              return {
+                  ...item,
+                  name: item.product_name,
+                  price: unitPrice,
+                  original_price:
+                      item.calculated?.original_price ??
+                      parseFloat(item.product?.price || 0),
+                  has_discount: item.calculated?.has_discount || false,
+                  formatted_price:
+                      item.calculated?.formatted_discounted_price ??
+                      `$${unitPrice.toFixed(2)}`,
+                  image: fullImagePath,
+              };
+          });
+
+    const subTotalFromCart = (cartItems || []).reduce(
+        (sum: number, item: any) =>
+            sum + parseFloat(item.calculated?.total_price ?? 0),
+        0,
+    );
+
+    const subTotal = hasOrderItems
+        ? parseFloat(order?.subtotal || 0)
+        : subTotalFromCart;
+
+    const shipping = hasOrderItems
+        ? parseFloat(String(shippingCost ?? 0))
+        : subTotalFromCart <= 1
+          ? 0
+          : parseFloat(String(shippingCost ?? 0));
+
+    const total = subTotal + shipping;
 
     return (
         <FrontendLayout>
@@ -337,12 +372,12 @@ export default function ShippingInformationPage() {
                                     </h2>
 
                                     {/* Product Rows */}
-                                    {orderItemsData.map((item: any) => (
+                                    {summaryItems.map((item: any) => (
                                         <div
                                             key={item.id}
                                             className="mb-4 flex items-center gap-3"
                                         >
-                                            <div className="h-14 w-14 flex-shrink-0 overflow-hidden rounded-sm border border-text-gray-300">
+                                            <div className="h-14 w-14 shrink-0 overflow-hidden rounded-sm border border-text-gray-300">
                                                 <img
                                                     src={
                                                         item.image ||

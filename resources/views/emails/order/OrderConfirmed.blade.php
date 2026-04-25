@@ -191,7 +191,7 @@
             </div>
 
             <p style="text-align: center;">
-                <a href="{{ route('frontend.orders.order-confirmed') }}" class="btn">View Order</a>
+                <a href="{{ route('frontend.orders.order-success') }}" class="btn">View Order</a>
             </p>
 
             <p>If you have any questions, feel free to reach out to our support team.</p>

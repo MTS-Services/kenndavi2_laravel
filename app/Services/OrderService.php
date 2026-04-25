@@ -33,13 +33,14 @@ class OrderService
     public function getAllOrders()
     {
         return $this->order::with(['orderItems.product.images', 'orderAddress'])
+            ->notInitialized()
             ->latest()
             ->get();
     }
 
     public function getOrderStats()
     {
-        $orders = $this->order::where('user_id', auth('web')->id())->get();
+        $orders = $this->order::where('user_id', auth('web')->id())->notInitialized()->get();
         
         return [
             'pending' => $orders->where('order_status', OrderStatus::PENDING->value)->count(),
@@ -53,7 +54,7 @@ class OrderService
 
     public function getAdminOrderStats()
     {
-        $orders = $this->order::all();
+        $orders = $this->order::query()->notInitialized()->get();
         
         return [
             'pending' => $orders->where('order_status', OrderStatus::PENDING->value)->count(),
@@ -68,6 +69,7 @@ class OrderService
     public function getLatestOrder()
     {
         return $this->order::with(['orderItems.product.images', 'orderAddress'])
+            ->notInitialized()
             ->where('user_id', auth('web')->id())
             ->latest()
             ->first();
@@ -76,6 +78,7 @@ class OrderService
     public function getOrdersByUserId()
     {
         return $this->order::with(['orderItems.product.images', 'orderAddress'])
+            ->notInitialized()
             ->where('user_id', auth('web')->id())
             ->latest()
             ->get();
@@ -86,6 +89,7 @@ class OrderService
         Log::info('getOrderByOrderNumber called with: ' . $orderNumber);
         
         $order = $this->order::where('order_number', $orderNumber)
+            ->notInitialized()
             ->with(['orderItems.product.images', 'orderAddress', 'payment'])
             ->first();
             
@@ -104,7 +108,7 @@ class OrderService
 
     public function updateOrderStatus($orderId, $status)
     {
-        $order = $this->order::find($orderId);
+        $order = $this->order::find($orderId)->notInitialized();
         if (!$order) {
             return false;
         }
@@ -122,6 +126,7 @@ class OrderService
     public function getOrderById($id)
     {
         return $this->order::with(['orderItems.product.images', 'orderAddress', 'payment'])
+            ->notInitialized()
             ->where('id', $id)
             ->first();
     }
@@ -129,6 +134,7 @@ class OrderService
     public function getOrderByDeliverd()
     {
         return $this->order::with(['orderItems.product.images', 'orderAddress'])
+            ->notInitialized()
             ->where('user_id', auth('web')->id())
             ->where('order_status', OrderStatus::DELIVERED)
             ->latest()

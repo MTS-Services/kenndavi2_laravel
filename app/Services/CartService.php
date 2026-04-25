@@ -6,20 +6,57 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Product;
 use App\Models\User;
-use Illuminate\Support\Collection;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class CartService
 {
+    public const SESSION_CART_ID_KEY = 'cart.id';
+
+    public const GUEST_CART_TTL_DAYS = 30;
+
     public function __construct(
         protected Cart $model,
         protected CartItem $cartItem,
         protected Product $product
     ) {}
 
+    public function resolveCart(Request $request): Cart
+    {
+        if ($request->user()) {
+            return Cart::query()->firstOrCreate(
+                ['user_id' => $request->user()->id],
+                ['expires_at' => null],
+            );
+        }
+
+        $cartId = $request->session()->get(self::SESSION_CART_ID_KEY);
+        if ($cartId !== null) {
+            $cart = Cart::query()
+                ->whereNull('user_id')
+                ->whereKey($cartId)
+                ->first();
+            if ($cart !== null) {
+                return $cart;
+            }
+            $request->session()->forget(self::SESSION_CART_ID_KEY);
+        }
+
+        $cart = Cart::query()->create([
+            'user_id' => null,
+            'session_id' => $request->session()->getId(),
+            'expires_at' => now()->addDays(self::GUEST_CART_TTL_DAYS),
+        ]);
+        $request->session()->put(self::SESSION_CART_ID_KEY, $cart->id);
+
+        return $cart;
+    }
+
     public function getShippingCost(): float
     {
         $shippingCost = \App\Models\ShippingCost::latest()->first();
+
         return $shippingCost ? (float) $shippingCost->cost : 20.00;
     }
 
@@ -40,7 +77,7 @@ class CartService
 
         // Use ProductService for consistent calculations
         $productService = app(\App\Services\ProductService::class);
-        
+
         $cartItems = $cart ? $cart->items->map(function ($cartItem) use ($productService) {
             if ($cartItem->product) {
                 $cartItem->calculated = $productService->getProductCalculatedData(
@@ -48,12 +85,68 @@ class CartService
                     $cartItem->quantity
                 );
             }
+
             return $cartItem;
         }) : collect();
 
         return [
-            'cart'      => $cart,
+            'cart' => $cart,
             'cartItems' => $cartItems,
+        ];
+    }
+
+    /**
+     * Server-side checkout totals for the authenticated user's cart (matches cart UI shipping rule).
+     *
+     * @return array{subtotal: float, shipping: float, total: float, empty: bool}
+     */
+    public function getCheckoutTotalsForAuthenticatedUser(): array
+    {
+        if (! auth('web')->check()) {
+            return [
+                'subtotal' => 0.0,
+                'shipping' => 0.0,
+                'total' => 0.0,
+                'empty' => true,
+            ];
+        }
+
+        $cart = $this->model
+            ->with(['items.product'])
+            ->where('user_id', auth('web')->id())
+            ->first();
+
+        if (! $cart || $cart->items->isEmpty()) {
+            return [
+                'subtotal' => 0.0,
+                'shipping' => 0.0,
+                'total' => 0.0,
+                'empty' => true,
+            ];
+        }
+
+        $productService = app(ProductService::class);
+        $subtotal = 0.0;
+
+        foreach ($cart->items as $item) {
+            if ($item->product) {
+                $calculated = $productService->getProductCalculatedData(
+                    $item->product,
+                    (int) $item->quantity
+                );
+                $subtotal += (float) ($calculated['total_price'] ?? 0);
+            }
+        }
+
+        $shippingCost = $productService->getShippingCost();
+        $shipping = $subtotal <= 1 ? 0.0 : (float) $shippingCost;
+        $total = $subtotal + $shipping;
+
+        return [
+            'subtotal' => round($subtotal, 2),
+            'shipping' => round($shipping, 2),
+            'total' => round($total, 2),
+            'empty' => false,
         ];
     }
 
@@ -64,7 +157,7 @@ class CartService
                 ['user_id' => Auth::guard('web')->id()],
                 [
                     'creater_type' => User::class,
-                    'creater_id'   => Auth::guard('web')->id(),
+                    'creater_id' => Auth::guard('web')->id(),
                 ]
             );
         } else {
@@ -72,12 +165,12 @@ class CartService
                 ['session_id' => session()->getId()],
                 [
                     'creater_type' => null,
-                    'creater_id'   => null,
+                    'creater_id' => null,
                 ]
             );
         }
 
-        $product  = $this->product::findOrFail($data['product_id']);
+        $product = $this->product::findOrFail($data['product_id']);
         $cartItem = $this->cartItem::where('cart_id', $cart->id)
             ->where('product_id', $product->id)
             ->first();
@@ -86,12 +179,12 @@ class CartService
             $cartItem->increment('quantity', $data['quantity'] ?? 1);
         } else {
             $this->cartItem::create([
-                'cart_id'      => $cart->id,
-                'product_id'   => $product->id,
+                'cart_id' => $cart->id,
+                'product_id' => $product->id,
                 'product_name' => $product->title,
-                'quantity'     => $data['quantity'] ?? 1,
+                'quantity' => $data['quantity'] ?? 1,
                 'creater_type' => User::class,
-                'creater_id'   => Auth::guard('web')->check() ? Auth::guard('web')->id() : null,
+                'creater_id' => Auth::guard('web')->check() ? Auth::guard('web')->id() : null,
             ]);
         }
 
@@ -138,9 +231,9 @@ class CartService
     public function updateCartItem(array $data): bool
     {
         $cartItem = $this->cartItem::findOrFail($data['cart_item_id']);
-        $cart     = $this->getUserCart();
+        $cart = $this->getUserCart();
 
-        if (!$cart || $cartItem->cart_id !== $cart->id) {
+        if (! $cart || $cartItem->cart_id !== $cart->id) {
             throw new \Exception('Cart item not found');
         }
 
@@ -152,9 +245,9 @@ class CartService
     public function removeCartItem(int $id): bool
     {
         $cartItem = $this->cartItem::findOrFail($id);
-        $cart     = $this->getUserCart();
+        $cart = $this->getUserCart();
 
-        if (!$cart || $cartItem->cart_id !== $cart->id) {
+        if (! $cart || $cartItem->cart_id !== $cart->id) {
             throw new \Exception('Cart item not found');
         }
 
@@ -163,13 +256,13 @@ class CartService
         return true;
     }
 
-    public function authCheck(string $sessionId = null): bool
+    public function authCheck(?string $sessionId = null): bool
     {
-        if (!Auth::guard('web')->check()) {
+        if (! Auth::guard('web')->check()) {
             return false;
         }
 
-        $user      = Auth::guard('web')->user();
+        $user = Auth::guard('web')->user();
         $sessionId = $sessionId ?? session()->getId();
 
         $guestCarts = $this->model::with('items')
@@ -214,18 +307,30 @@ class CartService
 
     private function calculateItemData(Product $product, int $quantity): array
     {
-        $price        = (float) ($product->price ?? 0);
+        $price = (float) ($product->price ?? 0);
         $discountRate = (float) ($product->discount ?? 0);
 
         $discountAmount = ($price * $discountRate) / 100;
-        $unitPrice      = $price - $discountAmount;
-        $totalPrice     = $unitPrice * $quantity;
+        $unitPrice = $price - $discountAmount;
+        $totalPrice = $unitPrice * $quantity;
 
         return [
-            'original_price'  => round($price, 2),
+            'original_price' => round($price, 2),
             'discount_amount' => round($discountAmount, 2),
-            'unit_price'      => round($unitPrice, 2),
-            'total_price'     => round($totalPrice, 2),
+            'unit_price' => round($unitPrice, 2),
+            'total_price' => round($totalPrice, 2),
         ];
+    }
+
+    public function resolveImageUrl(?string $url): ?string
+    {
+        if ($url === null || $url === '') {
+            return null;
+        }
+        if (filter_var($url, FILTER_VALIDATE_URL) && (str_starts_with($url, 'https://') || str_starts_with($url, 'http://'))) {
+            return $url;
+        }
+
+        return Storage::disk('public')->url($url);
     }
 }

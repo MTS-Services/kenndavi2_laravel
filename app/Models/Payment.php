@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CurrencyCode;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use Illuminate\Database\Eloquent\Model;
@@ -9,34 +10,28 @@ use Illuminate\Database\Eloquent\Model;
 class Payment extends Model
 {
     protected $fillable = [
-        'id',
         'order_id',
         'user_id',
-        'payment_method',
-        'transaction_id',
-        'payment_intent_id',
+        'method',
+        'gateway_txn_id',
+        'txn_id',
         'amount',
         'currency',
         'status',
-        'gateway_response',
         'paid_at',
-
-        'created_at',
-        'updated_at',
-        'creater_id',
-        'creater_type',
-        'updater_id',
-        'updater_type',
+        'gateway_response',
     ];
 
-
-    protected $casts = [
-        'payment_method' => PaymentMethod::class,
-        'amount' => 'decimal:2',
-        'status' => PaymentStatus::class,
-        'paid_at' => 'datetime',
-        'gateway_response' => 'array',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'amount' => 'decimal:2',
+            'currency' => CurrencyCode::class,
+            'status' => PaymentStatus::class,
+            'method' => PaymentMethod::class,
+            'paid_at' => 'datetime',
+        ];
+    }
 
     public function order()
     {
@@ -47,7 +42,6 @@ class Payment extends Model
     {
         return $this->belongsTo(User::class);
     }
-
 
     public function isPaid(): bool
     {

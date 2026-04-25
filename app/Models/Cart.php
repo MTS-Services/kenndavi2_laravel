@@ -9,6 +9,7 @@ class Cart extends Model
     protected $fillable = [
         'user_id',
         'session_id',
+        'expires_at',
 
         'created_at',
         'updated_at',
@@ -18,6 +19,12 @@ class Cart extends Model
         'updater_type',
 
     ];
+    protected function casts(): array
+    {
+        return [
+            'expires_at' => 'datetime',
+        ];
+    }
 
     public function user()
     {
