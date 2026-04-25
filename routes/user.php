@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\AuthorizeNetRelayController;
 use App\Http\Controllers\User\CheckoutController;
 use App\Http\Controllers\User\FeedbackController;
 use App\Http\Controllers\User\GoogleAuthController;
@@ -58,9 +59,7 @@ Route::prefix('user')->name('user.')->group(function () {
             Route::get('/success/{gateway}', 'success')->name('success');
             Route::get('/cancel/{orderId}', 'cancel')->name('cancel');
         });
-    });
 
-    Route::middleware(['auth'])->group(function () {
         Route::controller(CheckoutController::class)->middleware('throttle:checkout')->name('checkout.')->group(function () {
             Route::post('/checkout/place-order', 'placeOrder')->name('place-order');
             Route::get('/checkout/gateway/{order}', 'gateway')->name('gateway');
@@ -69,8 +68,12 @@ Route::prefix('user')->name('user.')->group(function () {
     });
 });
 
-
 Route::prefix('user')->name('user.')->group(function () {
     Route::get('auth/google', [GoogleAuthController::class, 'redirect'])->name('auth.google');
     Route::get('auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
 });
+
+
+Route::get('/payment/authorize-net/relay/{payment}', AuthorizeNetRelayController::class)
+    ->middleware('signed')
+    ->name('payment.authorize-net.relay');

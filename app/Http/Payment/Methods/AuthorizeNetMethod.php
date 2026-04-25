@@ -51,9 +51,9 @@ class AuthorizeNetMethod extends PaymentMethod
 
             $baseUrl = $this->resolveAuthorizeNetBaseUrl();
             $successUrl = (string) ($paymentData['success_url']
-                ?? ($baseUrl.route('payment.success', ['order' => $order->order_number], false)));
+                ?? ($baseUrl.route('user.payment.success', ['gateway' => 'authorize_net', 'order' => $order->order_number], false)));
             $cancelUrl = (string) ($paymentData['cancel_url']
-                ?? ($baseUrl.route('payment.cancel', ['order' => $order->order_number], false)));
+                ?? ($baseUrl.route('user.payment.cancel', ['orderId' => $order->order_number], false)));
 
             if (! Str::startsWith($successUrl, ['http://', 'https://'])) {
                 throw new Exception('Invalid success URL generated for Authorize.Net.');

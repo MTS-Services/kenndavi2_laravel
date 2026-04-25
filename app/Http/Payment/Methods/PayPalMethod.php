@@ -76,8 +76,8 @@ class PayPalMethod extends PaymentMethod
                 throw new Exception('Missing payment context.');
             }
 
-            $successUrl = $paymentData['success_url'] ?? route('payment.success', ['order' => $order->order_number]);
-            $cancelUrl = $paymentData['cancel_url'] ?? route('payment.cancel', ['order' => $order->order_number]);
+            $successUrl = $paymentData['success_url'] ?? route('user.payment.success', ['gateway' => 'paypal', 'order' => $order->order_number]);
+            $cancelUrl = $paymentData['cancel_url'] ?? route('user.payment.cancel', ['orderId' => $order->order_number]);
 
             $token = $this->getAccessToken();
 

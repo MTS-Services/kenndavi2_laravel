@@ -24,7 +24,7 @@ class PaymentService
     public function processPayment(Order $order, string $gateway, array $paymentData = []): array
     {
         try {
-            if (!$this->canProcessPayment($order)) {
+            if (! $this->canProcessPayment($order)) {
                 return [
                     'success' => false,
                     'message' => 'Order cannot accept payment at this time.',
@@ -60,6 +60,7 @@ class PaymentService
                 if (! $payment) {
                     $payment = Payment::create([
                         'order_id' => $lockedOrder->id,
+                        'user_id' => $lockedOrder->user_id,
                         'method' => $gateway,
                         'gateway_txn_id' => null,
                         'txn_id' => generate_transaction_id_hybrid(),
@@ -85,7 +86,7 @@ class PaymentService
 
             return [
                 'success' => false,
-                'message' => 'Payment processing failed: ' . $e->getMessage(),
+                'message' => 'Payment processing failed: '.$e->getMessage(),
                 'reason' => 'exception',
             ];
         }

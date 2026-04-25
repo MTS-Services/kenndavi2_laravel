@@ -42,9 +42,9 @@ class StripeMethod extends PaymentMethod
             $currency = 'usd';
 
             $successUrl = $paymentData['success_url']
-                ?? route('payment.success', ['order' => $order->order_number]).'?session_id={CHECKOUT_SESSION_ID}';
+                ?? route('user.payment.success', ['gateway' => 'stripe', 'order' => $order->order_number]).'?session_id={CHECKOUT_SESSION_ID}';
             $cancelUrl = $paymentData['cancel_url']
-                ?? route('payment.cancel', ['order' => $order->order_number]);
+                ?? route('user.payment.cancel', ['orderId' => $order->order_number]);
 
             $session = StripeSession::create([
                 'mode' => 'payment',
@@ -158,4 +158,3 @@ class StripeMethod extends PaymentMethod
         }
     }
 }
-

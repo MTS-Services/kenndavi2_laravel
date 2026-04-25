@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class PaymentController extends Controller
 {
@@ -43,7 +44,6 @@ class PaymentController extends Controller
         $order = Order::findOrFail($orderId);
         $user = $request->user();
 
-
         /**
          * 🚫 BLOCK: If order already paid or failed
          */
@@ -63,7 +63,6 @@ class PaymentController extends Controller
         //         ->route('user.orders')
         //         ->withErrors(['payment' => 'Payment already initiated for this order.']);
         // }
-
 
         // if (
         //     $existingPayment &&
@@ -113,7 +112,7 @@ class PaymentController extends Controller
 
         // Update payment status to PROCESSING when redirecting to payment gateway
         $payment->update([
-            'status' => PaymentStatus::PROCESSING->value,
+            'status' => PaymentStatus::PENDING->value,
             'updater_id' => $user->id,
             'updater_type' => User::class,
             'updated_at' => now(),
@@ -150,7 +149,8 @@ class PaymentController extends Controller
 
         abort(422, 'Unhandled payment method.');
     }
-    public function success(Request $request, string $gateway): RedirectResponse
+
+    public function success(Request $request, string $gateway): RedirectResponse|Response
     {
         $gateway = strtolower($gateway);
 
@@ -162,44 +162,62 @@ class PaymentController extends Controller
             return $this->handlePayPalSuccess($request);
         }
 
-        return redirect()->route('frontend.orders.order-confirmed')->withErrors(['payment' => 'Invalid gateway.']);
+        return redirect()
+            ->route('frontend.home')
+            ->withErrors(['payment' => 'Invalid gateway.']);
     }
 
-    private function handleStripeSuccess(Request $request): RedirectResponse
+    private function handleStripeSuccess(Request $request): RedirectResponse|Response
     {
         $sessionId = $request->query('session_id');
 
         if (! $sessionId || ! is_string($sessionId)) {
-            return redirect()->route('frontend.orders.order-confirmed')->withErrors(['payment' => 'Missing Stripe session.']);
+            return redirect()->route('frontend.home')->withErrors(['payment' => 'Missing Stripe session.']);
         }
 
         $secretKey = (string) config('services.stripe.secret');
         if ($secretKey === '') {
-            return redirect()->route('frontend.orders.order-confirmed')->withErrors(['payment' => 'Stripe is not configured.']);
+            return redirect()->route('frontend.home')->withErrors(['payment' => 'Stripe is not configured.']);
         }
 
         $response = Http::withBasicAuth($secretKey, '')
             ->timeout(10)
-            ->get('https://api.stripe.com/v1/checkout/sessions/' . $sessionId . '?expand[]=payment_intent');
+            ->get('https://api.stripe.com/v1/checkout/sessions/'.$sessionId.'?expand[]=payment_intent');
 
         if (! $response->successful()) {
-            report(new \RuntimeException('Stripe session retrieval failed: ' . $response->body()));
+            report(new \RuntimeException('Stripe session retrieval failed: '.$response->body()));
 
-            return redirect()->route('frontend.orders.order-confirmed')->withErrors(['payment' => 'Could not verify payment.']);
+            return redirect()->route('frontend.home')->withErrors(['payment' => 'Could not verify payment.']);
         }
 
         $session = $response->json();
         $paymentStatus = $session['payment_status'] ?? PaymentStatus::PENDING->value;
 
         if ($paymentStatus !== 'paid') {
-            return redirect()->route('frontend.orders.order-confirmed')->withErrors(['payment' => 'Payment was not completed.']);
+            return redirect()->route('frontend.home')->withErrors(['payment' => 'Payment was not completed.']);
         }
 
-        $paymentId = (int) ($session['metadata']['payment_id'] ?? 0);
-        $payment = Payment::where('id', $paymentId)->where('user_id', $request->user()->id)->first();
+        $paymentId = (int) (($session['metadata']['payment_db_id'] ?? null) ?: ($session['metadata']['payment_id'] ?? 0));
+        $payment = Payment::where('id', $paymentId)
+            ->where('user_id', $request->user()->id)
+            ->first();
+
+        if (! $payment) {
+            $payment = Payment::where('method', PaymentMethod::STRIPE->value)
+                ->where('gateway_txn_id', $sessionId)
+                ->where('user_id', $request->user()->id)
+                ->first();
+        }
 
         if (! $payment || $payment->isPaid()) {
-            return redirect()->route('frontend.orders.order-confirmed')->with('status', __('Payment already recorded.'));
+            if ($payment?->order) {
+                $payment->order->load(['orderItems.product.images', 'orderAddress', 'payment']);
+
+                return Inertia::render('user/order/success', $this->buildOrderPageProps($payment->order));
+            }
+
+            return redirect()->route('frontend.home')
+                ->withErrors(['payment' => 'Payment could not be matched to an order.']);
         }
 
         $paymentIntent = $session['payment_intent'] ?? null;
@@ -209,7 +227,7 @@ class PaymentController extends Controller
             $chargeId = $paymentIntent['charges']['data'][0]['id'];
         } elseif (is_string($paymentIntentId)) {
             $chargeResponse = Http::withBasicAuth($secretKey, '')
-                ->get('https://api.stripe.com/v1/payment_intents/' . $paymentIntentId);
+                ->get('https://api.stripe.com/v1/payment_intents/'.$paymentIntentId);
             if ($chargeResponse->successful()) {
                 $pi = $chargeResponse->json();
                 $chargeId = $pi['charges']['data'][0]['id'] ?? null;
@@ -236,21 +254,25 @@ class PaymentController extends Controller
             ]);
         });
 
-        return redirect()->route('frontend.orders.order-confirmed', ['order' => $payment->order->id])
-            ->with('status', __('Payment successful. Order :order confirmed.', ['order' => $payment->order->order_number]));
+        $payment->order->load(['orderItems.product.images', 'orderAddress', 'payment']);
+
+        return Inertia::render('user/order/success', $this->buildOrderPageProps($payment->order));
     }
 
-    private function handlePayPalSuccess(Request $request): RedirectResponse
+    private function handlePayPalSuccess(Request $request): RedirectResponse|Response
     {
         $token = $request->query('token');
         if (! $token || ! is_string($token)) {
-            return redirect()->route('frontend.orders.order-confirmed')->withErrors(['payment' => 'Missing PayPal token.']);
+            return redirect()->route('frontend.home')->withErrors(['payment' => 'Missing PayPal token.']);
         }
 
-        $payment = Payment::where('paypal_order_id', $token)->where('user_id', $request->user()->id)->first();
+        $payment = Payment::where('method', PaymentMethod::PAYPAL->value)
+            ->where('gateway_txn_id', $token)
+            ->where('user_id', $request->user()->id)
+            ->first();
 
         if (! $payment || $payment->isPaid()) {
-            return redirect()->route('frontend.orders.order-confirmed')->withErrors(['payment' => 'Payment not found.']);
+            return redirect()->route('frontend.home')->withErrors(['payment' => 'Payment not found.']);
         }
 
         $clientId = (string) config('services.paypal.client_id');
@@ -260,10 +282,10 @@ class PaymentController extends Controller
 
         $tokenResponse = Http::asForm()
             ->withBasicAuth($clientId, $clientSecret)
-            ->post($baseUrl . '/v1/oauth2/token', ['grant_type' => 'client_credentials']);
+            ->post($baseUrl.'/v1/oauth2/token', ['grant_type' => 'client_credentials']);
 
         if (! $tokenResponse->successful() || ! $tokenResponse->json('access_token')) {
-            return redirect()->route('frontend.orders.order-confirmed')->withErrors(['payment' => 'Could not verify with PayPal.']);
+            return redirect()->route('frontend.home')->withErrors(['payment' => 'Could not verify with PayPal.']);
         }
 
         $accessToken = $tokenResponse->json('access_token');
@@ -273,12 +295,12 @@ class PaymentController extends Controller
             ->withHeaders([
                 'Prefer' => 'return=representation',
             ])
-            ->post($baseUrl . '/v2/checkout/orders/' . $token . '/capture', new \stdClass);
+            ->post($baseUrl.'/v2/checkout/orders/'.$token.'/capture', new \stdClass);
 
         if (! $captureResponse->successful()) {
-            report(new \RuntimeException('PayPal capture failed: ' . $captureResponse->body()));
+            report(new \RuntimeException('PayPal capture failed: '.$captureResponse->body()));
 
-            return redirect()->route('frontend.orders.order-confirmed')->withErrors(['payment' => 'PayPal capture failed.']);
+            return redirect()->route('user.payment.cancel', ['orderId' => $payment->order->order_number])->withErrors(['payment' => 'PayPal capture failed.']);
         }
 
         $captureData = $captureResponse->json();
@@ -288,16 +310,14 @@ class PaymentController extends Controller
         $payerId = $captureData['payer']['payer_id'] ?? null;
 
         if ($status !== 'COMPLETED') {
-            return redirect()->route('frontend.orders.order-confirmed')->withErrors(['payment' => 'PayPal payment not completed.']);
+            return redirect()->route('user.payment.cancel', ['orderId' => $payment->order->order_number])->withErrors(['payment' => 'PayPal payment not completed.']);
         }
 
-        DB::transaction(function () use ($payment, $captureId, $payerId) {
+        DB::transaction(function () use ($payment, $captureId) {
             $payment->update([
                 'status' => PaymentStatus::COMPLETED->value,
                 'paid_at' => now(),
                 'transaction_id' => $captureId,
-                'paypal_capture_id' => $captureId,
-                'paypal_payer_id' => $payerId,
                 'updater_id' => $payment->user_id,
                 'updater_type' => User::class,
             ]);
@@ -311,8 +331,9 @@ class PaymentController extends Controller
             ]);
         });
 
-        return redirect()->route('frontend.orders.order-confirmed', ['order' => $payment->order->id])
-            ->with('status', __('Payment successful. Order :order confirmed.', ['order' => $payment->order->order_number]));
+        $payment->order->load(['orderItems.product.images', 'orderAddress', 'payment']);
+
+        return Inertia::render('user/order/success', $this->buildOrderPageProps($payment->order));
     }
 
     /**
@@ -345,7 +366,7 @@ class PaymentController extends Controller
         }
 
         $successUrl = route('user.payment.success', ['gateway' => 'stripe'])
-            . '?session_id={CHECKOUT_SESSION_ID}';
+            .'?session_id={CHECKOUT_SESSION_ID}';
 
         $cancelUrl = route('user.payment.cancel', $order->id);
 
@@ -374,7 +395,7 @@ class PaymentController extends Controller
 
         if (! $response->successful()) {
             report(new \RuntimeException(
-                'Stripe checkout session creation failed: ' . $response->body()
+                'Stripe checkout session creation failed: '.$response->body()
             ));
             abort(500, 'Unable to start Stripe payment. Please try again.');
         }
@@ -417,11 +438,11 @@ class PaymentController extends Controller
         $tokenResponse = Http::asForm()
             ->withBasicAuth($clientId, $clientSecret)
             ->timeout(15)
-            ->post($baseUrl . '/v1/oauth2/token', ['grant_type' => 'client_credentials']);
+            ->post($baseUrl.'/v1/oauth2/token', ['grant_type' => 'client_credentials']);
 
         if (! $tokenResponse->successful()) {
             report(new \RuntimeException(
-                'PayPal token request failed: ' . $tokenResponse->body()
+                'PayPal token request failed: '.$tokenResponse->body()
             ));
             abort(500, 'Unable to authenticate with PayPal.');
         }
@@ -442,7 +463,7 @@ class PaymentController extends Controller
         $orderResponse = Http::withToken($accessToken)
             ->acceptJson()
             ->timeout(15)
-            ->post($baseUrl . '/v2/checkout/orders', [
+            ->post($baseUrl.'/v2/checkout/orders', [
                 'intent' => 'CAPTURE',
                 'purchase_units' => [[
                     'amount' => [
@@ -464,7 +485,7 @@ class PaymentController extends Controller
 
         if (! $orderResponse->successful()) {
             report(new \RuntimeException(
-                'PayPal order creation failed: ' . $orderResponse->status() . ' ' . $orderResponse->body()
+                'PayPal order creation failed: '.$orderResponse->status().' '.$orderResponse->body()
             ));
             abort(500, 'Unable to start PayPal payment. Please try again.');
         }
@@ -486,9 +507,12 @@ class PaymentController extends Controller
         return $approvalLink;
     }
 
-    public function cancel($orderId)
+    public function cancel(Request $request, string $orderId): Response
     {
-        $order = Order::findOrFail($orderId);
+        $order = Order::query()
+            ->where('order_number', $orderId)
+            ->orWhere('id', is_numeric($orderId) ? (int) $orderId : 0)
+            ->firstOrFail();
 
         DB::transaction(function () use ($order) {
 
@@ -504,7 +528,40 @@ class PaymentController extends Controller
             }
         });
 
-        return redirect()->route('frontend.orders')
-            ->withErrors(['payment' => 'Payment cancelled']);
+        $order->load(['orderItems.product.images', 'orderAddress', 'payment']);
+
+        return Inertia::render('user/order/cancel', [
+            ...$this->buildOrderPageProps($order),
+            'errorMessage' => session('errors') ? session('errors')->first('payment') : 'Payment cancelled',
+        ]);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function buildOrderPageProps(Order $order): array
+    {
+        $maxAttempts = max((int) config('services.payment.max_attempts', 3), 1);
+        $attemptCount = (int) $order->payments()->count();
+        $attemptsRemaining = max($maxAttempts - $attemptCount, 0);
+
+        return [
+            'order' => [
+                'order_number' => $order->order_number,
+                'subtotal' => (float) $order->subtotal,
+                'shipping_cost' => (float) $order->shipping_cost,
+                'total' => (float) $order->total,
+                'order_status' => $order->order_status?->value ?? (string) $order->order_status,
+                'payment_status' => $order->payment_status?->value ?? (string) $order->payment_status,
+                'created_at' => $order->created_at,
+            ],
+            'orderAddress' => $order->orderAddress,
+            'orderItems' => $order->orderItems,
+            'paymentMethod' => $order->payment?->method,
+            'maxAttempts' => $maxAttempts,
+            'attemptCount' => $attemptCount,
+            'attemptsRemaining' => $attemptsRemaining,
+            'canRetryPayment' => $attemptsRemaining > 0 && (($order->payment_status?->value ?? (string) $order->payment_status) !== OrderPaymentStatus::PAID->value),
+        ];
     }
 }

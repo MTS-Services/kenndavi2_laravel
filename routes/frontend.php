@@ -11,7 +11,7 @@ Route::name('frontend.')->controller(FrontendController::class)->group(function 
 
         Route::get('/shipping-info', 'shippingInfo')->name('shipping-info');
         Route::group(['prefix' => 'orders', 'as' => 'orders.'], function () {
-            Route::get('/order-confirmed', [OrderController::class, 'orderConfirmed'])->name('order-confirmed');
+            Route::get('/order-success', [OrderController::class, 'orderSuccess'])->name('order-success');
             Route::post('/store', [OrderController::class, 'store'])->name('store');
             // Route::post('/place-order', [OrderController::class, 'placeOrder'])->name('placeOrder');
         });

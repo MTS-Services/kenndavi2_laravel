@@ -168,7 +168,7 @@ class PaymentController extends Controller
         }
 
         return redirect()
-            ->route('checkout.gateway', ['order' => $orderModel->order_number])
+            ->route('user.checkout.gateway', ['order' => $orderModel->order_number])
             ->with('toast', [
                 'type' => 'error',
                 'message' => 'Missing payment confirmation parameters.',

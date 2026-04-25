@@ -111,21 +111,6 @@ export default function ProductCard() {
         }
 
         router.visit(shippingInfo().url);
-        return;
-
-        // router.post(
-        //     route('frontend.orders.store'),
-        //     {
-        //         subTotal: subTotal,
-        //         shipping: shipping,
-        //         total: total,
-        //     },
-        //     {
-        //         onError: (errors) => {
-        //             console.log(errors);
-        //         },
-        //     },
-        // );
     };
     // Calculate totals dynamically using backend calculated data
     const subTotal = products.reduce((total: number, product: any) => {

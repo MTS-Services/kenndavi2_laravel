@@ -11,6 +11,7 @@ class Payment extends Model
 {
     protected $fillable = [
         'order_id',
+        'user_id',
         'method',
         'gateway_txn_id',
         'txn_id',
@@ -31,6 +32,7 @@ class Payment extends Model
             'paid_at' => 'datetime',
         ];
     }
+
     public function order()
     {
         return $this->belongsTo(Order::class);
@@ -40,7 +42,6 @@ class Payment extends Model
     {
         return $this->belongsTo(User::class);
     }
-
 
     public function isPaid(): bool
     {

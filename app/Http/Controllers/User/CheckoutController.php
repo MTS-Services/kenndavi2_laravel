@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Enums\OrderPaymentStatus;
 use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\StoreShippingAddressRequest;
 use App\Models\Order;
+use App\Models\OrderAddresse;
 use App\Models\OrderItem;
 use App\Models\PaymentGateway;
-use App\Models\ShippingAddress;
 use App\Services\CartService;
 use App\Services\PaymentService;
+use App\Services\ProductService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -23,15 +25,15 @@ class CheckoutController extends Controller
         StoreShippingAddressRequest $request,
         CartService $cartService,
         PaymentService $paymentService,
+        ProductService $productService,
     ): BaseResponse {
         $cart = $cartService->resolveCart($request);
 
-        $cart->load('items');
-        dd($cart->items);
+        $cart->load('items.product.images');
 
         if ($cart->items->isEmpty()) {
             return redirect()
-                ->route('cart.index')
+                ->route('frontend.cart.index')
                 ->with('toast', [
                     'type' => 'error',
                     'message' => 'Your cart is empty.',
@@ -43,20 +45,19 @@ class CheckoutController extends Controller
         }
 
         foreach ($cart->items as $item) {
-            $variant = $item->variant;
-            if (! $variant) {
+            if (! $item->product) {
                 return redirect()
-                    ->route('cart.index')
+                    ->route('frontend.cart.index')
                     ->with('toast', [
                         'type' => 'error',
-                        'message' => 'A cart item is missing its variant. Please update your cart.',
+                        'message' => 'A cart item product is missing. Please update your cart.',
                     ]);
             }
 
-            $variant->refresh();
-            if ((int) $variant->quantity < (int) $item->quantity) {
+            $item->product->refresh();
+            if ((int) $item->product->stock_level < (int) $item->quantity) {
                 return redirect()
-                    ->route('cart.index')
+                    ->route('frontend.cart.index')
                     ->with('toast', [
                         'type' => 'error',
                         'message' => 'One or more items are out of stock. Please update your cart.',
@@ -65,86 +66,70 @@ class CheckoutController extends Controller
         }
 
         /** @var Order $order */
-        $order = DB::transaction(function () use ($request, $cart, $cartService) {
+        $order = DB::transaction(function () use ($request, $cart, $productService) {
             $userId = (int) $request->user()->id;
 
             $shippingData = $request->validated();
-            $saveAsDefault = (bool) ($shippingData['save_as_default'] ?? false);
-            unset($shippingData['save_as_default']);
-            $shippingData['is_default'] = $saveAsDefault;
+            $subtotal = 0.0;
+            $totalDiscount = 0.0;
 
-            if ($saveAsDefault) {
-                ShippingAddress::query()
-                    ->where('user_id', $userId)
-                    ->update(['is_default' => false]);
-            }
-
-            $shippingAddress = ShippingAddress::query()->updateOrCreate(
-                ['cart_id' => $cart->id, 'user_id' => $userId],
-                $shippingData,
-            );
-
-            $cartItemUpdatedAt = optional($cart->items->max('updated_at'))?->timestamp ?? 0;
-            $idempotencyKey = hash('sha256', implode('|', [
-                (string) $cart->id,
-                (string) $cartItemUpdatedAt,
-                (string) $shippingAddress->id,
-                (string) $userId,
-            ]));
-
-            $existing = Order::query()
-                ->where('user_id', $userId)
-                ->where('idempotency_key', $idempotencyKey)
-                ->first();
-
-            if ($existing) {
-                return $existing;
-            }
-
-            $subtotal = 0;
             foreach ($cart->items as $item) {
-                $variant = $item->variant;
-                $subtotal += (float) $item->unit_price * (int) $item->quantity;
+                $calculated = $productService->getProductCalculatedData(
+                    $item->product,
+                    (int) $item->quantity,
+                );
+
+                $subtotal += (float) ($calculated['total_price'] ?? 0);
+                $totalDiscount += (float) ($calculated['discount_amount'] ?? 0) * (int) $item->quantity;
             }
 
             $subtotal = round($subtotal, 2);
+            $shippingCost = $subtotal <= 1 ? 0.0 : (float) $productService->getShippingCost();
+            $grandTotal = round($subtotal + $shippingCost, 2);
 
             $order = Order::create([
                 'order_number' => generate_order_id_hybrid(),
-                'idempotency_key' => $idempotencyKey,
                 'user_id' => $userId,
-                'shipping_address_id' => $shippingAddress->id,
                 'subtotal' => $subtotal,
-                'discount_amount' => 0,
-                'shipping_cost' => 0,
-                'tax_amount' => 0,
-                'grand_total' => $subtotal,
-                'status' => OrderStatus::INITIALIZED->value,
+                'discount' => round($totalDiscount, 2),
+                'shipping_cost' => $shippingCost,
+                'tax' => 0,
+                'total' => $grandTotal,
+                'currency' => 'USD',
+                'payment_status' => \App\Enums\OrderPaymentStatus::UNPAID->value,
+                'order_status' => OrderStatus::INITIALIZED->value,
+            ]);
+
+            OrderAddresse::create([
+                'order_id' => $order->id,
+                'full_name' => $shippingData['name'],
+                'phone' => $shippingData['phone'],
+                'email' => $shippingData['email'],
+                'address_line1' => $shippingData['address_line1'],
+                'address_line2' => $shippingData['address_line2'] ?? null,
+                'city' => $shippingData['city'],
+                'state' => $shippingData['State'],
+                'postal_code' => $shippingData['postalCode'],
+                'country' => $shippingData['country'],
+                'creater_id' => $userId,
+                'creater_type' => \App\Models\User::class,
             ]);
 
             foreach ($cart->items as $item) {
-                $variant = $item->variant;
-                $product = $variant?->product;
-                $image = $product?->images
-                    ?->sortByDesc('is_primary')
-                    ->sortBy('sort_order')
-                    ->first();
-
-                $unit = (float) $item->unit_price;
+                $product = $item->product;
                 $qty = (int) $item->quantity;
+                $calculated = $productService->getProductCalculatedData($product, $qty);
+                $itemDiscount = (float) ($calculated['discount_amount'] ?? 0) * $qty;
 
                 OrderItem::create([
                     'order_id' => $order->id,
-                    'variant_id' => $variant?->id,
-                    'product_title' => $product?->title,
-                    'sku' => null,
-                    'color_name' => $variant?->color?->name,
-                    'size_name' => $variant?->size?->name,
-                    'image_url' => $cartService->resolveImageUrl($image?->url),
-                    'unit_price' => $unit,
-                    'offer_price' => null,
+                    'product_id' => $product->id,
+                    'product_name' => $product->title,
+                    'product_sku' => $product->sku,
+                    'price' => (float) ($calculated['discounted_price'] ?? 0),
+                    'discount' => round($itemDiscount, 2),
                     'quantity' => $qty,
-                    'total_price' => round($unit * $qty, 2),
+                    'total' => round((float) ($calculated['total_price'] ?? 0), 2),
                 ]);
             }
 
@@ -156,7 +141,7 @@ class CheckoutController extends Controller
         $activeGateways = PaymentGateway::query()
             ->enabled()
             ->get()
-            ->filter(fn(PaymentGateway $g) => $g->isSupported())
+            ->filter(fn (PaymentGateway $g) => $g->isSupported())
             ->values();
 
         if ($activeGateways->count() === 1) {
@@ -167,7 +152,7 @@ class CheckoutController extends Controller
 
             if (! ($result['success'] ?? false)) {
                 return redirect()
-                    ->route('checkout.gateway', ['order' => $order->order_number])
+                    ->route('user.checkout.gateway', ['order' => $order->order_number])
                     ->with('toast', [
                         'type' => 'error',
                         'message' => $result['message'] ?? 'Failed to start payment.',
@@ -177,7 +162,7 @@ class CheckoutController extends Controller
             return Inertia::location($result['checkout_url']);
         }
 
-        return redirect()->route('checkout.gateway', ['order' => $order->order_number]);
+        return redirect()->route('user.checkout.gateway', ['order' => $order->order_number]);
     }
 
     public function gateway(Request $request, string $order): Response
@@ -190,14 +175,14 @@ class CheckoutController extends Controller
         $gateways = PaymentGateway::query()
             ->enabled()
             ->get()
-            ->filter(fn(PaymentGateway $g) => $g->isSupported())
-            ->map(fn(PaymentGateway $g) => [
+            ->filter(fn (PaymentGateway $g) => $g->isSupported())
+            ->map(fn (PaymentGateway $g) => [
                 'slug' => $g->slug,
                 'name' => $g->name,
             ])
             ->values();
 
-        return Inertia::render('backend/user/order-management/gateway', [
+        return Inertia::render('user/order/gateway', [
             'orderNumber' => $orderModel->order_number,
             'gateways' => $gateways,
             'grandTotal' => (float) $orderModel->grand_total,
@@ -220,6 +205,29 @@ class CheckoutController extends Controller
             ->where('slug', $validated['gateway'])
             ->where('is_active', true)
             ->firstOrFail();
+
+        $maxAttempts = max((int) config('services.payment.max_attempts', 3), 1);
+        $attemptCount = (int) $order->payments()->count();
+        if ($attemptCount >= $maxAttempts) {
+            return redirect()
+                ->route('user.payment.cancel', ['orderId' => $order->order_number])
+                ->withErrors(['payment' => 'Maximum payment attempts reached for this order.']);
+        }
+
+        // Allow retry when previous attempt moved order to cancelled/failed.
+        if (
+            in_array($order->order_status?->value ?? (string) $order->order_status, [
+                OrderStatus::CANCELLED->value,
+                OrderStatus::FAILED->value,
+            ], true)
+            && (($order->payment_status?->value ?? (string) $order->payment_status) !== OrderPaymentStatus::PAID->value)
+        ) {
+            $order->update([
+                'order_status' => OrderStatus::INITIALIZED->value,
+                'payment_status' => OrderPaymentStatus::UNPAID->value,
+            ]);
+            $order->refresh();
+        }
 
         $result = $paymentService->processPayment($order, $gateway->slug, [
             'currency' => 'USD',
