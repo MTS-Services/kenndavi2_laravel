@@ -78,6 +78,7 @@ class PaymentController extends Controller
 
     public function paymentSuccess(Request $request, string $order)
     {
+        Log::info('Payment success', ['order' => $order]);
         $orderModel = Order::query()
             ->where('order_number', $order)
             ->where('user_id', $request->user()->id)

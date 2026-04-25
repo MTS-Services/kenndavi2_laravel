@@ -75,8 +75,13 @@ class PayPalMethod extends PaymentMethod
             if (! $payment instanceof Payment) {
                 throw new Exception('Missing payment context.');
             }
+            Log::info('PAYMENT_FLOW [PP-01] PayPal startPayment called', [
+                'order_number' => $order->order_number,
+                'payment_id' => $payment->id,
+                'amount' => (float) $payment->amount,
+            ]);
 
-            $successUrl = $paymentData['success_url'] ?? route('user.payment.success', ['gateway' => 'paypal', 'order' => $order->order_number]);
+            $successUrl = $paymentData['success_url'] ?? route('user.payment.success', ['gateway' => 'paypal']);
             $cancelUrl = $paymentData['cancel_url'] ?? route('user.payment.cancel', ['orderId' => $order->order_number]);
 
             $token = $this->getAccessToken();
@@ -140,6 +145,11 @@ class PayPalMethod extends PaymentMethod
                     'checkout_url' => $approveUrl,
                 ], JSON_THROW_ON_ERROR),
             ]);
+            Log::info('PAYMENT_FLOW [PP-02] PayPal order created', [
+                'order_number' => $order->order_number,
+                'payment_id' => $payment->id,
+                'paypal_order_id' => $paypalOrderId,
+            ]);
 
             return [
                 'success' => true,
@@ -149,6 +159,7 @@ class PayPalMethod extends PaymentMethod
             ];
         } catch (Exception $e) {
             Log::error('PayPal payment initialization failed', [
+                'step' => 'PP-EX',
                 'order_number' => $order->order_number ?? null,
                 'error' => $e->getMessage(),
             ]);
@@ -163,6 +174,9 @@ class PayPalMethod extends PaymentMethod
     public function confirmPayment(string $transactionId, ?string $paymentMethodId = null): array
     {
         try {
+            Log::info('PAYMENT_FLOW [PP-03] PayPal confirmPayment called', [
+                'paypal_order_id' => $transactionId,
+            ]);
             $token = $this->getAccessToken();
             $res = Http::withToken($token)->post($this->baseUrl()."/v2/checkout/orders/{$transactionId}/capture");
 
@@ -172,6 +186,10 @@ class PayPalMethod extends PaymentMethod
 
             $status = strtoupper((string) ($res->json('status') ?? ''));
             if ($status !== 'COMPLETED') {
+                Log::warning('PAYMENT_FLOW [PP-04] PayPal capture not completed', [
+                    'paypal_order_id' => $transactionId,
+                    'status' => $status,
+                ]);
                 return [
                     'success' => false,
                     'message' => __('Payment not completed. Status: :status', ['status' => $status ?: 'unknown']),
@@ -187,6 +205,10 @@ class PayPalMethod extends PaymentMethod
                     ->firstOrFail();
 
                 if ($payment->status?->value === PaymentStatus::COMPLETED->value) {
+                    Log::info('PAYMENT_FLOW [PP-05] PayPal payment already completed', [
+                        'payment_id' => $payment->id,
+                        'paypal_order_id' => $transactionId,
+                    ]);
                     return [
                         'success' => true,
                         'message' => __('Payment already processed.'),
@@ -205,6 +227,11 @@ class PayPalMethod extends PaymentMethod
                     'status' => OrderStatus::PENDING->value,
                     'payment_status' => OrderPaymentStatus::PAID->value,
                 ]);
+                Log::info('PAYMENT_FLOW [PP-06] PayPal payment and order updated', [
+                    'payment_id' => $payment->id,
+                    'order_number' => $order->order_number,
+                    'paypal_order_id' => $transactionId,
+                ]);
 
                 return [
                     'success' => true,
@@ -213,6 +240,7 @@ class PayPalMethod extends PaymentMethod
             });
         } catch (Exception $e) {
             Log::error('PayPal payment confirmation failed', [
+                'step' => 'PP-EX2',
                 'paypal_order_id' => $transactionId,
                 'error' => $e->getMessage(),
             ]);

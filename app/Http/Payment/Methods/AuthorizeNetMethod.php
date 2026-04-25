@@ -46,6 +46,11 @@ class AuthorizeNetMethod extends PaymentMethod
             if (! $payment instanceof Payment) {
                 throw new Exception('Missing payment context.');
             }
+            Log::info('PAYMENT_FLOW [AN-01] Authorize.Net startPayment called', [
+                'order_number' => $order->order_number,
+                'payment_id' => $payment->id,
+                'amount' => (float) $payment->amount,
+            ]);
 
             $config = AuthorizeNetConfig::forGateway($this->gateway);
 
@@ -87,6 +92,13 @@ class AuthorizeNetMethod extends PaymentMethod
                 'gateway_txn_id' => null,
                 'gateway_response' => json_encode($gatewayPayload, JSON_THROW_ON_ERROR),
             ]);
+            Log::info('PAYMENT_FLOW [AN-02] Authorize.Net relay prepared', [
+                'order_number' => $order->order_number,
+                'payment_id' => $payment->id,
+                'relay_url' => $relayUrl,
+                'success_url' => $successUrl,
+                'cancel_url' => $cancelUrl,
+            ]);
 
             return [
                 'success' => true,
@@ -95,6 +107,7 @@ class AuthorizeNetMethod extends PaymentMethod
             ];
         } catch (Exception $e) {
             Log::error('Authorize.Net payment initialization failed', [
+                'step' => 'AN-EX',
                 'order_number' => $order->order_number ?? null,
                 'error' => $e->getMessage(),
             ]);
@@ -109,6 +122,9 @@ class AuthorizeNetMethod extends PaymentMethod
     public function confirmPayment(string $orderNumber, ?string $paymentMethodId = null): array
     {
         try {
+            Log::info('PAYMENT_FLOW [AN-03] Authorize.Net confirmPayment called', [
+                'order_number' => $orderNumber,
+            ]);
             $config = AuthorizeNetConfig::forGateway($this->gateway);
             if (! $config->configured()) {
                 throw new Exception('Authorize.Net API credentials are not configured.');
@@ -161,6 +177,11 @@ class AuthorizeNetMethod extends PaymentMethod
                 $order->update([
                     'status' => OrderStatus::PENDING->value,
                     'payment_status' => OrderPaymentStatus::PAID->value,
+                ]);
+                Log::info('PAYMENT_FLOW [AN-04] Authorize.Net payment and order updated', [
+                    'order_number' => $orderNumber,
+                    'payment_id' => $payment->id,
+                    'gateway_txn_id' => (string) $matchedTxn->getTransId(),
                 ]);
             });
 

@@ -24,6 +24,11 @@ Route::get('reset-password', [UserAuthController::class, 'resetPassword'])->name
 Route::post('reset-password', [UserAuthController::class, 'resetPasswordStore'])->name('reset-password.post');
 
 Route::prefix('user')->name('user.')->group(function () {
+    Route::controller(PaymentController::class)->prefix('payment')->name('payment.')->group(function () {
+        Route::get('/success/{gateway}', 'success')->name('success');
+        Route::get('/cancel/{orderId}', 'cancel')->name('cancel');
+    });
+
     // Authentication Routes...
     Route::get('/pending-verification', [UserController::class, 'accountPending'])->name('pending-verification');
     Route::middleware(['auth'])->group(function () {
@@ -56,8 +61,6 @@ Route::prefix('user')->name('user.')->group(function () {
 
         Route::controller(PaymentController::class)->prefix('payment')->name('payment.')->group(function () {
             Route::get('/start', 'start')->name('start');
-            Route::get('/success/{gateway}', 'success')->name('success');
-            Route::get('/cancel/{orderId}', 'cancel')->name('cancel');
         });
 
         Route::controller(CheckoutController::class)->middleware('throttle:checkout')->name('checkout.')->group(function () {

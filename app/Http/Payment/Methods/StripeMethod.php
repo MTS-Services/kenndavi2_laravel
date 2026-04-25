@@ -38,11 +38,16 @@ class StripeMethod extends PaymentMethod
             if (! $payment instanceof Payment) {
                 throw new Exception('Missing payment context.');
             }
+            Log::info('PAYMENT_FLOW [SM-01] Stripe startPayment called', [
+                'order_number' => $order->order_number,
+                'payment_id' => $payment->id,
+                'amount' => (float) $payment->amount,
+            ]);
 
             $currency = 'usd';
 
             $successUrl = $paymentData['success_url']
-                ?? route('user.payment.success', ['gateway' => 'stripe', 'order' => $order->order_number]).'?session_id={CHECKOUT_SESSION_ID}';
+                ?? route('user.payment.success', ['gateway' => 'stripe']).'?session_id={CHECKOUT_SESSION_ID}';
             $cancelUrl = $paymentData['cancel_url']
                 ?? route('user.payment.cancel', ['orderId' => $order->order_number]);
 
@@ -77,6 +82,11 @@ class StripeMethod extends PaymentMethod
                     'checkout_url' => $session->url,
                 ], JSON_THROW_ON_ERROR),
             ]);
+            Log::info('PAYMENT_FLOW [SM-02] Stripe session created', [
+                'order_number' => $order->order_number,
+                'payment_id' => $payment->id,
+                'session_id' => $session->id,
+            ]);
 
             return [
                 'success' => true,
@@ -86,6 +96,7 @@ class StripeMethod extends PaymentMethod
             ];
         } catch (Exception $e) {
             Log::error('Stripe payment initialization failed', [
+                'step' => 'SM-EX',
                 'order_number' => $order->order_number ?? null,
                 'error' => $e->getMessage(),
             ]);
@@ -100,12 +111,19 @@ class StripeMethod extends PaymentMethod
     public function confirmPayment(string $sessionId, ?string $paymentMethodId = null): array
     {
         try {
+            Log::info('PAYMENT_FLOW [SM-03] Stripe confirmPayment called', [
+                'session_id' => $sessionId,
+            ]);
             $session = StripeSession::retrieve($sessionId);
             if (! $session) {
                 throw new Exception('Stripe session not found.');
             }
 
             if (($session->payment_status ?? null) !== 'paid') {
+                Log::warning('PAYMENT_FLOW [SM-04] Stripe session not paid', [
+                    'session_id' => $sessionId,
+                    'payment_status' => $session->payment_status ?? null,
+                ]);
                 return [
                     'success' => false,
                     'message' => __('Payment not completed.'),
@@ -121,6 +139,10 @@ class StripeMethod extends PaymentMethod
                     ->firstOrFail();
 
                 if ($payment->status?->value === PaymentStatus::COMPLETED->value) {
+                    Log::info('PAYMENT_FLOW [SM-05] Stripe payment already completed', [
+                        'payment_id' => $payment->id,
+                        'session_id' => $sessionId,
+                    ]);
                     return [
                         'success' => true,
                         'message' => __('Payment already processed.'),
@@ -139,6 +161,11 @@ class StripeMethod extends PaymentMethod
                     'status' => OrderStatus::PENDING->value,
                     'payment_status' => OrderPaymentStatus::PAID->value,
                 ]);
+                Log::info('PAYMENT_FLOW [SM-06] Stripe payment and order updated', [
+                    'payment_id' => $payment->id,
+                    'order_number' => $order->order_number,
+                    'session_id' => $sessionId,
+                ]);
 
                 return [
                     'success' => true,
@@ -147,6 +174,7 @@ class StripeMethod extends PaymentMethod
             });
         } catch (Exception $e) {
             Log::error('Stripe payment confirmation failed', [
+                'step' => 'SM-EX2',
                 'session_id' => $sessionId,
                 'error' => $e->getMessage(),
             ]);

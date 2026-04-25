@@ -15,6 +15,7 @@ use App\Services\PaymentService;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\Response as BaseResponse;
@@ -27,6 +28,9 @@ class CheckoutController extends Controller
         PaymentService $paymentService,
         ProductService $productService,
     ): BaseResponse {
+        Log::info('PAYMENT_FLOW [CO-01] placeOrder called', [
+            'user_id' => $request->user()?->id,
+        ]);
         $cart = $cartService->resolveCart($request);
 
         $cart->load('items.product.images');
@@ -146,11 +150,20 @@ class CheckoutController extends Controller
 
         if ($activeGateways->count() === 1) {
             $gateway = $activeGateways->first();
+            Log::info('PAYMENT_FLOW [CO-02] single active gateway auto-start', [
+                'order_number' => $order->order_number,
+                'gateway' => $gateway->slug,
+            ]);
             $result = $paymentService->processPayment($order, $gateway->slug, [
                 'currency' => 'USD',
             ]);
 
             if (! ($result['success'] ?? false)) {
+                Log::warning('PAYMENT_FLOW [CO-03] auto-start payment failed', [
+                    'order_number' => $order->order_number,
+                    'gateway' => $gateway->slug,
+                    'message' => $result['message'] ?? null,
+                ]);
                 return redirect()
                     ->route('user.checkout.gateway', ['order' => $order->order_number])
                     ->with('toast', [
@@ -162,6 +175,10 @@ class CheckoutController extends Controller
             return Inertia::location($result['checkout_url']);
         }
 
+        Log::info('PAYMENT_FLOW [CO-04] multiple gateways, redirecting to gateway page', [
+            'order_number' => $order->order_number,
+            'gateway_count' => $activeGateways->count(),
+        ]);
         return redirect()->route('user.checkout.gateway', ['order' => $order->order_number]);
     }
 
@@ -191,6 +208,10 @@ class CheckoutController extends Controller
 
     public function start(Request $request, PaymentService $paymentService): BaseResponse
     {
+        Log::info('PAYMENT_FLOW [CO-05] checkout start called', [
+            'user_id' => $request->user()?->id,
+            'payload' => $request->only(['order_number', 'gateway']),
+        ]);
         $validated = $request->validate([
             'order_number' => ['required', 'string', 'max:32'],
             'gateway' => ['required', 'string', 'max:60'],
@@ -234,6 +255,11 @@ class CheckoutController extends Controller
         ]);
 
         if (! ($result['success'] ?? false)) {
+            Log::warning('PAYMENT_FLOW [CO-06] checkout start failed', [
+                'order_number' => $order->order_number,
+                'gateway' => $gateway->slug,
+                'message' => $result['message'] ?? null,
+            ]);
             return redirect()
                 ->back()
                 ->with('toast', [
@@ -242,6 +268,10 @@ class CheckoutController extends Controller
                 ]);
         }
 
+        Log::info('PAYMENT_FLOW [CO-07] checkout start redirecting to gateway URL', [
+            'order_number' => $order->order_number,
+            'gateway' => $gateway->slug,
+        ]);
         return Inertia::location($result['checkout_url']);
     }
 }
