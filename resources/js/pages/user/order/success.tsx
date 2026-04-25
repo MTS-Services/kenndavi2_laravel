@@ -86,10 +86,10 @@ export default function OrderSuccessPage({
                                         <Calendar className="h-4 w-4" />
                                         {new Date(order.created_at).toLocaleDateString()}
                                     </p>
-                                    <p className="flex items-center gap-2">
+                                    {/* <p className="flex items-center gap-2">
                                         <CreditCard className="h-4 w-4" />
                                         {paymentMethod || 'N/A'}
-                                    </p>
+                                    </p> */}
                                     <p>Status: {order.order_status}</p>
                                     <p>Payment: {order.payment_status}</p>
                                 </div>

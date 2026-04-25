@@ -43,6 +43,7 @@ enum OrderStatus: string
 
     public static function options(): array
     {
+        // Load all statuses except initialized
         return array_map(
             fn($case) => ['value' => $case->value, 'label' => $case->label(), 'color' => $case->color()],
             self::cases()

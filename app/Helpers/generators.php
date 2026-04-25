@@ -115,7 +115,8 @@ if (!function_exists('generate_order_id_hybrid')) {
         $sequenceStr = base62_encode($sequence);
         $sequenceStr = str_pad($sequenceStr, 6, '0', STR_PAD_LEFT);
 
-        return $prefix . $timestamp . $sequenceStr;
+        // return as uppercase and trim the prefix.
+        return (string) strtoupper(trim($prefix . $timestamp . $sequenceStr));
     }
 }
 

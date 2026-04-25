@@ -116,4 +116,9 @@ class Order extends Model
     {
         $this->attributes['total'] = $value;
     }
+
+    public function scopeNotInitialized($query)
+    {
+        return $query->where('order_status', '!=', OrderStatus::INITIALIZED->value);
+    }
 }
