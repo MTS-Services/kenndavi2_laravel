@@ -4,6 +4,9 @@ import { ArrowRight, CheckCircle, Minus, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 import { Input } from '@/components/ui/input';
+import { login } from '@/routes';
+import { SharedData } from '@/types';
+import { shippingInfo } from '@/routes/frontend';
 
 interface CartItem {
     id: number;
@@ -30,6 +33,7 @@ interface CartData {
 }
 
 export default function ProductCard() {
+    const { auth } = usePage<SharedData>().props;
     const { props } = usePage();
     const cartData = props as any;
     const { cart, cartItems, shippingCost, formattedShippingCost } = cartData;
@@ -101,19 +105,27 @@ export default function ProductCard() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        router.post(
-            route('frontend.orders.store'),
-            {
-                subTotal: subTotal,
-                shipping: shipping,
-                total: total,
-            },
-            {
-                onError: (errors) => {
-                    console.log(errors);
-                },
-            },
-        );
+        if (!auth.user) {
+            router.visit(login().url);
+            return;
+        }
+
+        router.visit(shippingInfo().url);
+        return;
+
+        // router.post(
+        //     route('frontend.orders.store'),
+        //     {
+        //         subTotal: subTotal,
+        //         shipping: shipping,
+        //         total: total,
+        //     },
+        //     {
+        //         onError: (errors) => {
+        //             console.log(errors);
+        //         },
+        //     },
+        // );
     };
     // Calculate totals dynamically using backend calculated data
     const subTotal = products.reduce((total: number, product: any) => {

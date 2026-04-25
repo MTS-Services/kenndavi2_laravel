@@ -34,7 +34,6 @@ class FrontendController extends Controller
         $this->feedbackService = $feedbackService;
         $this->orderService = $orderService;
         $this->feedbackService = $feedbackService;
-
     }
 
 
@@ -80,22 +79,23 @@ class FrontendController extends Controller
         if ($data['user']) {
             $data['user']->load('addresses');
         }
-        
+
+        /*
         // Security: Check if payment session exists and is valid
         $paymentSession = session('payment_pending');
         if ($paymentSession) {
             // Security: Verify user ID matches
             if ($paymentSession['user_id'] !== auth('web')->id()) {
                 session()->forget('payment_pending');
-                return redirect()->route('frontend.product-card')->with('error', 'Invalid payment session');
+                return redirect()->route('frontend.cart.index')->with('error', 'Invalid payment session');
             }
-            
+
             // Security: Check session age (5 minutes max)
             if (now()->timestamp - ($paymentSession['created_at'] ?? 0) > 300) {
                 session()->forget('payment_pending');
-                return redirect()->route('frontend.product-card')->with('error', 'Payment session expired');
+                return redirect()->route('frontend.cart.index')->with('error', 'Payment session expired');
             }
-            
+
             // Get the latest order from session using service
             $orderId = $paymentSession['order_id'];
             if ($orderId) {
@@ -108,17 +108,18 @@ class FrontendController extends Controller
             }
         } else {
             // No payment session - redirect to cart
-            return redirect()->route('frontend.product-card')->with('error', 'No active payment session');
+            return redirect()->route('frontend.cart.index')->with('error', 'No active payment session');
         }
-        
+            */
+
         $cartDatas = $this->cartService->getAllDatas();
-        
+
         // Merge cart data with existing data and shipping cost
         $data = array_merge($data, $cartDatas, [
             'shippingCost' => $shippingCost,
             'formattedShippingCost' => '$' . number_format($shippingCost, 2),
         ]);
-        
+
         return Inertia::render('frontend/shipping-info', $data);
     }
 

@@ -17,7 +17,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->string('session_id', 255)->nullable();
-
+            $table->timestamp('expires_at')->nullable();
+            
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
             $this->addMorphedAuditColumns($table);

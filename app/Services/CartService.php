@@ -6,16 +6,53 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Product;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class CartService
 {
+    public const SESSION_CART_ID_KEY = 'cart.id';
+
+    public const GUEST_CART_TTL_DAYS = 30;
+    
     public function __construct(
         protected Cart $model,
         protected CartItem $cartItem,
         protected Product $product
     ) {}
+
+    public function resolveCart(Request $request): Cart
+    {
+        if ($request->user()) {
+            return Cart::query()->firstOrCreate(
+                ['user_id' => $request->user()->id],
+                ['expires_at' => null],
+            );
+        }
+
+        $cartId = $request->session()->get(self::SESSION_CART_ID_KEY);
+        if ($cartId !== null) {
+            $cart = Cart::query()
+                ->whereNull('user_id')
+                ->whereKey($cartId)
+                ->first();
+            if ($cart !== null) {
+                return $cart;
+            }
+            $request->session()->forget(self::SESSION_CART_ID_KEY);
+        }
+
+        $cart = Cart::query()->create([
+            'user_id' => null,
+            'session_id' => $request->session()->getId(),
+            'expires_at' => now()->addDays(self::GUEST_CART_TTL_DAYS),
+        ]);
+        $request->session()->put(self::SESSION_CART_ID_KEY, $cart->id);
+
+        return $cart;
+    }
 
     public function getShippingCost(): float
     {
@@ -227,5 +264,17 @@ class CartService
             'unit_price'      => round($unitPrice, 2),
             'total_price'     => round($totalPrice, 2),
         ];
+    }
+
+    public function resolveImageUrl(?string $url): ?string
+    {
+        if ($url === null || $url === '') {
+            return null;
+        }
+        if (filter_var($url, FILTER_VALIDATE_URL) && (str_starts_with($url, 'https://') || str_starts_with($url, 'http://'))) {
+            return $url;
+        }
+
+        return Storage::disk('public')->url($url);
     }
 }

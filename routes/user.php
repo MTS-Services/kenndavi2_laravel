@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\User\CheckoutController;
 use App\Http\Controllers\User\FeedbackController;
 use App\Http\Controllers\User\GoogleAuthController;
 use App\Http\Controllers\User\PaymentController;
@@ -56,6 +57,14 @@ Route::prefix('user')->name('user.')->group(function () {
             Route::get('/start', 'start')->name('start');
             Route::get('/success/{gateway}', 'success')->name('success');
             Route::get('/cancel/{orderId}', 'cancel')->name('cancel');
+        });
+    });
+
+    Route::middleware(['auth'])->group(function () {
+        Route::controller(CheckoutController::class)->middleware('throttle:checkout')->name('checkout.')->group(function () {
+            Route::post('/checkout/place-order', 'placeOrder')->name('place-order');
+            Route::get('/checkout/gateway/{order}', 'gateway')->name('gateway');
+            Route::post('/checkout/start', 'start')->name('start');
         });
     });
 });
