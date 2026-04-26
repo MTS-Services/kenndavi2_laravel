@@ -37,8 +37,8 @@ interface Order {
     }>;
     payment?: {
         id: string;
-        payment_method: string;
-        transaction_id?: string;
+        method: string;
+        txn_id?: string;
         payment_intent_id?: string;
         amount: number;
         currency: string;
@@ -103,7 +103,7 @@ export default function OrderManagementDetails() {
             return `/storage/${firstImg.image}`;
         }
         
-        return '/assets/images/products/placeholder.png';
+        return 'https://placehold.co/600x400';
     };
 
     return (
@@ -251,7 +251,7 @@ export default function OrderManagementDetails() {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-between">
                             <div>
                                 <p className="text-sm font-medium text-gray-500">Payment Method</p>
-                                <p className="text-gray-900 capitalize">{order.payment.payment_method}</p>
+                                <p className="text-gray-900 capitalize">{order.payment.method}</p>
                             </div>
                             
                             <div>
@@ -263,17 +263,17 @@ export default function OrderManagementDetails() {
                             
                             <div>
                                 <p className="text-sm font-medium text-gray-500">Transaction ID</p>
-                                <p className="text-gray-900 break-all">{order.payment.transaction_id || 'N/A'}</p>
+                                <p className="text-gray-900 break-all">{order.payment.txn_id || 'N/A'}</p>
                             </div>
                             
 
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-between mt-4">
-                            <div>
+                            {/* <div>
                                 <p className="text-sm font-medium text-gray-500">Payment Intent ID</p>
                                 <p className="text-gray-900 text-sm">{order.payment.payment_intent_id || 'N/A'}</p>
-                            </div>
+                            </div> */}
 
                             <div>
                                 <p className="text-sm font-medium text-gray-500">Payment Date</p>

@@ -25,7 +25,7 @@ interface Props {
 
 export default function RecipeCardAdmin({ recipe }: Props) {
     const primaryImage = recipe.images?.find((img: RecipeImage) => img.is_primary);
-    const imageUrl = primaryImage?.image || recipe.image || '/assets/images/placeholder.jpg';
+    const imageUrl = primaryImage?.image || recipe.image || 'https://placehold.co/600x400';
 
     const href = route('frontend.recipe-details', recipe.id);
 
@@ -37,6 +37,9 @@ export default function RecipeCardAdmin({ recipe }: Props) {
                     src={imageUrl}
                     alt={recipe.title}
                     className="w-full h-64 object-cover rounded-t-md"
+                    onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = 'https://placehold.co/600x400';
+                    }}
                 />
             </div>
             </a>
@@ -47,9 +50,6 @@ export default function RecipeCardAdmin({ recipe }: Props) {
                 </h3>
                 </a>
                 <a href={href} target="_blank" rel="noopener noreferrer">
-                {/* <p className="mb-4 font-aktiv-grotesk text-base font-normal text-text-body line-clamp-2">
-                   {recipe.description}
-                </p> */}
                 <div className="mb-4 font-aktiv-grotesk text-base font-normal text-text-body">
                     <div dangerouslySetInnerHTML={{ __html: recipe.description }} />
                 </div>
