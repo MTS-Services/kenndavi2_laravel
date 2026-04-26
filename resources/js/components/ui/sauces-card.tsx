@@ -8,7 +8,7 @@ interface Props {
 export default function SaucesCard({ product }: Props) {
     const primaryImage = product?.images?.find((img: any) => img.is_primary);
     const imagePath = primaryImage?.image || product?.image;
-    const imageUrl = imagePath ? `/storage/${imagePath}` : '/assets/images/placeholder.jpg';
+    const imageUrl = imagePath ? `/storage/${imagePath}` : 'https://placehold.co/600x400';
 
     const href = route('frontend.product-details', product.id);
 

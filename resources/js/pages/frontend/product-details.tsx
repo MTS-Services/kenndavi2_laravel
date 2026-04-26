@@ -74,7 +74,7 @@ export default function ProductDetailsPage() {
 
     const productImages = product.images?.map((img) => `/storage/${img.image}`) || [];
     const [selectedImage, setSelectedImage] = useState<string>(
-        productImages[0] || '/assets/images/product/Rectangle 20.png',
+        productImages[0] || 'https://placehold.co/600x400',
     );
     const [quantity, setQuantity] = useState<number>(1);
 
