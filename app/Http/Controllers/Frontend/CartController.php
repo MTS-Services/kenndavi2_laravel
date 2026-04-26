@@ -16,22 +16,23 @@ class CartController extends Controller
 
     public function __construct(CartService $cartService, ProductService $productService)
     {
-        $this->cartService = $cartService;
+        $this->cartService    = $cartService;
         $this->productService = $productService;
     }
+
     public function index(): Response
     {
-        $data = $this->cartService->getAllDatas();
+        $data         = $this->cartService->getAllDatas();
         $shippingCost = $this->productService->getShippingCost();
 
-        // Add shipping cost to data
         $data = array_merge($data, [
-            'shippingCost' => $shippingCost,
+            'shippingCost'          => $shippingCost,
             'formattedShippingCost' => '$' . number_format($shippingCost, 2),
         ]);
 
         return Inertia::render('frontend/product-card', $data);
     }
+
     public function add(Request $request)
     {
         $request->validate([
@@ -41,20 +42,23 @@ class CartController extends Controller
 
         try {
             $this->cartService->addToCart($request->all());
+
             return redirect()->back()->with('success', 'Product added to cart successfully!');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to add product to cart. Please try again.');
         }
     }
+
     public function update(Request $request)
     {
         $request->validate([
             'cart_item_id' => 'required|exists:cart_items,id',
-            'quantity' => 'required|integer|min:1',
+            'quantity'     => 'required|integer|min:1',
         ]);
 
         try {
             $this->cartService->updateCartItem($request->all());
+
             return redirect()->back()->with('success', 'Cart updated successfully!');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to update cart. Please try again.');
@@ -65,6 +69,7 @@ class CartController extends Controller
     {
         try {
             $this->cartService->removeCartItem($id);
+
             return redirect()->back()->with('success', 'Item removed from cart successfully!');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to remove item from cart. Please try again.');
@@ -78,21 +83,18 @@ class CartController extends Controller
             'quantity'   => 'integer|min:1',
         ]);
 
-        if (!auth('web')->check()) {
-            session()->put('buy_now', [
-                'product_id' => $request->product_id,
-                'quantity'   => $request->get('quantity', 1),
-            ]);
-            session()->put('url.intended', route('frontend.shipping-info'));
 
-            return redirect()->route('login')
-                ->with('info', 'Please login to continue.');
-        }
-
-        session()->put('buy_now', [
+        $request->session()->put('buy_now', [
             'product_id' => $request->product_id,
             'quantity'   => $request->get('quantity', 1),
         ]);
+
+        if (!auth('web')->check()) {
+            $request->session()->put('url.intended', route('frontend.shipping-info'));
+
+            return redirect()->route('login')
+                ->with('info', 'Please login to continue with your purchase.');
+        }
 
         return redirect()->route('frontend.shipping-info');
     }
