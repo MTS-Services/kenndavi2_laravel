@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
-use App\Models\User;
 use App\Services\DataTableService;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
@@ -30,13 +29,103 @@ class AdminController extends Controller
 
     public function dashboard(): Response
     {
-
-          $orders = $this->orderService->getAllOrders();
+        $orders = $this->orderService->getAllOrders();
+        
+        // Calculate dashboard statistics
+        $stats = $this->calculateDashboardStats();
+        
+        // Get sales performance data for chart
+        $salesPerformance = $this->getSalesPerformanceData();
 
         return Inertia::render('admin/dashboard', [
             'orders' => $orders,
-             'statusOptions' => OrderStatus::options(),
+            'statusOptions' => OrderStatus::options(),
+            'stats' => $stats,
+            'salesPerformance' => $salesPerformance,
         ]);
+    }
+
+    private function calculateDashboardStats(): array
+    {
+        $orders = $this->orderService->getAllOrders();
+        $thirtyDaysAgo = now()->subDays(30);
+        
+        // Current period stats (last 30 days)
+        $currentPeriodOrders = $orders->filter(function ($order) use ($thirtyDaysAgo) {
+            return $order->created_at >= $thirtyDaysAgo;
+        });
+        
+        // Previous period stats (30-60 days ago)
+        $previousPeriodStart = now()->subDays(60);
+        $previousPeriodEnd = now()->subDays(30);
+        $previousPeriodOrders = $orders->filter(function ($order) use ($previousPeriodStart, $previousPeriodEnd) {
+            return $order->created_at >= $previousPeriodStart && $order->created_at < $previousPeriodEnd;
+        });
+
+        // Calculate totals
+        $totalRevenue = $currentPeriodOrders->sum('total');
+        $totalOrders = $currentPeriodOrders->count();
+        $productsSold = $currentPeriodOrders->sum(function ($order) {
+            return $order->orderItems->sum('quantity');
+        });
+
+        // Calculate previous period totals for comparison
+        $previousRevenue = $previousPeriodOrders->sum('total');
+        $previousOrders = $previousPeriodOrders->count();
+        $previousProductsSold = $previousPeriodOrders->sum(function ($order) {
+            return $order->orderItems->sum('quantity');
+        });
+
+        // Calculate percentage changes
+        $revenueChange = $previousRevenue > 0 ? (($totalRevenue - $previousRevenue) / $previousRevenue) * 100 : 0;
+        $ordersChange = $previousOrders > 0 ? (($totalOrders - $previousOrders) / $previousOrders) * 100 : 0;
+        $productsChange = $previousProductsSold > 0 ? (($productsSold - $previousProductsSold) / $previousProductsSold) * 100 : 0;
+
+        return [
+            'totalRevenue' => [
+                'value' => $totalRevenue,
+                'formatted' => '$' . number_format($totalRevenue, 2),
+                'change' => round($revenueChange, 1),
+            ],
+            'totalOrders' => [
+                'value' => $totalOrders,
+                'formatted' => number_format($totalOrders),
+                'change' => round($ordersChange, 1),
+            ],
+            'productsSold' => [
+                'value' => $productsSold,
+                'formatted' => number_format($productsSold),
+                'change' => round($productsChange, 1),
+            ],
+        ];
+    }
+
+    private function getSalesPerformanceData(): array
+    {
+        $orders = $this->orderService->getAllOrders();
+        
+        // Get last 24 weeks of data
+        $weeklyData = [];
+        $labels = [];
+        
+        for ($i = 23; $i >= 0; $i--) {
+            $weekStart = now()->startOfWeek()->subWeeks($i);
+            $weekEnd = $weekStart->copy()->endOfWeek();
+            
+            $weekRevenue = $orders
+                ->filter(function ($order) use ($weekStart, $weekEnd) {
+                    return $order->created_at >= $weekStart && $order->created_at <= $weekEnd;
+                })
+                ->sum('total');
+            
+            $weeklyData[] = $weekRevenue;
+            $labels[] = 'W' . (24 - $i);
+        }
+
+        return [
+            'labels' => $labels,
+            'data' => $weeklyData,
+        ];
     }
 
     public function index(): Response

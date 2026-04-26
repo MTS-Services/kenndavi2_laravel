@@ -29,145 +29,254 @@ class CheckoutController extends Controller
         ProductService $productService,
     ): BaseResponse {
         Log::info('PAYMENT_FLOW [CO-01] placeOrder called', [
-            'user_id' => $request->user()?->id,
+            'user_id'    => $request->user()?->id,
+            'is_buy_now' => session()->has('buy_now'),
         ]);
-        $cart = $cartService->resolveCart($request);
 
-        $cart->load('items.product.images');
+        $isBuyNow   = session()->has('buy_now');
+        $buyNowData = session()->get('buy_now');
 
-        if ($cart->items->isEmpty()) {
-            return redirect()
-                ->route('frontend.cart.index')
-                ->with('toast', [
-                    'type' => 'error',
-                    'message' => 'Your cart is empty.',
+        // ─────────────────────────────────────────────────────────────────────
+        // BUY NOW FLOW
+        // ─────────────────────────────────────────────────────────────────────
+        if ($isBuyNow) {
+            $product = \App\Models\Product::find($buyNowData['product_id']);
+
+            if (! $product) {
+                session()->forget('buy_now');
+
+                return redirect()
+                    ->route('frontend.cart.index')
+                    ->with('toast', [
+                        'type'    => 'error',
+                        'message' => 'Product not found.',
+                    ]);
+            }
+
+            $qty = (int) ($buyNowData['quantity'] ?? 1);
+
+            // Stock check
+            if ((int) $product->stock_level < $qty) {
+                return redirect()
+                    ->route('frontend.shipping-info')
+                    ->with('toast', [
+                        'type'    => 'error',
+                        'message' => 'Product is out of stock.',
+                    ]);
+            }
+
+            /** @var Order $order */
+            $order = DB::transaction(function () use ($request, $product, $qty, $productService) {
+                $userId      = (int) $request->user()->id;
+                $shippingData = $request->validated();
+
+                $calculated   = $productService->getProductCalculatedData($product, $qty);
+                $subtotal     = round((float) ($calculated['total_price'] ?? 0), 2);
+                $itemDiscount = round((float) ($calculated['discount_amount'] ?? 0) * $qty, 2);
+                $shippingCost = $subtotal <= 1 ? 0.0 : (float) $productService->getShippingCost();
+                $grandTotal   = round($subtotal + $shippingCost, 2);
+
+                $order = Order::create([
+                    'order_number'   => generate_order_id_hybrid(),
+                    'user_id'        => $userId,
+                    'subtotal'       => $subtotal,
+                    'discount'       => $itemDiscount,
+                    'shipping_cost'  => $shippingCost,
+                    'tax'            => 0,
+                    'total'          => $grandTotal,
+                    'currency'       => 'USD',
+                    'payment_status' => OrderPaymentStatus::UNPAID->value,
+                    'order_status'   => OrderStatus::INITIALIZED->value,
                 ]);
-        }
 
-        if ((int) $cart->user_id !== (int) $request->user()->id) {
-            abort(403);
-        }
-
-        foreach ($cart->items as $item) {
-            if (! $item->product) {
-                return redirect()
-                    ->route('frontend.cart.index')
-                    ->with('toast', [
-                        'type' => 'error',
-                        'message' => 'A cart item product is missing. Please update your cart.',
-                    ]);
-            }
-
-            $item->product->refresh();
-            if ((int) $item->product->stock_level < (int) $item->quantity) {
-                return redirect()
-                    ->route('frontend.cart.index')
-                    ->with('toast', [
-                        'type' => 'error',
-                        'message' => 'One or more items are out of stock. Please update your cart.',
-                    ]);
-            }
-        }
-
-        /** @var Order $order */
-        $order = DB::transaction(function () use ($request, $cart, $productService) {
-            $userId = (int) $request->user()->id;
-
-            $shippingData = $request->validated();
-            $subtotal = 0.0;
-            $totalDiscount = 0.0;
-
-            foreach ($cart->items as $item) {
-                $calculated = $productService->getProductCalculatedData(
-                    $item->product,
-                    (int) $item->quantity,
-                );
-
-                $subtotal += (float) ($calculated['total_price'] ?? 0);
-                $totalDiscount += (float) ($calculated['discount_amount'] ?? 0) * (int) $item->quantity;
-            }
-
-            $subtotal = round($subtotal, 2);
-            $shippingCost = $subtotal <= 1 ? 0.0 : (float) $productService->getShippingCost();
-            $grandTotal = round($subtotal + $shippingCost, 2);
-
-            $order = Order::create([
-                'order_number' => generate_order_id_hybrid(),
-                'user_id' => $userId,
-                'subtotal' => $subtotal,
-                'discount' => round($totalDiscount, 2),
-                'shipping_cost' => $shippingCost,
-                'tax' => 0,
-                'total' => $grandTotal,
-                'currency' => 'USD',
-                'payment_status' => \App\Enums\OrderPaymentStatus::UNPAID->value,
-                'order_status' => OrderStatus::INITIALIZED->value,
-            ]);
-
-            OrderAddresse::create([
-                'order_id' => $order->id,
-                'full_name' => $shippingData['name'],
-                'phone' => $shippingData['phone'],
-                'email' => $shippingData['email'],
-                'address_line1' => $shippingData['address_line1'],
-                'address_line2' => $shippingData['address_line2'] ?? null,
-                'city' => $shippingData['city'],
-                'state' => $shippingData['State'],
-                'postal_code' => $shippingData['postalCode'],
-                'country' => $shippingData['country'],
-                'creater_id' => $userId,
-                'creater_type' => \App\Models\User::class,
-            ]);
-
-            foreach ($cart->items as $item) {
-                $product = $item->product;
-                $qty = (int) $item->quantity;
-                $calculated = $productService->getProductCalculatedData($product, $qty);
-                $itemDiscount = (float) ($calculated['discount_amount'] ?? 0) * $qty;
+                OrderAddresse::create([
+                    'order_id'      => $order->id,
+                    'full_name'     => $shippingData['name'],
+                    'phone'         => $shippingData['phone'],
+                    'email'         => $shippingData['email'],
+                    'address_line1' => $shippingData['address_line1'],
+                    'address_line2' => $shippingData['address_line2'] ?? null,
+                    'city'          => $shippingData['city'],
+                    'state'         => $shippingData['State'],
+                    'postal_code'   => $shippingData['postalCode'],
+                    'country'       => $shippingData['country'],
+                    'creater_id'    => $userId,
+                    'creater_type'  => \App\Models\User::class,
+                ]);
 
                 OrderItem::create([
-                    'order_id' => $order->id,
-                    'product_id' => $product->id,
+                    'order_id'     => $order->id,
+                    'product_id'   => $product->id,
                     'product_name' => $product->title,
-                    'product_sku' => $product->sku,
-                    'price' => (float) ($calculated['discounted_price'] ?? 0),
-                    'discount' => round($itemDiscount, 2),
-                    'quantity' => $qty,
-                    'total' => round((float) ($calculated['total_price'] ?? 0), 2),
+                    'product_sku'  => $product->sku ?? null,
+                    'price'        => (float) ($calculated['discounted_price'] ?? 0),
+                    'discount'     => $itemDiscount,
+                    'quantity'     => $qty,
+                    'total'        => $subtotal,
                 ]);
+
+                return $order;
+            });
+
+            // Buy Now session clear
+            session()->forget('buy_now');
+
+            Log::info('PAYMENT_FLOW [CO-02-BN] buy now order created', [
+                'order_number' => $order->order_number,
+                'user_id'      => $request->user()->id,
+            ]);
+
+        // ─────────────────────────────────────────────────────────────────────
+        // NORMAL CART FLOW
+        // ─────────────────────────────────────────────────────────────────────
+        } else {
+            $cart = $cartService->resolveCart($request);
+            $cart->load('items.product.images');
+
+            if ($cart->items->isEmpty()) {
+                return redirect()
+                    ->route('frontend.cart.index')
+                    ->with('toast', [
+                        'type'    => 'error',
+                        'message' => 'Your cart is empty.',
+                    ]);
             }
 
-            $cart->items()->delete();
+            if ((int) $cart->user_id !== (int) $request->user()->id) {
+                abort(403);
+            }
 
-            return $order;
-        });
+            foreach ($cart->items as $item) {
+                if (! $item->product) {
+                    return redirect()
+                        ->route('frontend.cart.index')
+                        ->with('toast', [
+                            'type'    => 'error',
+                            'message' => 'A cart item product is missing. Please update your cart.',
+                        ]);
+                }
 
+                $item->product->refresh();
+                if ((int) $item->product->stock_level < (int) $item->quantity) {
+                    return redirect()
+                        ->route('frontend.cart.index')
+                        ->with('toast', [
+                            'type'    => 'error',
+                            'message' => 'One or more items are out of stock. Please update your cart.',
+                        ]);
+                }
+            }
+
+            /** @var Order $order */
+            $order = DB::transaction(function () use ($request, $cart, $productService) {
+                $userId       = (int) $request->user()->id;
+                $shippingData = $request->validated();
+                $subtotal     = 0.0;
+                $totalDiscount = 0.0;
+
+                foreach ($cart->items as $item) {
+                    $calculated     = $productService->getProductCalculatedData(
+                        $item->product,
+                        (int) $item->quantity,
+                    );
+                    $subtotal      += (float) ($calculated['total_price'] ?? 0);
+                    $totalDiscount += (float) ($calculated['discount_amount'] ?? 0) * (int) $item->quantity;
+                }
+
+                $subtotal     = round($subtotal, 2);
+                $shippingCost = $subtotal <= 1 ? 0.0 : (float) $productService->getShippingCost();
+                $grandTotal   = round($subtotal + $shippingCost, 2);
+
+                $order = Order::create([
+                    'order_number'   => generate_order_id_hybrid(),
+                    'user_id'        => $userId,
+                    'subtotal'       => $subtotal,
+                    'discount'       => round($totalDiscount, 2),
+                    'shipping_cost'  => $shippingCost,
+                    'tax'            => 0,
+                    'total'          => $grandTotal,
+                    'currency'       => 'USD',
+                    'payment_status' => OrderPaymentStatus::UNPAID->value,
+                    'order_status'   => OrderStatus::INITIALIZED->value,
+                ]);
+
+                OrderAddresse::create([
+                    'order_id'      => $order->id,
+                    'full_name'     => $shippingData['name'],
+                    'phone'         => $shippingData['phone'],
+                    'email'         => $shippingData['email'],
+                    'address_line1' => $shippingData['address_line1'],
+                    'address_line2' => $shippingData['address_line2'] ?? null,
+                    'city'          => $shippingData['city'],
+                    'state'         => $shippingData['State'],
+                    'postal_code'   => $shippingData['postalCode'],
+                    'country'       => $shippingData['country'],
+                    'creater_id'    => $userId,
+                    'creater_type'  => \App\Models\User::class,
+                ]);
+
+                foreach ($cart->items as $item) {
+                    $product    = $item->product;
+                    $qty        = (int) $item->quantity;
+                    $calculated = $productService->getProductCalculatedData($product, $qty);
+                    $itemDiscount = round((float) ($calculated['discount_amount'] ?? 0) * $qty, 2);
+
+                    OrderItem::create([
+                        'order_id'     => $order->id,
+                        'product_id'   => $product->id,
+                        'product_name' => $product->title,
+                        'product_sku'  => $product->sku ?? null,
+                        'price'        => (float) ($calculated['discounted_price'] ?? 0),
+                        'discount'     => $itemDiscount,
+                        'quantity'     => $qty,
+                        'total'        => round((float) ($calculated['total_price'] ?? 0), 2),
+                    ]);
+                }
+
+                // Cart items delete
+                $cart->items()->delete();
+
+                return $order;
+            });
+
+            Log::info('PAYMENT_FLOW [CO-02] cart order created', [
+                'order_number' => $order->order_number,
+                'user_id'      => $request->user()->id,
+            ]);
+        }
+
+        // ─────────────────────────────────────────────────────────────────────
+        // PAYMENT GATEWAY — 
+        // ─────────────────────────────────────────────────────────────────────
         $activeGateways = PaymentGateway::query()
             ->enabled()
             ->get()
-            ->filter(fn (PaymentGateway $g) => $g->isSupported())
+            ->filter(fn(PaymentGateway $g) => $g->isSupported())
             ->values();
 
         if ($activeGateways->count() === 1) {
             $gateway = $activeGateways->first();
-            Log::info('PAYMENT_FLOW [CO-02] single active gateway auto-start', [
+
+            Log::info('PAYMENT_FLOW [CO-03] single active gateway auto-start', [
                 'order_number' => $order->order_number,
-                'gateway' => $gateway->slug,
+                'gateway'      => $gateway->slug,
             ]);
+
             $result = $paymentService->processPayment($order, $gateway->slug, [
                 'currency' => 'USD',
             ]);
 
             if (! ($result['success'] ?? false)) {
-                Log::warning('PAYMENT_FLOW [CO-03] auto-start payment failed', [
+                Log::warning('PAYMENT_FLOW [CO-04] auto-start payment failed', [
                     'order_number' => $order->order_number,
-                    'gateway' => $gateway->slug,
-                    'message' => $result['message'] ?? null,
+                    'gateway'      => $gateway->slug,
+                    'message'      => $result['message'] ?? null,
                 ]);
+
                 return redirect()
                     ->route('user.checkout.gateway', ['order' => $order->order_number])
                     ->with('toast', [
-                        'type' => 'error',
+                        'type'    => 'error',
                         'message' => $result['message'] ?? 'Failed to start payment.',
                     ]);
             }
@@ -175,10 +284,11 @@ class CheckoutController extends Controller
             return Inertia::location($result['checkout_url']);
         }
 
-        Log::info('PAYMENT_FLOW [CO-04] multiple gateways, redirecting to gateway page', [
-            'order_number' => $order->order_number,
+        Log::info('PAYMENT_FLOW [CO-05] multiple gateways, redirecting to gateway page', [
+            'order_number'  => $order->order_number,
             'gateway_count' => $activeGateways->count(),
         ]);
+
         return redirect()->route('user.checkout.gateway', ['order' => $order->order_number]);
     }
 
@@ -192,8 +302,8 @@ class CheckoutController extends Controller
         $gateways = PaymentGateway::query()
             ->enabled()
             ->get()
-            ->filter(fn (PaymentGateway $g) => $g->isSupported())
-            ->map(fn (PaymentGateway $g) => [
+            ->filter(fn(PaymentGateway $g) => $g->isSupported())
+            ->map(fn(PaymentGateway $g) => [
                 'slug' => $g->slug,
                 'name' => $g->name,
             ])
@@ -201,20 +311,21 @@ class CheckoutController extends Controller
 
         return Inertia::render('user/order/gateway', [
             'orderNumber' => $orderModel->order_number,
-            'gateways' => $gateways,
-            'grandTotal' => (float) $orderModel->grand_total,
+            'gateways'    => $gateways,
+            'grandTotal'  => (float) $orderModel->grand_total,
         ]);
     }
 
     public function start(Request $request, PaymentService $paymentService): BaseResponse
     {
-        Log::info('PAYMENT_FLOW [CO-05] checkout start called', [
+        Log::info('PAYMENT_FLOW [CO-06] checkout start called', [
             'user_id' => $request->user()?->id,
             'payload' => $request->only(['order_number', 'gateway']),
         ]);
+
         $validated = $request->validate([
             'order_number' => ['required', 'string', 'max:32'],
-            'gateway' => ['required', 'string', 'max:60'],
+            'gateway'      => ['required', 'string', 'max:60'],
         ]);
 
         $order = Order::query()
@@ -227,15 +338,16 @@ class CheckoutController extends Controller
             ->where('is_active', true)
             ->firstOrFail();
 
-        $maxAttempts = max((int) config('services.payment.max_attempts', 3), 1);
+        $maxAttempts  = max((int) config('services.payment.max_attempts', 3), 1);
         $attemptCount = (int) $order->payments()->count();
+
         if ($attemptCount >= $maxAttempts) {
             return redirect()
                 ->route('user.payment.cancel', ['orderId' => $order->order_number])
                 ->withErrors(['payment' => 'Maximum payment attempts reached for this order.']);
         }
 
-        // Allow retry when previous attempt moved order to cancelled/failed.
+        // Allow retry when previous attempt moved order to cancelled/failed
         if (
             in_array($order->order_status?->value ?? (string) $order->order_status, [
                 OrderStatus::CANCELLED->value,
@@ -244,7 +356,7 @@ class CheckoutController extends Controller
             && (($order->payment_status?->value ?? (string) $order->payment_status) !== OrderPaymentStatus::PAID->value)
         ) {
             $order->update([
-                'order_status' => OrderStatus::INITIALIZED->value,
+                'order_status'   => OrderStatus::INITIALIZED->value,
                 'payment_status' => OrderPaymentStatus::UNPAID->value,
             ]);
             $order->refresh();
@@ -255,23 +367,25 @@ class CheckoutController extends Controller
         ]);
 
         if (! ($result['success'] ?? false)) {
-            Log::warning('PAYMENT_FLOW [CO-06] checkout start failed', [
+            Log::warning('PAYMENT_FLOW [CO-07] checkout start failed', [
                 'order_number' => $order->order_number,
-                'gateway' => $gateway->slug,
-                'message' => $result['message'] ?? null,
+                'gateway'      => $gateway->slug,
+                'message'      => $result['message'] ?? null,
             ]);
+
             return redirect()
                 ->back()
                 ->with('toast', [
-                    'type' => 'error',
+                    'type'    => 'error',
                     'message' => $result['message'] ?? 'Failed to start payment.',
                 ]);
         }
 
-        Log::info('PAYMENT_FLOW [CO-07] checkout start redirecting to gateway URL', [
+        Log::info('PAYMENT_FLOW [CO-08] checkout start redirecting to gateway URL', [
             'order_number' => $order->order_number,
-            'gateway' => $gateway->slug,
+            'gateway'      => $gateway->slug,
         ]);
+
         return Inertia::location($result['checkout_url']);
     }
 }

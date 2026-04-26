@@ -29,5 +29,6 @@ Route::name('frontend.')->controller(FrontendController::class)->group(function 
         Route::post('/add', [CartController::class, 'add'])->name('add');
         Route::post('/update', [CartController::class, 'update'])->name('update');
         Route::delete('/remove/{id}', [CartController::class, 'remove'])->name('remove');
+        Route::post('/buy-now', [CartController::class, 'buyNow'])->name('buy-now');
     });
 });

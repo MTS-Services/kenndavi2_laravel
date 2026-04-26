@@ -44,7 +44,7 @@ export default function ProductCard() {
 
         const fullImagePath = imagePath
             ? `/storage/${imagePath}`
-            : '/assets/images/product/Rectangle 20.png';
+            : 'https://placehold.co/600x400';
 
         return {
             ...item,
@@ -133,22 +133,23 @@ export default function ProductCard() {
                             <h2 className="mb-8 font-bebas-neue text-4xl font-normal text-text-title uppercase">
                                 Shopping Cart
                             </h2>
-                            {/* Header - Hidden on mobile */}
-                            <div className="hidden grid-cols-12 px-6 py-4 md:grid">
-                                <div className="col-span-6 font-aktiv-grotesk text-base font-normal text-text-title">
-                                    Products
-                                </div>
-                                <div className="col-span-2 font-aktiv-grotesk text-base font-normal text-text-title">
-                                    Price
-                                </div>
-                                <div className="col-span-2 font-aktiv-grotesk text-base font-normal text-text-title">
-                                    Quantity
-                                </div>
-                                <div className="col-span-2"></div>
-                            </div>
-
                             {/* Product Rows */}
-                            {products.map((product: any, index: number) => (
+                            {products.length > 0 ? (
+                                <>
+                                    {/* Header - Hidden on mobile */}
+                                    <div className="hidden grid-cols-12 px-6 py-4 md:grid">
+                                        <div className="col-span-6 font-aktiv-grotesk text-base font-normal text-text-title">
+                                            Products
+                                        </div>
+                                        <div className="col-span-2 font-aktiv-grotesk text-base font-normal text-text-title">
+                                            Price
+                                        </div>
+                                        <div className="col-span-2 font-aktiv-grotesk text-base font-normal text-text-title">
+                                            Quantity
+                                        </div>
+                                        <div className="col-span-2"></div>
+                                    </div>
+                                    {products.map((product: any, index: number) => (
                                 <div
                                     key={product.id}
                                     className={`my-2 px-0 py-0 sm:px-6 sm:py-4 ${
@@ -314,6 +315,25 @@ export default function ProductCard() {
                                     </div>
                                 </div>
                             ))}
+                                </>
+                            ) : (
+                                <div className="flex flex-col items-center justify-center py-16">
+                                    <div className="mb-4 text-6xl">🛒</div>
+                                    <h3 className="mb-2 font-bebas-neue text-2xl font-normal text-text-title uppercase">
+                                        Your cart is empty
+                                    </h3>
+                                    <p className="mb-6 font-aktiv-grotesk text-base text-text-body">
+                                        Looks like you haven't added any products to your cart yet.
+                                    </p>
+                                    <button
+                                        onClick={() => router.visit('/')}
+                                        className="cursor-pointer flex items-center gap-2 px-6 py-3 font-bebas-neue text-base font-normal uppercase bg-text-buy-now text-white hover:bg-opacity-90 transition-colors"
+                                    >
+                                        Continue Shopping
+                                        <ArrowRight className="h-4 w-4" />
+                                    </button>
+                                </div>
+                            )}
                         </div>
 
                         {/* Right Column - Order Summary */}
@@ -324,33 +344,41 @@ export default function ProductCard() {
                                 </h2>
 
                                 <form onSubmit={handleSubmit}>
-                                    {products.map((product: any) => (
-                                        <div
-                                            key={product.id}
-                                            className="mb-4 flex items-center gap-3"
-                                        >
-                                            <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-sm border border-text-gray-300">
-                                                <img
-                                                    src={product.image}
-                                                    alt={product.name}
-                                                    className="h-full w-full object-cover"
-                                                />
+                                    {products.length > 0 ? (
+                                        products.map((product: any) => (
+                                            <div
+                                                key={product.id}
+                                                className="mb-4 flex items-center gap-3"
+                                            >
+                                                <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-sm border border-text-gray-300">
+                                                    <img
+                                                        src={product.image}
+                                                        alt={product.name}
+                                                        className="h-full w-full object-cover"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <p className="font-aktiv-grotesk text-base font-normal text-text-title">
+                                                        {product.name}
+                                                    </p>
+                                                    <p className="mt-0.5 font-public-sans text-sm font-normal text-text-body">
+                                                        {product.quantity} ×{' '}
+                                                        <span className="font-semibold text-text-green">
+                                                            {
+                                                                product.formatted_price
+                                                            }
+                                                        </span>
+                                                    </p>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <p className="font-aktiv-grotesk text-base font-normal text-text-title">
-                                                    {product.name}
-                                                </p>
-                                                <p className="mt-0.5 font-public-sans text-sm font-normal text-text-body">
-                                                    {product.quantity} ×{' '}
-                                                    <span className="font-semibold text-text-green">
-                                                        {
-                                                            product.formatted_price
-                                                        }
-                                                    </span>
-                                                </p>
-                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="py-8 text-center">
+                                            <p className="font-aktiv-grotesk text-base text-text-body">
+                                                No items in cart
+                                            </p>
                                         </div>
-                                    ))}
+                                    )}
 
                                     <div className="mb-4 space-y-3">
                                         <div className="flex items-center justify-between">

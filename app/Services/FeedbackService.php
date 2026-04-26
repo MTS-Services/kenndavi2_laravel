@@ -42,56 +42,64 @@ class FeedbackService
             ->where('user_id', $userId)
             ->get(['product_id', 'order_id']);
     }
-    public function getFeedbacksByProductId($productId)
+
+    public function getFeedbacksByProductId($productId, int $perPage = 4, int $page = 1): array
     {
-        $feedbacks = $this->feedback
+        $allFeedbacks = $this->feedback
             ->where('product_id', $productId)
-            ->with('user')
-            ->get();
+            ->get(['rating']);
 
-        // Calculate rating breakdown
-        $ratingCounts = [0, 0, 0, 0, 0]; // Index 0 = 1 star, index 4 = 5 stars
-        $totalFeedbacks = $feedbacks->count();
+        $totalFeedbacks = $allFeedbacks->count();
 
-        foreach ($feedbacks as $feedback) {
+        $ratingCounts = array_fill(0, 5, 0);
+        foreach ($allFeedbacks as $feedback) {
             if ($feedback->rating >= 1 && $feedback->rating <= 5) {
                 $ratingCounts[$feedback->rating - 1]++;
             }
         }
 
         $ratingBreakdown = [];
-        for ($i = 4; $i >= 0; $i--) { // Show 5 stars first
+        for ($i = 4; $i >= 0; $i--) {
             $ratingBreakdown[] = [
-                'stars' => $i + 1,
-                'percentage' => $totalFeedbacks > 0 ? round(($ratingCounts[$i] / $totalFeedbacks) * 100) : 0,
-                'count' => $ratingCounts[$i]
+                'stars'      => $i + 1,
+                'percentage' => $totalFeedbacks > 0
+                    ? round(($ratingCounts[$i] / $totalFeedbacks) * 100)
+                    : 0,
+                'count'      => $ratingCounts[$i],
             ];
         }
 
-        // Calculate average rating
         $averageRating = 0;
         if ($totalFeedbacks > 0) {
-            $totalRating = $feedbacks->sum('rating');
+            $totalRating   = $allFeedbacks->sum('rating');
             $averageRating = floor(($totalRating / $totalFeedbacks) * 10) / 10;
         }
+        $paginator = $this->feedback
+            ->where('product_id', $productId)
+            ->with('user')
+            ->latest()
+            ->paginate($perPage, ['*'], 'page', $page);
 
-        // Transform feedback data for frontend
-        $transformedFeedbacks = $feedbacks->map(function ($feedback) {
-            return [
-                'id' => $feedback->id,
-                'name' => $feedback->user->name ?? 'Anonymous User',
-                'time' => $feedback->created_at->format('M j, Y'),
-                'rating' => $feedback->rating,
-                'comment' => $feedback->message,
-                'image' => $feedback->user->image_url ?? null
-            ];
-        });
+        $transformedFeedbacks = $paginator->getCollection()->map(fn($feedback) => [
+            'id'      => $feedback->id,
+            'name'    => $feedback->user->name ?? 'Anonymous User',
+            'time'    => $feedback->created_at->format('M j, Y'),
+            'rating'  => $feedback->rating,
+            'comment' => $feedback->message,
+            'image'   => $feedback->user->image_url ?? null,
+        ]);
 
         return [
-            'feedbacks' => $transformedFeedbacks,
+            'feedbacks'       => $transformedFeedbacks,
             'rating_breakdown' => $ratingBreakdown,
-            'average_rating' => $averageRating,
-            'total_reviews' => $totalFeedbacks
+            'average_rating'  => $averageRating,
+            'total_reviews'   => $totalFeedbacks,
+            'pagination'      => [
+                'current_page' => $paginator->currentPage(),
+                'last_page'    => $paginator->lastPage(),
+                'per_page'     => $paginator->perPage(),
+                'total'        => $paginator->total(),
+            ],
         ];
     }
 }

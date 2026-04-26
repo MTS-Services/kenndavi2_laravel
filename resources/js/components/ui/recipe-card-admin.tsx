@@ -50,9 +50,9 @@ export default function RecipeCardAdmin({ recipe }: Props) {
                 {/* <p className="mb-4 font-aktiv-grotesk text-base font-normal text-text-body line-clamp-2">
                    {recipe.description}
                 </p> */}
-                <p className="mb-4 font-aktiv-grotesk text-base font-normal text-text-body">
-                   <div className="mb-4 font-aktiv-grotesk text-base font-normal text-text-body line-clamp-3" dangerouslySetInnerHTML={{ __html: recipe.description }} />
-                </p>
+                <div className="mb-4 font-aktiv-grotesk text-base font-normal text-text-body">
+                    <div dangerouslySetInnerHTML={{ __html: recipe.description }} />
+                </div>
                 </a>
                 <div className="flex items-center justify-between">
                     <Link href={route('admin.rm.edit', recipe.id)}

@@ -1,8 +1,8 @@
 import { useState } from 'react';
+import { router, usePage } from '@inertiajs/react';
 import FrontendLayout from '@/layouts/frontend-layout';
 import ProductDetail from '@/components/section/products/detail';
 import ProductFeedback from '@/components/section/products/feedback';
-import { usePage } from '@inertiajs/react';
 
 type Product = {
     id: number;
@@ -53,33 +53,30 @@ type PageProps = {
     }>;
     average_rating: number;
     total_reviews: number;
+    pagination: {
+        current_page: number;
+        last_page: number;
+        per_page: number;
+        total: number;
+    };
 };
 
-// const feedbacks = product.feedbacks || [];
-
-const TOTAL_PAGES = 10;
-
 export default function ProductDetailsPage() {
-    const { product, calculated, feedbacks, rating_breakdown, average_rating, total_reviews } = usePage<PageProps>().props;
-    const productImages = product.images?.map(img => `/storage/${img.image}`) || [];
-    const [selectedImage, setSelectedImage] = useState<string>(productImages[0] || '/assets/images/product/Rectangle 20.png');
+    const {
+        product,
+        calculated,
+        feedbacks,
+        rating_breakdown,
+        average_rating,
+        total_reviews,
+        pagination,
+    } = usePage<PageProps>().props;
+
+    const productImages = product.images?.map((img) => `/storage/${img.image}`) || [];
+    const [selectedImage, setSelectedImage] = useState<string>(
+        productImages[0] || 'https://placehold.co/600x400',
+    );
     const [quantity, setQuantity] = useState<number>(1);
-    const [currentPage, setCurrentPage] = useState<number>(1);
-
-    // Transform feedback data for the component
-    const transformedFeedbacks = feedbacks?.map((feedback: any) => ({
-        name: feedback.user?.name || 'Anonymous User',
-        time: new Date(feedback.created_at).toLocaleDateString('en-US', { 
-            year: 'numeric', 
-            month: 'short', 
-            day: 'numeric' 
-        }),
-        rating: feedback.rating,
-        comment: feedback.message,
-        image: feedback.user?.image,
-    })) || [];
-
-    console.log(transformedFeedbacks);
 
     const handleDecrease = (): void => setQuantity((current) => (current > 1 ? current - 1 : current));
     const handleIncrease = (): void => setQuantity((current) => current + 1);
@@ -89,9 +86,20 @@ export default function ProductDetailsPage() {
     };
 
     const handlePageChange = (page: number) => {
-        setCurrentPage(page);
-        // Scroll to feedback section
-        document.getElementById('customer-feedback')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        router.get(
+            window.location.pathname,
+            { feedback_page: page },
+            {
+                preserveState: true,
+                preserveScroll: false,
+                onSuccess: () => {
+                    document.getElementById('customer-feedback')?.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start',
+                    });
+                },
+            },
+        );
     };
 
     return (
@@ -109,10 +117,10 @@ export default function ProductDetailsPage() {
                         averageRating={average_rating}
                         totalReviews={total_reviews}
                     />
-                    
+
                     <ProductFeedback
-                        currentPage={currentPage}
-                        totalPages={TOTAL_PAGES}
+                        currentPage={pagination.current_page}
+                        totalPages={pagination.last_page}
                         onPageChange={handlePageChange}
                         feedbacks={feedbacks}
                         ratingBreakdown={rating_breakdown}
