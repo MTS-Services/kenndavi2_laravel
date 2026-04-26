@@ -62,17 +62,20 @@ const labels = [
 
 const gradientPlugin = {
   id: 'customGradient',
-  beforeDatasetDraw(chart: any) {
+  beforeDraw(chart: any) {
     const { ctx, chartArea: { top, bottom } } = chart;
     const gradient = ctx.createLinearGradient(0, top, 0, bottom);
     gradient.addColorStop(0, 'rgba(249, 115, 22, 0.5)');  
     gradient.addColorStop(1, 'rgba(249, 115, 22, 0.0)'); 
-    chart.data.datasets[0].backgroundColor = gradient;
-    // Remove chart.update('none') to prevent infinite loop
+    
+    if (chart.data.datasets[0] && chart.data.datasets[0].fill) {
+      chart.data.datasets[0].backgroundColor = gradient;
+    }
   },
 };
 
-export const data = {
+// Default static data as fallback
+export const defaultData = {
   labels: [
     'W1','W2','W3','W4','W5','W6','W7','W8',
     'W9','W10','W11','W12','W13','W14','W15','W16',
@@ -134,7 +137,18 @@ const StatCard = ({ title, value, subtext, icon: Icon, trendValue }: any) => (
 
 
 export default function Index() {
-     const { orders, statusOptions } = usePage().props as any;
+     const { orders, statusOptions, stats, salesPerformance } = usePage().props as any;
+
+    // Create dynamic chart data or use default as fallback
+    const chartData = salesPerformance ? {
+        labels: salesPerformance.labels || defaultData.labels,
+        datasets: [
+            {
+                ...defaultData.datasets[0],
+                data: salesPerformance.data || defaultData.datasets[0].data,
+            },
+        ],
+    } : defaultData;
 
     return (
         <AdminLayout activeSlug={'dashboard'}>
@@ -160,24 +174,24 @@ export default function Index() {
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                         <StatCard
                             title="Total Revenue"
-                            value="$45,231"
+                            value={stats?.totalRevenue?.formatted || '$0'}
                             subtext="from last month"
                             icon={DollarSign}
-                            trendValue="20.1%"
+                            trendValue={`${stats?.totalRevenue?.change || 0}%`}
                         />
                         <StatCard
                             title="Total Orders"
-                            value="2,350"
+                            value={stats?.totalOrders?.formatted || '0'}
                             subtext="from last month"
                             icon={ShoppingCart}
-                            trendValue="180.1%"
+                            trendValue={`${stats?.totalOrders?.change || 0}%`}
                         />
                         <StatCard
                             title="Products Sold"
-                            value="12,234"
+                            value={stats?.productsSold?.formatted || '0'}
                             subtext="from last month"
                             icon={Truck}
-                            trendValue="19%"
+                            trendValue={`${stats?.productsSold?.change || 0}%`}
                         />
                     </div>
                 </div>
@@ -192,7 +206,7 @@ export default function Index() {
                             <option value="90d">Last 90 days</option>   
                         </select>
                     </div>
-                    <Line options={options} data={data} plugins={[gradientPlugin]} />
+                    <Line options={options} data={chartData} plugins={[gradientPlugin]} />
                 </div>
 
                 {/* orders prop passed directly from Index */}
