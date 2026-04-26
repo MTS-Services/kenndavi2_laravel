@@ -90,34 +90,22 @@ export default function ProductDetail({
             },
         );
     };
+const handleBuyNow = (e: React.MouseEvent) => {
+    e.preventDefault();
 
-    const handleBuyNow = (e: React.MouseEvent) => {
-        e.preventDefault();
-        // First add to cart, then proceed with checkout flow
-        router.post(
-            route('frontend.cart.add'),
-            { product_id: product.id, quantity: quantity },
-            {
-                onSuccess: () => {
-                    toast.success('Added to cart!');
-                    // Create order first, then redirect to shipping-info
-                    router.post('/orders/store', {
-                        subTotal: calculated.discounted_price * quantity,
-                        shipping: 0,
-                        total: calculated.discounted_price * quantity,
-                    }, {
-                        onSuccess: () => {
-                            router.visit(route('frontend.shipping-info'));
-                        },
-                        onError: (errors) => {
-                            toast.error('Failed to create order');
-                        }
-                    });
-                },
-                onError: () => toast.error('Failed to add to cart'),
+    router.post(
+        route('frontend.cart.buy-now'),
+        {
+            product_id: product.id,
+            quantity: quantity,
+        },
+        {
+            onError: (errors) => {
+                toast.error('Please login to continue.');
             },
-        );
-    };
+        },
+    );
+};
 
     return (
         <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] xl:gap-16">

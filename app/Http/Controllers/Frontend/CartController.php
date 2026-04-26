@@ -23,7 +23,7 @@ class CartController extends Controller
     {
         $data = $this->cartService->getAllDatas();
         $shippingCost = $this->productService->getShippingCost();
-        
+
         // Add shipping cost to data
         $data = array_merge($data, [
             'shippingCost' => $shippingCost,
@@ -69,5 +69,31 @@ class CartController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to remove item from cart. Please try again.');
         }
+    }
+
+    public function buyNow(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'quantity'   => 'integer|min:1',
+        ]);
+
+        if (!auth('web')->check()) {
+            session()->put('buy_now', [
+                'product_id' => $request->product_id,
+                'quantity'   => $request->get('quantity', 1),
+            ]);
+            session()->put('url.intended', route('frontend.shipping-info'));
+
+            return redirect()->route('login')
+                ->with('info', 'Please login to continue.');
+        }
+
+        session()->put('buy_now', [
+            'product_id' => $request->product_id,
+            'quantity'   => $request->get('quantity', 1),
+        ]);
+
+        return redirect()->route('frontend.shipping-info');
     }
 }
