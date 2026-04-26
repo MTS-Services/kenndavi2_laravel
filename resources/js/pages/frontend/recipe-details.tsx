@@ -29,14 +29,19 @@ export default function RecipeDetails() {
     const { recipe } = usePage<PageProps>().props;
     console.log(recipe);
 
+    const PLACEHOLDER_IMAGE = 'https://placehold.co/600x400';
+
     return (
         <FrontendLayout>
             <div className="mb-12 sm:mb-28">
                 <div className="">
                     <img
-                        src={recipe.image || '/assets/images/product/Rectangle 3292 (2).png'}
+                        src={recipe.image || PLACEHOLDER_IMAGE}
                         alt={recipe.title}
                         className="h-[430px] w-full object-cover sm:h-full"
+                        onError={(e) => {
+                            (e.currentTarget as HTMLImageElement).src = PLACEHOLDER_IMAGE;
+                        }}
                     />
                 </div>
                 <div className="container mx-auto px-4 py-10 lg:py-16">
