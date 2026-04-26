@@ -38,10 +38,10 @@ class UserAuthController extends Controller
     public function registerStore(Request $request)
     {
         Validator::make($request->all(), [
-            'name'     => ['required', 'string', 'max:255'],
-            'phone'    => ['nullable', 'string', 'max:20'],
-            'image'    => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:2048'],
-            'email'    => [
+            'name' => ['required', 'string', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:20'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:2048'],
+            'email' => [
                 'required',
                 'string',
                 'email',
@@ -52,38 +52,39 @@ class UserAuthController extends Controller
         ])->validate();
 
         if ($request->hasFile('image')) {
-            $file      = $request->file('image');
-            $imageName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file = $request->file('image');
+            $imageName = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
             $file->storeAs('user_images', $imageName);
         }
 
         $otp = str_pad(random_int(100000, 999999), 6, '0', STR_PAD_LEFT);
 
         $user = User::create([
-            'name'     => $request['name'],
-            'email'    => $request['email'],
-            'phone'    => $request['phone'],
-            'image'    => $imageName ?? null,
-            'status'   => ActiveInactive::ACTIVE->value,
+            'name' => $request['name'],
+            'email' => $request['email'],
+            'phone' => $request['phone'],
+            'image' => $imageName ?? null,
+            'status' => ActiveInactive::ACTIVE->value,
             'password' => Hash::make($request['password']),
-            'otp'      => $otp,
+            'otp' => $otp,
         ]);
 
         $user->update([
-            'creater_id'   => $user->id,
+            'creater_id' => $user->id,
             'creater_type' => User::class,
         ]);
 
         $request->session()->put('email_verification', [
-            'email'           => $request->email,
-            'otp'             => $otp,
-            'expires_at'      => now()->addMinutes(10)->timestamp,
-            'guest_session_id'=> $request->session()->getId(),
+            'email' => $request->email,
+            'otp' => $otp,
+            'expires_at' => now()->addMinutes(10)->timestamp,
+            'guest_session_id' => $request->session()->getId(),
+            'url_intended' => $request->session()->get('url.intended'),
         ]);
 
         Mail::to($request->email)->send(new UserEmailVerificationOtpMail([
             'email' => $request->email,
-            'otp'   => $otp,
+            'otp' => $otp,
         ]));
 
         return redirect()->route('email-verification');
@@ -91,7 +92,7 @@ class UserAuthController extends Controller
 
     public function emailVerification()
     {
-        if (!session()->has('email_verification')) {
+        if (! session()->has('email_verification')) {
             return redirect()->route('user.register');
         }
 
@@ -106,7 +107,7 @@ class UserAuthController extends Controller
 
         $verificationData = session()->get('email_verification');
 
-        if (!$verificationData) {
+        if (! $verificationData) {
             return redirect()->route('user.register')
                 ->withErrors(['otp' => 'Session expired. Please register again.']);
         }
@@ -125,26 +126,31 @@ class UserAuthController extends Controller
 
         $user = User::where('email', $verificationData['email'])->first();
 
-        if (!$user) {
+        if (! $user) {
             return redirect()->route('user.register')
                 ->withErrors(['email' => 'User not found. Please register again.']);
         }
 
         $user->update([
             'email_verified_at' => now(),
-            'otp'               => $request->otp,
+            'otp' => $request->otp,
         ]);
 
         $guestSessionId = $verificationData['guest_session_id']
-                          ?? $request->session()->getId();
+            ?? $request->session()->getId();
 
-        $buyNow      = $request->session()->get('buy_now');
-        $urlIntended = $request->session()->get('url.intended');
+        $buyNow = $request->session()->get('buy_now');
+        $urlIntended = $verificationData['url_intended']
+            ?? $request->session()->get('url.intended');
 
         session()->forget('email_verification');
 
         Auth::login($user);
         $user->update(['last_login_at' => now()]);
+
+        $sessionCartIdRaw = session()->get(CartService::SESSION_CART_ID_KEY);
+        $sessionCartId = is_numeric($sessionCartIdRaw) ? (int) $sessionCartIdRaw : null;
+        $this->cartService->mergeGuestCartsForUser($user, $guestSessionId, $sessionCartId);
 
         $request->session()->regenerate();
 
@@ -155,10 +161,8 @@ class UserAuthController extends Controller
             $request->session()->put('url.intended', $urlIntended);
         }
 
-        $this->cartService->authCheck($guestSessionId);
-
         Mail::to($user->email)->send(new UserWelcomeMail([
-            'name'  => $user->name,
+            'name' => $user->name,
             'email' => $user->email,
         ]));
 
@@ -191,15 +195,15 @@ class UserAuthController extends Controller
         $otp = str_pad(random_int(100000, 999999), 6, '0', STR_PAD_LEFT);
 
         $request->session()->put('password_reset', [
-            'otp'        => $otp,
-            'email'      => $request->email,
+            'otp' => $otp,
+            'email' => $request->email,
             'expires_at' => now()->addMinutes(10)->timestamp,
-            'verified'   => false,
+            'verified' => false,
         ]);
 
         Mail::to($request->email)->send(new UserPasswordResetOtpMail([
             'email' => $request->email,
-            'otp'   => $otp,
+            'otp' => $otp,
         ]));
 
         return redirect()->route('otp-verification');
@@ -207,7 +211,7 @@ class UserAuthController extends Controller
 
     public function otpVerification()
     {
-        if (!session()->has('password_reset')) {
+        if (! session()->has('password_reset')) {
             return redirect()->route('forgot-password');
         }
 
@@ -222,7 +226,7 @@ class UserAuthController extends Controller
 
         $resetData = session()->get('password_reset');
 
-        if (!$resetData) {
+        if (! $resetData) {
             return redirect()->route('forgot-password')
                 ->withErrors(['email' => 'Session expired. Please start over.']);
         }
@@ -245,7 +249,7 @@ class UserAuthController extends Controller
 
     public function resetPassword()
     {
-        if (!session()->has('password_reset')) {
+        if (! session()->has('password_reset')) {
             return redirect()->route('forgot-password');
         }
 
@@ -255,20 +259,20 @@ class UserAuthController extends Controller
     public function resetPasswordStore(Request $request)
     {
         $request->validate([
-            'password'              => $this->passwordRules(),
+            'password' => $this->passwordRules(),
             'password_confirmation' => ['required', 'same:password'],
         ]);
 
         $resetData = $request->session()->get('password_reset');
 
-        if (!$resetData || !$resetData['verified']) {
+        if (! $resetData || ! $resetData['verified']) {
             return redirect()->route('forgot-password')
                 ->withErrors(['email' => 'Session expired. Please start over.']);
         }
 
         $user = User::where('email', $resetData['email'])->first();
 
-        if (!$user) {
+        if (! $user) {
             return redirect()->route('forgot-password')
                 ->withErrors(['email' => 'User not found.']);
         }

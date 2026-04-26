@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Mail\UserEmailVerificationOtpMail;
 use App\Mail\UserWelcomeMail;
-use App\Services\CartService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -14,13 +13,6 @@ use Inertia\Inertia;
 
 class LoginController extends Controller
 {
-    protected CartService $cartService;
-
-    public function __construct(CartService $cartService)
-    {
-        $this->cartService = $cartService;
-    }
-
     public function showLogin(Request $request)
     {
         if (Auth::check()) {
@@ -38,7 +30,7 @@ class LoginController extends Controller
         ]);
 
         $credentials = $request->only('email', 'password');
-        $oldSessionId = session()->getId();
+        $guestSessionIdBeforeAttempt = session()->getId();
 
         // Attempt login
         if (! Auth::attempt($credentials)) {
@@ -50,6 +42,8 @@ class LoginController extends Controller
         $user = Auth::user();
 
         if (is_null($user->email_verified_at)) {
+            $urlIntended = $request->session()->get('url.intended');
+
             Auth::logout();
 
             if (is_null($user->otp)) {
@@ -61,6 +55,8 @@ class LoginController extends Controller
                 'email' => $user->email,
                 'otp' => $user->otp,
                 'expires_at' => now()->addMinutes(10)->timestamp,
+                'guest_session_id' => $guestSessionIdBeforeAttempt,
+                'url_intended' => $urlIntended,
             ]);
 
             // Send verification email
@@ -77,12 +73,9 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
-        $this->cartService->authCheck($oldSessionId); 
-
-
         if ($isFirstLogin) {
             Mail::to($user->email)->send(new UserWelcomeMail([
-                'name'  => $user->name,
+                'name' => $user->name,
                 'email' => $user->email,
             ]));
         }
