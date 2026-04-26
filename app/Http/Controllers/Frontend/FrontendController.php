@@ -53,20 +53,23 @@ class FrontendController extends Controller
     }
 
     public function productDetails($id): Response
-    {
-        $product = $this->productService->getById($id);
-        $calculatedData = $this->productService->getProductCalculatedData($product);
-        $feedbackData = $this->feedbackService->getFeedbacksByProductId($id);
+{
+    $product        = $this->productService->getById($id);
+    $calculatedData = $this->productService->getProductCalculatedData($product);
 
-        return Inertia::render('frontend/product-details', [
-            'product' => $product,
-            'calculated' => $calculatedData,
-            'feedbacks' => $feedbackData['feedbacks'],
-            'rating_breakdown' => $feedbackData['rating_breakdown'],
-            'average_rating' => $feedbackData['average_rating'],
-            'total_reviews' => $feedbackData['total_reviews'],
-        ]);
-    }
+    $page        = (int) request()->get('feedback_page', 1);
+    $feedbackData = $this->feedbackService->getFeedbacksByProductId($id, 10, $page);
+
+    return Inertia::render('frontend/product-details', [
+        'product'          => $product,
+        'calculated'       => $calculatedData,
+        'feedbacks'        => $feedbackData['feedbacks'],
+        'rating_breakdown' => $feedbackData['rating_breakdown'],
+        'average_rating'   => $feedbackData['average_rating'],
+        'total_reviews'    => $feedbackData['total_reviews'],
+        'pagination'       => $feedbackData['pagination'],
+    ]);
+}
 
     public function shippingInfo(): Response|RedirectResponse
     {
