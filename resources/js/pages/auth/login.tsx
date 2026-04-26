@@ -158,7 +158,7 @@ export default function Login({ status, userType }: LoginProps) {
                         )}
                     </Form>
 
-                    <div>
+                    <div className="flex items-center justify-center mt-2">
                         <a href={route('user.auth.google')} className="flex w-fit items-center justify-center">
                             <svg className="mr-2 h-12 w-12" viewBox="0 0 24 24">
                                 <path
