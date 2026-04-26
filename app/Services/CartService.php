@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Product;
+use App\Models\ShippingCost;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -31,21 +32,50 @@ class CartService
             );
         }
 
+        return $this->findOrCreateGuestCart($request);
+    }
+
+    /**
+     * Resolve or create the guest cart for the current session (session_id + optional cart.id in session).
+     */
+    public function findOrCreateGuestCart(Request $request): Cart
+    {
+        $sessionId = $request->session()->getId();
+
+        $cart = Cart::query()
+            ->whereNull('user_id')
+            ->where('session_id', $sessionId)
+            ->orderBy('id')
+            ->first();
+
+        if ($cart !== null) {
+            $request->session()->put(self::SESSION_CART_ID_KEY, $cart->id);
+
+            return $cart;
+        }
+
         $cartId = $request->session()->get(self::SESSION_CART_ID_KEY);
         if ($cartId !== null) {
-            $cart = Cart::query()
+            $cartById = Cart::query()
                 ->whereNull('user_id')
                 ->whereKey($cartId)
                 ->first();
-            if ($cart !== null) {
-                return $cart;
+
+            if ($cartById !== null) {
+                if ($cartById->session_id !== $sessionId) {
+                    $cartById->update(['session_id' => $sessionId]);
+                }
+                $request->session()->put(self::SESSION_CART_ID_KEY, $cartById->id);
+
+                return $cartById;
             }
+
             $request->session()->forget(self::SESSION_CART_ID_KEY);
         }
 
         $cart = Cart::query()->create([
             'user_id' => null,
-            'session_id' => $request->session()->getId(),
+            'session_id' => $sessionId,
             'expires_at' => now()->addDays(self::GUEST_CART_TTL_DAYS),
         ]);
         $request->session()->put(self::SESSION_CART_ID_KEY, $cart->id);
@@ -55,7 +85,7 @@ class CartService
 
     public function getShippingCost(): float
     {
-        $shippingCost = \App\Models\ShippingCost::latest()->first();
+        $shippingCost = ShippingCost::latest()->first();
 
         return $shippingCost ? (float) $shippingCost->cost : 20.00;
     }
@@ -76,7 +106,7 @@ class CartService
             ->first();
 
         // Use ProductService for consistent calculations
-        $productService = app(\App\Services\ProductService::class);
+        $productService = app(ProductService::class);
 
         $cartItems = $cart ? $cart->items->map(function ($cartItem) use ($productService) {
             if ($cartItem->product) {
@@ -161,13 +191,7 @@ class CartService
                 ]
             );
         } else {
-            $cart = $this->model::firstOrCreate(
-                ['session_id' => session()->getId()],
-                [
-                    'creater_type' => null,
-                    'creater_id' => null,
-                ]
-            );
+            $cart = $this->findOrCreateGuestCart(request());
         }
 
         $product = $this->product::findOrFail($data['product_id']);
@@ -190,7 +214,6 @@ class CartService
 
         return true;
     }
-
 
     public function updateCartItem(array $data): bool
     {
@@ -220,35 +243,52 @@ class CartService
         return true;
     }
 
-    public function authCheck(?string $sessionId = null): bool
+    /**
+     * Merge guest cart rows (by session id and/or session cart id) into the user's cart.
+     *
+     * @return bool True when at least one guest cart was merged.
+     */
+    public function mergeGuestCartsForUser(User $user, string $guestSessionId, ?int $sessionCartId = null): bool
     {
-        if (! Auth::guard('web')->check()) {
-            return false;
-        }
-
-        $user = Auth::guard('web')->user();
-        $sessionId = $sessionId ?? session()->getId();
-
-        $guestCarts = $this->model::with('items')
-            ->where('session_id', $sessionId)
-            ->get();
+        $guestCarts = $this->model::query()
+            ->whereNull('user_id')
+            ->where(function ($query) use ($guestSessionId, $sessionCartId): void {
+                $query->where('session_id', $guestSessionId);
+                if ($sessionCartId !== null) {
+                    $query->orWhere('id', $sessionCartId);
+                }
+            })
+            ->with('items')
+            ->get()
+            ->unique('id');
 
         if ($guestCarts->isEmpty()) {
             return false;
         }
 
-        $userCart = $this->model::firstOrCreate([
-            'user_id' => $user->id,
-        ]);
+        $userCart = $this->model::firstOrCreate(
+            ['user_id' => $user->id],
+            [
+                'expires_at' => null,
+                'creater_type' => User::class,
+                'creater_id' => $user->id,
+            ],
+        );
 
         foreach ($guestCarts as $guestCart) {
+            if ((int) $guestCart->id === (int) $userCart->id) {
+                continue;
+            }
+
             foreach ($guestCart->items as $guestItem) {
-                $existingItem = $this->cartItem::where('cart_id', $userCart->id)
+                $existingItem = $this->cartItem::query()
+                    ->where('cart_id', $userCart->id)
                     ->where('product_id', $guestItem->product_id)
                     ->first();
 
                 if ($existingItem) {
                     $existingItem->increment('quantity', $guestItem->quantity);
+                    $guestItem->delete();
                 } else {
                     $guestItem->update(['cart_id' => $userCart->id]);
                 }
@@ -257,7 +297,23 @@ class CartService
             $guestCart->delete();
         }
 
+        session()->forget(self::SESSION_CART_ID_KEY);
+
         return true;
+    }
+
+    public function authCheck(?string $sessionId = null): bool
+    {
+        if (! Auth::guard('web')->check()) {
+            return false;
+        }
+
+        $user = Auth::guard('web')->user();
+        $sessionId = $sessionId ?? session()->getId();
+        $cartIdRaw = session()->get(self::SESSION_CART_ID_KEY);
+        $sessionCartId = is_numeric($cartIdRaw) ? (int) $cartIdRaw : null;
+
+        return $this->mergeGuestCartsForUser($user, $sessionId, $sessionCartId);
     }
 
     // ─── Private Helpers ─────────────────────────────────────────────────────

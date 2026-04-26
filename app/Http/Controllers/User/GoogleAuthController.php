@@ -5,7 +5,6 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Mail\UserWelcomeMail;
 use App\Models\User;
-use App\Services\CartService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -13,13 +12,6 @@ use Laravel\Socialite\Facades\Socialite;
 
 class GoogleAuthController extends Controller
 {
-    protected CartService $cartService;
-
-    public function __construct(CartService $cartService)
-    {
-        $this->cartService = $cartService;
-    }
-
     public function redirect()
     {
         return Socialite::driver('google')->redirect();
@@ -32,21 +24,24 @@ class GoogleAuthController extends Controller
         $email = $googleUser->getEmail();
         [$firstName] = $this->extractName($googleUser->getName(), $email);
 
-        $guestSessionId = $request->session()->getId();
-        $buyNow         = $request->session()->get('buy_now');
-        $urlIntended    = $request->session()->get('url.intended');
+        $buyNow = $request->session()->get('buy_now');
+        $urlIntended = $request->session()->get('url.intended');
 
         $user = User::updateOrCreate(
             ['email' => $email],
             [
-                'name'                   => $googleUser->getName() ?? $firstName,
-                'provider'               => 'google',
-                'provider_id'            => $googleUser->getId(),
-                'provider_avatar'        => $googleUser->getAvatar(),
-                'provider_token'         => $googleUser->token,
+                'name' => $googleUser->getName() ?? $firstName,
+                'provider' => 'google',
+                'provider_id' => $googleUser->getId(),
+                'provider_avatar' => $googleUser->getAvatar(),
+                'provider_token' => $googleUser->token,
                 'provider_refresh_token' => $googleUser->refreshToken,
             ]
         );
+
+        if ($user->email_verified_at === null) {
+            $user->update(['email_verified_at' => now()]);
+        }
 
         $isFirstLogin = is_null($user->last_login_at);
 
@@ -62,14 +57,13 @@ class GoogleAuthController extends Controller
             $request->session()->put('url.intended', $urlIntended);
         }
 
-        $this->cartService->authCheck($guestSessionId);
-
         if ($isFirstLogin) {
             Mail::to($user->email)->send(new UserWelcomeMail([
-                'name'  => $user->name,
+                'name' => $user->name,
                 'email' => $user->email,
             ]));
         }
+
         return redirect()->intended(route('user.dashboard'));
     }
 
