@@ -44,7 +44,7 @@ export default function ProductCard() {
 
         const fullImagePath = imagePath
             ? `/storage/${imagePath}`
-            : '/assets/images/product/Rectangle 20.png';
+            : 'https://placehold.co/600x400';
 
         return {
             ...item,

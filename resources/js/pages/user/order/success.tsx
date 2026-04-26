@@ -47,7 +47,7 @@ interface SuccessPageProps {
 
 const imageOf = (item: OrderItem) => {
     const path = item.product?.images?.[0]?.image;
-    return path ? `/storage/${path}` : '/assets/images/product/Rectangle 20.png';
+    return path ? `/storage/${path}` : 'https://placehold.co/600x400';
 };
 
 export default function OrderSuccessPage({

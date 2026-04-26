@@ -71,7 +71,7 @@ interface PaymentMethodOption {
 const primaryImage = (items: OrderItem[]) => {
     const cartProducts = (items || []).map((item: any) => {
         const imagePath = item.product?.images?.[0]?.image;
-        const fullImagePath = imagePath ? `/storage/${imagePath}` : '/assets/images/product/Rectangle 20.png';
+        const fullImagePath = imagePath ? `/storage/${imagePath}` : 'https://placehold.co/600x400';
         return fullImagePath;
     });
     return cartProducts;

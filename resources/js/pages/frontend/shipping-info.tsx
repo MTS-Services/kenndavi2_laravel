@@ -115,7 +115,7 @@ export default function ShippingInformationPage() {
               const imagePath = item.product?.images?.[0]?.image;
               const fullImagePath = imagePath
                   ? `/storage/${imagePath}`
-                  : '/assets/images/product/Rectangle 20.png';
+                  : 'https://placehold.co/600x400';
 
               return {
                   ...item,
@@ -132,7 +132,7 @@ export default function ShippingInformationPage() {
               const imagePath = item.product?.images?.[0]?.image;
               const fullImagePath = imagePath
                   ? `/storage/${imagePath}`
-                  : '/assets/images/product/Rectangle 20.png';
+                  : 'https://placehold.co/600x400';
               const unitPrice =
                   item.calculated?.discounted_price ??
                   parseFloat(item.product?.price || 0);
