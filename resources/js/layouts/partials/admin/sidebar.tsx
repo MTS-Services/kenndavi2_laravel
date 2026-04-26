@@ -29,12 +29,12 @@ const adminNavItems: NavItemType[] = [
         icon: UsersRound,
         slug: 'user-management',
     },
-    {
-        title: 'Tag Management',
-        href: route('admin.tm.index'),
-        icon: LayoutGrid,
-        slug: 'tag-management',
-    },
+    // {
+    //     title: 'Tag Management',
+    //     href: route('admin.tm.index'),
+    //     icon: LayoutGrid,
+    //     slug: 'tag-management',
+    // },
     {
         title: 'Product',
         href: route('admin.pm.index'),
@@ -42,16 +42,16 @@ const adminNavItems: NavItemType[] = [
         slug: 'product-management',
     },
     {
-        title: 'Order Management',
-        href: route('admin.om.index'),
-        icon: ShoppingCart,
-        slug: 'order-management',
-    },
-    {
         title: 'Recipe Management',
         href: route('admin.rm.index'),
         icon: CookingPot,
         slug: 'recipe-management',
+    },
+        {
+        title: 'Order Management',
+        href: route('admin.om.index'),
+        icon: ShoppingCart,
+        slug: 'order-management',
     },
     {
         title: 'Terms & Conditions',

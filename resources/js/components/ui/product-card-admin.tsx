@@ -29,7 +29,7 @@ export default function ProductCardAdmin({ product }: Props) {
         ? `/storage/${primaryImage.image}`
         : product.image
         ? `/storage/${product.image}`
-        : '/assets/images/placeholder.jpg';
+        : 'https://placehold.co/600x400';
         const href = route('frontend.product-details', product.id);
 
     return (

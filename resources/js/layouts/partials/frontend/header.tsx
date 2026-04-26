@@ -213,8 +213,18 @@ function FrontendHeader({ activePage, subPage, cartImage }: Props) {
                                 Recipes
                             </Link>
                             <div className="flex items-center space-x-4 pt-4">
-                                <Link className="text-text-white transition-colors hover:text-gray-300">
+                                <Link
+                                    href={route('frontend.cart.index')}
+                                    className="relative text-text-white transition-colors hover:text-gray-300"
+                                >
                                     <ShoppingCart size={24} />
+                                    {cart_count > 0 && (
+                                        <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                                            {cart_count > 99
+                                                ? '99+'
+                                                : cart_count}
+                                        </span>
+                                    )}
                                 </Link>
                                 <Link
                                     href={route('login')}
