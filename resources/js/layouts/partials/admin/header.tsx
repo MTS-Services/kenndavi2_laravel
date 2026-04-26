@@ -64,9 +64,9 @@ export function AdminHeader({
                         {/* Right side - Notifications and user menu */}
                         <div className="flex items-center space-x-2">
                             {/* Notifications button */}
-                            <button className="rounded-full text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none">
+                            {/* <button className="rounded-full text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none">
                                 <Bell className="h-6 w-6" />
-                            </button>
+                            </button> */}
 
                             {/* User dropdown */}
                             <DropdownMenu>

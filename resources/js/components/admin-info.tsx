@@ -16,9 +16,14 @@ export function AdminInfo({
         <>
             <Avatar className="h-12 w-12 overflow-hidden rounded-full">
                 {/* <AvatarImage src={user.avatar_url || user.avatar} alt={user.name} /> */}
-                <AvatarFallback className="rounded-lg bg-primary text-white text-lg font-semibold font-montserrat">
+                {/* <AvatarFallback className="rounded-lg bg-primary text-white text-lg font-semibold font-montserrat">
                     {getInitials(admin.name)}
-                </AvatarFallback>
+                </AvatarFallback> */}
+                <AvatarImage
+                        src="/assets/images/8.png"
+                        alt={admin.name || 'Admin'}
+                        className="h-full w-full"
+                    />
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate text-base font-semibold text-text-secondary font-montserrat">{admin.name}</span>
@@ -29,7 +34,7 @@ export function AdminInfo({
                 )}
                 {showRole && (
                     <span className="text-base text-text-primary font-normal">
-                        {admin?.role_label || 'Employee'}
+                        {admin?.role || 'Admin'}
                     </span>
                 )}
             </div>

@@ -55,9 +55,7 @@ class RecipeController extends Controller
     {
         $recipe = $this->recipeService->update($request, $id);
 
-        return redirect()
-            ->route('admin.rm.index')
-            ->with('success', 'Recipe updated successfully!');
+        return redirect()->back()->with('success', 'Recipe updated successfully!');
     }
     
     public function delete($id)
