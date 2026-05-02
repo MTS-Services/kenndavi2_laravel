@@ -30,11 +30,11 @@ export default function ProductCardAdmin({ product }: Props) {
         : product.image
         ? `/storage/${product.image}`
         : 'https://placehold.co/600x400';
-        const href = route('frontend.product-details', product.id);
+        const href = route('admin.pm.show', product.id);
 
     return (
         <div className="rounded-md bg-bg-card shadow-md px-4 py-3">
-            <a href={href} target="_blank" rel="noopener noreferrer">
+            <a href={href} rel="noopener noreferrer">
             <div className="relative">
                 <img
                     src={imageUrl}
@@ -54,12 +54,12 @@ export default function ProductCardAdmin({ product }: Props) {
             </div>
             </a>
             <div className="mt-3">   
-                <a href={href} target="_blank" rel="noopener noreferrer">
+                <a href={href} rel="noopener noreferrer">
                 <h3 className="mb-2 font-inter text-xl font-medium text-text-title">
                     {product.title}
                 </h3>
                 </a>
-                <a href={href} target="_blank" rel="noopener noreferrer">
+                <a href={href} rel="noopener noreferrer">
                 <div
                     className="mb-4 font-aktiv-grotesk text-base font-normal text-text-body line-clamp-3"
                     dangerouslySetInnerHTML={{ __html: product.description }}

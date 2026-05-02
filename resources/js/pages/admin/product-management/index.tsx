@@ -1,5 +1,4 @@
 import ProductCardAdmin, { productData } from '@/components/ui/product-card-admin';
-import SaucesCardAdmin from '@/components/ui/product-card-admin';
 import AdminLayout from '@/layouts/admin-layout';
 import { Link, usePage } from '@inertiajs/react';
 
