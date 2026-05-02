@@ -59,6 +59,7 @@ type PageProps = {
         per_page: number;
         total: number;
     };
+    frontendUrl: string;
 };
 
 export default function ProductDetailsPage() {
@@ -70,6 +71,7 @@ export default function ProductDetailsPage() {
         average_rating,
         total_reviews,
         pagination,
+        frontendUrl,
     } = usePage<PageProps>().props;
 
     const productImages = product.images?.map((img) => `/storage/${img.image}`) || [];
@@ -122,6 +124,7 @@ export default function ProductDetailsPage() {
                         onImageSelect={handleImageSelect}
                         averageRating={average_rating}
                         totalReviews={total_reviews}
+                        frontendUrl={frontendUrl}
                     />
 
                     <ProductFeedbackAdmin

@@ -1,4 +1,6 @@
 import { Link, Star } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
+import { useRef } from 'react';
 
 type StarRatingProps = { rating: number; size?: 'sm' | 'md' };
 
@@ -35,6 +37,7 @@ interface Props {
     onImageSelect: (image: string) => void;
     averageRating: number;
     totalReviews: number;
+    frontendUrl: string;
 }
 
 export default function ProductDetailAdmin({
@@ -44,11 +47,30 @@ export default function ProductDetailAdmin({
 
     averageRating,
     totalReviews,
+    frontendUrl,
 }: Props) {
+    const qrRef = useRef<SVGSVGElement>(null);
     const productImages =
         product.images?.map((img) => `/storage/${img.image}`) || [];
     const rating = averageRating || 0;
     const reviewsCount = totalReviews || 0;
+
+     // ── Download as SVG ──────────────────────────────────────────────
+    const downloadSVG = () => {
+        const svg = qrRef.current;
+        if (!svg) return;
+
+        const serializer = new XMLSerializer();
+        const svgString = serializer.serializeToString(svg);
+        const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${product.title}-qrcode.svg`;
+        a.click();
+        URL.revokeObjectURL(url);
+    };
     return (
         <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] xl:gap-16">
             {/* Left: Product Gallery */}
@@ -104,17 +126,31 @@ export default function ProductDetailAdmin({
                     />
                 </div>
                 <div className="space-y-6">
-                  <div className="">
+                  {/* <div className="">
                       <Link
                         href={route('admin.pm.create')}
                         className="rounded-xl bg-bg-button px-3 sm:px-6 py-2 sm:py-4 font-inter text-base sm:text-xl font-medium  hover:opacity-90 transition-opacity cursor-pointer"
                     >
                         QR Code Generator
                     </Link>
-                  </div>
-                  <div className="">
-                    <img src="/assets/images/product/qr.svg" alt="QR Code Example" className="w-36 h-auto" />
-                  </div>
+                  </div> */}
+
+                  <div className="space-y-3">
+                        <div className="p-4 bg-white shadow rounded flex flex-col items-center w-fit">
+                            {/* 👇 add the ref here */}
+                            <QRCodeSVG ref={qrRef} value={frontendUrl} size={200} />
+                            <p className="mt-2 text-xs text-gray-500">Scan to View</p>
+                        </div>
+
+                        <div className="flex gap-2">
+                            <button
+                                onClick={downloadSVG}
+                                className="rounded-xl bg-bg-button px-3 sm:px-4 py-2 sm:py-3 font-inter text-base sm:text-xl font-medium  text-white hover:opacity-90 transition-opacity cursor-pointer"
+                            >
+                                ↓ SVG
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -4,8 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ProductTag;
-use App\Services\ProductService;
 use App\Services\FeedbackService;
+use App\Services\ProductService;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -62,19 +63,11 @@ class ProductController extends Controller
 
     public function show(int $id)
     {
-        // $product = $this->productService->getById($id);
-
-        // return Inertia::render('admin/product-management/details', [
-        //     'product' => $product
-        // ]);
-
-
         $product        = $this->productService->getById($id);
         $calculatedData = $this->productService->getProductCalculatedData($product);
-
         $page        = (int) request()->get('feedback_page', 1);
         $feedbackData = $this->feedbackService->getFeedbacksByProductId($id, 10, $page);
-
+        $frontendUrl = route('frontend.product-details', ['id' => $id]);
         return Inertia::render('admin/product-management/details', [
             'product'          => $product,
             'calculated'       => $calculatedData,
@@ -83,6 +76,7 @@ class ProductController extends Controller
             'average_rating'   => $feedbackData['average_rating'],
             'total_reviews'    => $feedbackData['total_reviews'],
             'pagination'       => $feedbackData['pagination'],
+            'frontendUrl'      => $frontendUrl,
         ]);
     }
 
