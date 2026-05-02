@@ -57,6 +57,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/edit/{id}', [ProductController::class, 'edit'])->name('edit');
             Route::post('/update/{id}', [ProductController::class, 'update'])->name('update');
             Route::delete('/delete/{id}', [ProductController::class, 'delete'])->name('delete');
+            Route::get('/show/{id}', [ProductController::class, 'show'])->name('show');
         });
         Route::group(['prefix' => 'order-management', 'as' => 'om.'], function () {
             Route::get('/index', [OrderController::class, 'index'])->name('index');

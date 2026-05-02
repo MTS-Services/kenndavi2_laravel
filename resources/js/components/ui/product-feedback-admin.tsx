@@ -23,7 +23,7 @@ interface Props {
     totalReviews: number;
 }
 
-export default function ProductFeedback({
+export default function ProductFeedbackAdmin({
     currentPage,
     totalPages,
     onPageChange,

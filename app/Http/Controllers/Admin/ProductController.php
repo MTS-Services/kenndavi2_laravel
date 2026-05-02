@@ -5,22 +5,25 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ProductTag;
 use App\Services\ProductService;
+use App\Services\FeedbackService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ProductController extends Controller
 {
     protected ProductService $productService;
+    protected FeedbackService $feedbackService;
 
-    public function __construct(ProductService $productService)
+    public function __construct(ProductService $productService, FeedbackService $feedbackService)
     {
         $this->productService = $productService;
+        $this->feedbackService = $feedbackService;
     }
 
     public function index()
     {
         $products = $this->productService->getPaginated(10);
-        
+
         return Inertia::render('admin/product-management/index', [
             'products' => $products
         ]);
@@ -29,7 +32,7 @@ class ProductController extends Controller
     public function create()
     {
         $productTags = ProductTag::where('status', 'active')->get();
-        
+
         return Inertia::render('admin/product-management/create', [
             'productTags' => $productTags
         ]);
@@ -59,10 +62,27 @@ class ProductController extends Controller
 
     public function show(int $id)
     {
-        $product = $this->productService->getById($id);
-        
-        return Inertia::render('admin/product-management/show', [
-            'product' => $product
+        // $product = $this->productService->getById($id);
+
+        // return Inertia::render('admin/product-management/details', [
+        //     'product' => $product
+        // ]);
+
+
+        $product        = $this->productService->getById($id);
+        $calculatedData = $this->productService->getProductCalculatedData($product);
+
+        $page        = (int) request()->get('feedback_page', 1);
+        $feedbackData = $this->feedbackService->getFeedbacksByProductId($id, 10, $page);
+
+        return Inertia::render('admin/product-management/details', [
+            'product'          => $product,
+            'calculated'       => $calculatedData,
+            'feedbacks'        => $feedbackData['feedbacks'],
+            'rating_breakdown' => $feedbackData['rating_breakdown'],
+            'average_rating'   => $feedbackData['average_rating'],
+            'total_reviews'    => $feedbackData['total_reviews'],
+            'pagination'       => $feedbackData['pagination'],
         ]);
     }
 
@@ -71,7 +91,7 @@ class ProductController extends Controller
         $product = $this->productService->getById($id);
         $productTags = ProductTag::where('status', 'active')->get();
 
-        
+
         return Inertia::render('admin/product-management/edit', [
             'product' => $product,
             'productTags' => $productTags
