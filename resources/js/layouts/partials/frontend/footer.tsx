@@ -36,12 +36,16 @@ const FrontendFooter: React.FC = () => {
                         <h3 className="text-text-white text-xl font-medium font-inter mb-4">Contacts</h3>
                         <div className="flex items-center space-x-2 mb-2">
                             <Phone size={20} className="text-text-white text-lg font-normal font-inter" />
-                            <span className="text-text-white text-lg font-normal font-inter">(202) 993-1664</span>
+                            <a href="tel:(202) 993-1664" className="text-text-white text-lg font-normal font-inter hover:underline">(202) 993-1664</a>
                         </div>
                         <div className="flex items-center space-x-2">
                             <Mail size={20} className="text-text-white text-lg font-normal font-inter" />
-                            <span className="text-text-white text-lg font-normal font-inter">info@northside.com</span>
+                            <a href="mailto:Taste-of-Tha-Northside@outlook.com" className="text-text-white text-base font-normal font-inter hover:underline">Taste-of-Tha-Northside@outlook.com</a>
                         </div>
+                        {/* <div className="flex items-center space-x-2">
+                            <Mail size={20} className="text-text-white text-lg font-normal font-inter" />
+                            <span className="text-text-white text-lg font-normal font-inter">info@northside.com</span>
+                        </div> */}
                     </div>
 
                     {/* Column 4: Logo */}
