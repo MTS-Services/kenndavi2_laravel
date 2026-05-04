@@ -6,7 +6,7 @@ const FrontendFooter: React.FC = () => {
     return (
         <footer className="bg-bg-footer text-text-white py-8">
             <div className="container mx-auto px-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     {/* Column 1: Logo and Description */}
                     <div className="flex flex-col items-start">
                         <Link href={route('frontend.home')}>
@@ -42,6 +42,13 @@ const FrontendFooter: React.FC = () => {
                             <Mail size={20} className="text-text-white text-lg font-normal font-inter" />
                             <span className="text-text-white text-lg font-normal font-inter">info@northside.com</span>
                         </div>
+                    </div>
+
+                    {/* Social Media */}
+                    <div className="flex flex-col items-start">
+                        <Link href={route('frontend.home')}>
+                        <img src="/assets/images/footer-logo-preview.png" alt="Northside Logo" className="max-w-36 mb-4" />
+                        </Link>
                     </div>
                 </div>
 

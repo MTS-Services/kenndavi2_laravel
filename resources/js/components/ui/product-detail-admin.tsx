@@ -126,18 +126,8 @@ export default function ProductDetailAdmin({
                     />
                 </div>
                 <div className="space-y-6">
-                  {/* <div className="">
-                      <Link
-                        href={route('admin.pm.create')}
-                        className="rounded-xl bg-bg-button px-3 sm:px-6 py-2 sm:py-4 font-inter text-base sm:text-xl font-medium  hover:opacity-90 transition-opacity cursor-pointer"
-                    >
-                        QR Code Generator
-                    </Link>
-                  </div> */}
-
-                  <div className="space-y-3">
+                  {/* <div className="space-y-3">
                         <div className="p-4 bg-white shadow rounded flex flex-col items-center w-fit">
-                            {/* 👇 add the ref here */}
                             <QRCodeSVG ref={qrRef} value={frontendUrl} size={200} />
                             <p className="mt-2 text-xs text-gray-500">Scan to View</p>
                         </div>
@@ -150,7 +140,7 @@ export default function ProductDetailAdmin({
                                 ↓ SVG
                             </button>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </div>
