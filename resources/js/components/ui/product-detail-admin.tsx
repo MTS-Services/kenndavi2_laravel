@@ -126,7 +126,7 @@ export default function ProductDetailAdmin({
                     />
                 </div>
                 <div className="space-y-6">
-                  {/* <div className="space-y-3">
+                  <div className="space-y-3">
                         <div className="p-4 bg-white shadow rounded flex flex-col items-center w-fit">
                             <QRCodeSVG ref={qrRef} value={frontendUrl} size={200} />
                             <p className="mt-2 text-xs text-gray-500">Scan to View</p>
@@ -140,7 +140,7 @@ export default function ProductDetailAdmin({
                                 ↓ SVG
                             </button>
                         </div>
-                    </div> */}
+                    </div>
                 </div>
             </div>
         </div>
