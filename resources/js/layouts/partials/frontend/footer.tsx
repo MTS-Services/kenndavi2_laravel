@@ -44,7 +44,7 @@ const FrontendFooter: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Social Media */}
+                    {/* Column 4: Logo */}
                     <div className="flex flex-col items-start">
                         <Link href={route('frontend.home')}>
                         <img src="/assets/images/footer-logo-preview.png" alt="Northside Logo" className="max-w-36 mb-4" />
