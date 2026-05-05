@@ -54,19 +54,35 @@ export default function ProductDetailAdmin({
     const rating = averageRating || 0;
     const reviewsCount = totalReviews || 0;
 
-const canvasRef = useRef<HTMLCanvasElement>(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
 
-const downloadPNG = () => {
-    // QRCodeCanvas এর ভেতরের actual canvas element নিতে হবে
-    const canvas = canvasRef.current?.querySelector('canvas') as HTMLCanvasElement;
-    if (!canvas) return;
+    const downloadPNG = () => {
+        const qrCanvas = canvasRef.current;
+        if (!qrCanvas) return;
 
-    const url = canvas.toDataURL('image/png');
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${product.title}-qrcode.png`;
-    a.click();
-};
+        const padding = 20;
+        const size = qrCanvas.width + padding * 2;
+
+        const newCanvas = document.createElement('canvas');
+        newCanvas.width = size;
+        newCanvas.height = size;
+
+        const ctx = newCanvas.getContext('2d');
+        if (!ctx) return;
+
+
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, size, size);
+
+
+        ctx.drawImage(qrCanvas, padding, padding);
+
+        const url = newCanvas.toDataURL('image/png');
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${product.title}-qrcode.png`;
+        a.click();
+    };
     return (
         <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] xl:gap-16">
             {/* Left: Product Gallery */}
@@ -123,13 +139,17 @@ const downloadPNG = () => {
                 </div>
                 <div className="space-y-6">
                   <div className="space-y-3">
-                       <div
-                        ref={canvasRef}
-                        className="p-4 bg-white shadow rounded flex flex-col items-center w-fit"
-                    >
-                        <QRCodeCanvas value={frontendUrl} size={200} />
-                        <p className="mt-2 text-xs text-gray-500">Scan to View</p>
-                    </div>
+                      {/* ref wrapper div */}
+                        <div className="p-4 bg-white shadow rounded flex flex-col items-center w-fit">
+                            <QRCodeCanvas
+                                ref={canvasRef}
+                                value={frontendUrl}
+                                size={300}         
+                                level="H"           
+                                includeMargin={true} 
+                            />
+                            <p className="mt-2 text-xs text-gray-500">Scan to View</p>
+                        </div>
 
                         <div className="flex gap-2">
                             <button
