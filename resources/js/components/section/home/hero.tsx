@@ -23,7 +23,7 @@ export default function Hero() {
                         Welcome to Northside
                     </h1>
                     <p className="mb-4 max-w-xl font-inter text-lg leading-relaxed md:text-xl">
-                        No matter what's on your grill, make it unforgettable with the Taste of Da Northside legendary St. Louis flavor Bar-B-Que sauce.
+                        No matter what's on your grill, make it unforgettable with The Taste of Tha Northside legendary St. Louis flavor Bar-B-Que sauce.
                     </p>
                 </div>
             </div>
