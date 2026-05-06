@@ -44,7 +44,7 @@ export default function SaucesCard({ product }: Props) {
                </Link>
                 <div className="flex items-center justify-between">
                     <span className="font-aktiv-grotesk text-2xl font-normal text-text-title line-clamp-3">
-                        Price {product?.price}$
+                        Price ${product?.price}
                     </span>
                     <Link 
                         href={href}
