@@ -37,7 +37,7 @@ class FrontendController extends Controller
 
     public function index(): Response
     {
-        $products = $this->productService->getPaginated(10);
+        $products = $this->productService->getPaginated(6);
         $recipes = $this->recipeService->getAll(6);
         $feedbacks = $this->feedbackService->getAllFeedbacks()->load('user');
 
