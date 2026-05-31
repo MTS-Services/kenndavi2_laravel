@@ -149,7 +149,7 @@ class ProductService
         ];
     }
 
-    public function getPaginated(int $perPage = 10)
+    public function getPaginated(int $perPage = 6)
     {
         return $this->model::with(['images', 'tag'])->latest()->paginate($perPage);
     }
